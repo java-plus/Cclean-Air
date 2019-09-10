@@ -19,6 +19,7 @@ import javax.persistence.Table;
 @Table(name = "COMMUNE")
 public class Commune implements Serializable {
 
+	private static final long serialVersionUID = 3795370245957064865L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_id")
@@ -49,6 +50,13 @@ public class Commune implements Serializable {
 	private DonneesLocales donnesLocales;
 
 	/**
+	 * Liste des notifications et alertes concernant une commune spécifiques
+	 */
+	@OneToMany(mappedBy = "commune")
+	@Column(name = "com_liste_notifications")
+	private List<Notification> listeNotifications;
+
+	/**
 	 * Constructeur
 	 */
 	public Commune() {
@@ -72,7 +80,7 @@ public class Commune implements Serializable {
 	}
 
 	public Commune(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude,
-			List<Indicateur> listeIndicateurs, DonneesLocales donnesLocales) {
+			List<Indicateur> listeIndicateurs, DonneesLocales donnesLocales, List<Notification> listeNotifications) {
 		super();
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
@@ -81,6 +89,7 @@ public class Commune implements Serializable {
 		this.longitude = longitude;
 		this.listeIndicateurs = listeIndicateurs;
 		this.donnesLocales = donnesLocales;
+		this.listeNotifications = listeNotifications;
 	}
 
 	@Override
@@ -92,6 +101,7 @@ public class Commune implements Serializable {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
 		result = prime * result + ((listeIndicateurs == null) ? 0 : listeIndicateurs.hashCode());
+		result = prime * result + ((listeNotifications == null) ? 0 : listeNotifications.hashCode());
 		result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
 		result = prime * result + ((nbHabitants == null) ? 0 : nbHabitants.hashCode());
 		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
@@ -131,6 +141,11 @@ public class Commune implements Serializable {
 			if (other.listeIndicateurs != null)
 				return false;
 		} else if (!listeIndicateurs.equals(other.listeIndicateurs))
+			return false;
+		if (listeNotifications == null) {
+			if (other.listeNotifications != null)
+				return false;
+		} else if (!listeNotifications.equals(other.listeNotifications))
 			return false;
 		if (longitude == null) {
 			if (other.longitude != null)
@@ -226,10 +241,24 @@ public class Commune implements Serializable {
 		this.donnesLocales = donnesLocales;
 	}
 
+	/**
+	 * @return the listeNotifications
+	 */
+	public List<Notification> getListeNotifications() {
+		return listeNotifications;
+	}
+
+	/**
+	 * @param listeNotifications the listeNotifications to set
+	 */
+	public void setListeNotifications(List<Notification> listeNotifications) {
+		this.listeNotifications = listeNotifications;
+	}
+
 	@Override
 	public String toString() {
 		return "Commune [id=" + id + ", nom=" + nom + ", nbHabitants=" + nbHabitants + ", codeInsee=" + codeInsee
 				+ ", latitude=" + latitude + ", longitude=" + longitude + ", listeIndicateurs=" + listeIndicateurs
-				+ ", donnesLocales=" + donnesLocales + "]";
+				+ ", donnesLocales=" + donnesLocales + ", listeNotifications=" + listeNotifications + "]";
 	}
 }

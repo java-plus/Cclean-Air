@@ -45,27 +45,35 @@ public class DonneesLocales implements Serializable {
 	private Commune commune;
 
 	/**
-	 * Condition meteorologiques enregistrées associées à la commune
+	 * Conditions meteorologiques enregistrées associées à la commune
 	 */
 	@ManyToOne
 	@JoinColumn(name = "don_condition_meteo")
 	private ConditionMeteo conditionMeteo;
 
+	/**
+	 * Données de qualités de l'air enregistrées associées à la commune
+	 */
+	@ManyToOne
+	@JoinColumn(name = "don_qualite_air")
+	private QualiteAir qualiteAir;
+
 	public DonneesLocales() {
 
 	}
 
-	public DonneesLocales(ZonedDateTime date, Commune commune, ConditionMeteo conditionMeteo) {
+	public DonneesLocales(ZonedDateTime date, Commune commune, ConditionMeteo conditionMeteo, QualiteAir qualiteAir) {
 		super();
 		this.date = date;
 		this.commune = commune;
 		this.conditionMeteo = conditionMeteo;
+		this.qualiteAir = qualiteAir;
 	}
 
 	@Override
 	public String toString() {
 		return "DonneesLocales [id=" + id + ", date=" + date + ", commune=" + commune + ", conditionMeteo="
-				+ conditionMeteo + "]";
+				+ conditionMeteo + ", qualiteAir=" + qualiteAir + "]";
 	}
 
 	@Override
@@ -76,6 +84,7 @@ public class DonneesLocales implements Serializable {
 		result = prime * result + ((conditionMeteo == null) ? 0 : conditionMeteo.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((qualiteAir == null) ? 0 : qualiteAir.hashCode());
 		return result;
 	}
 
@@ -107,6 +116,11 @@ public class DonneesLocales implements Serializable {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (qualiteAir == null) {
+			if (other.qualiteAir != null)
+				return false;
+		} else if (!qualiteAir.equals(other.qualiteAir))
 			return false;
 		return true;
 	}
@@ -165,6 +179,20 @@ public class DonneesLocales implements Serializable {
 	 */
 	public void setConditionMeteo(ConditionMeteo conditionMeteo) {
 		this.conditionMeteo = conditionMeteo;
+	}
+
+	/**
+	 * @return the qualiteAir
+	 */
+	public QualiteAir getQualiteAir() {
+		return qualiteAir;
+	}
+
+	/**
+	 * @param qualiteAir the qualiteAir to set
+	 */
+	public void setQualiteAir(QualiteAir qualiteAir) {
+		this.qualiteAir = qualiteAir;
 	}
 
 }
