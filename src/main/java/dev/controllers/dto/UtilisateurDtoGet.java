@@ -22,7 +22,6 @@ public class UtilisateurDtoGet {
         this.email = utilisateur.getEmail();
         this.statut = utilisateur.getStatut();
         this.nomCommune = utilisateur.getCommune().getNom();
-        this.codePostal = utilisateur.getCommune().getCodePostal();
         this.statutNotification = utilisateur.getStatutNotification();
     }
 
@@ -31,10 +30,17 @@ public class UtilisateurDtoGet {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
-        this.statut = statut;
         this.nomCommune = nomCommune;
         this.codePostal = codePostal;
         this.statutNotification = statutNotification;
+    }
+
+    public Statut getStatut() {
+        return statut;
+    }
+
+    public void setStatut(Statut statut) {
+        this.statut = statut;
     }
 
     public String getNom() {
@@ -59,14 +65,6 @@ public class UtilisateurDtoGet {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getStatut() {
-        return statut;
-    }
-
-    public void setStatut(String statut) {
-        this.statut = statut;
     }
 
     public String getNomCommune() {

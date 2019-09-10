@@ -1,12 +1,12 @@
 package dev.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
@@ -86,6 +86,9 @@ public abstract class Utilisateur implements Serializable {
 	@Column(name = "liste_indicateurs")
 	protected List<Indicateur> listeIndicateurs;
 
+	@ManyToOne
+	protected Commune commune;
+
 	public Utilisateur() {
 	}
 
@@ -109,74 +112,12 @@ public abstract class Utilisateur implements Serializable {
 				+ listeIndicateurs + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((compteurTentativesConnexion == null) ? 0 : compteurTentativesConnexion.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((listeIndicateurs == null) ? 0 : listeIndicateurs.hashCode());
-		result = prime * result + ((motDePasse == null) ? 0 : motDePasse.hashCode());
-		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-		result = prime * result + ((prenom == null) ? 0 : prenom.hashCode());
-		result = prime * result + ((statut == null) ? 0 : statut.hashCode());
-		result = prime * result + ((statutNotification == null) ? 0 : statutNotification.hashCode());
-		return result;
+	public Commune getCommune() {
+		return commune;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Utilisateur other = (Utilisateur) obj;
-		if (compteurTentativesConnexion == null) {
-			if (other.compteurTentativesConnexion != null)
-				return false;
-		} else if (!compteurTentativesConnexion.equals(other.compteurTentativesConnexion))
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (listeIndicateurs == null) {
-			if (other.listeIndicateurs != null)
-				return false;
-		} else if (!listeIndicateurs.equals(other.listeIndicateurs))
-			return false;
-		if (motDePasse == null) {
-			if (other.motDePasse != null)
-				return false;
-		} else if (!motDePasse.equals(other.motDePasse))
-			return false;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		if (prenom == null) {
-			if (other.prenom != null)
-				return false;
-		} else if (!prenom.equals(other.prenom))
-			return false;
-		if (statut != other.statut)
-			return false;
-		if (statutNotification == null) {
-			if (other.statutNotification != null)
-				return false;
-		} else if (!statutNotification.equals(other.statutNotification))
-			return false;
-		return true;
+	public void setCommune(Commune commune) {
+		this.commune = commune;
 	}
 
 	/**
