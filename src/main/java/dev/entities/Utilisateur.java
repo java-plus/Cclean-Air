@@ -1,23 +1,7 @@
-/**
- * 
- */
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
@@ -87,7 +71,6 @@ public abstract class Utilisateur implements Serializable {
 	protected Integer compteurTentativesConnexion;
 
 	public Utilisateur() {
-
 	}
 
 	public Utilisateur(String nom, String prenom, String email, String motDePasse, Statut statut,

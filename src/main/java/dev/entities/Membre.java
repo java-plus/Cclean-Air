@@ -1,15 +1,11 @@
-/**
- * 
- */
 package dev.entities;
-
-import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * @author Guillaume Classe regroupant les profils standards inscrits à
@@ -30,6 +26,9 @@ public class Membre extends Utilisateur implements Serializable {
 	@Column(name = "uti_date_derniere_connexion")
 	private ZonedDateTime dateDerniereConnexion;
 
+	/**
+	 * Constructeur
+	 */
 	public Membre() {
 		this.statut = Statut.MEMBRE;
 	}
@@ -37,6 +36,19 @@ public class Membre extends Utilisateur implements Serializable {
 	public Membre(ZonedDateTime dateDerniereConnexion) {
 		super();
 		this.statut = Statut.MEMBRE;
+		this.dateDerniereConnexion = dateDerniereConnexion;
+	}
+
+	public Membre(String nom, String prenom, String email, String motDePasse, Boolean statutNotification,
+				  Integer compteurTentativesConnexion, ZonedDateTime dateDerniereConnexion) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.email = email;
+		this.motDePasse = motDePasse;
+		this.statut = Statut.MEMBRE;
+		this.statutNotification = statutNotification;
+		this.compteurTentativesConnexion = compteurTentativesConnexion;
 		this.dateDerniereConnexion = dateDerniereConnexion;
 	}
 

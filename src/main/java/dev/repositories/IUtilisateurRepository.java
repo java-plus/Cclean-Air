@@ -1,11 +1,7 @@
-/**
- * 
- */
 package dev.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import dev.entities.Utilisateur;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author Guillaume Repository pour les requêtes d'accès à la base de données
