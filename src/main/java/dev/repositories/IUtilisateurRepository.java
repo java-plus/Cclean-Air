@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import dev.entities.Utilisateur;
 
+import java.util.Locale;
+import java.util.Optional;
+
 /**
  * @author Guillaume Repository pour les requêtes d'accès à la base de données
  *         communes aux profils membre et utilisateur
@@ -14,4 +17,10 @@ import dev.entities.Utilisateur;
  */
 public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
 
+    /**
+     * Méthode qui retrouve un utilisateur en fonction de son email.
+     * @param email
+     * @return
+     */
+    Optional<Utilisateur> findByEmailIgnoreCase(String email);
 }
