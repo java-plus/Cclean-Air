@@ -1,3 +1,4 @@
+
 package dev.entities;
 
 import javax.persistence.*;
@@ -95,10 +96,13 @@ public class Utilisateur implements Serializable {
 	@ManyToOne
 	private Commune commune;
 
+	public Utilisateur() {
+	}
+
 	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
-			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
-			List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
-			ZonedDateTime dateDerniereConnexion, List<Indicateur> listeIndicateurs, Commune commune) {
+			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")@NotBlank String motDePasse,
+					   List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
+					   ZonedDateTime dateDerniereConnexion, List<Indicateur> listeIndicateurs, Commune commune) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -360,3 +364,4 @@ public class Utilisateur implements Serializable {
 	}
 
 }
+
