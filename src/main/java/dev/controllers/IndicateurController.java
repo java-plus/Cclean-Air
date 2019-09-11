@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,13 +71,28 @@ public class IndicateurController {
 	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
 
 		try {
+
 			IndicateurDto response = service.sauvegarderNouvelIndicateur(indicateur);
-			return new ResponseEntity<>(response, HttpStatus.CREATED);
+			if (response != null) {
+				return new ResponseEntity<>(response, HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 
 		} catch (NombreIndicateursException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
+	}
+
+	/**
+	 * @param indicateur : L'indicateur à supprimer, identifié par le nom de la
+	 *                   commune et les informations de l'utilisateur connecté
+	 * @return renvoie un code 204 en cas de suppression réussie
+	 */
+	@DeleteMapping(value = "indicateurs")
+	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
+		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
 	}
 
 }
