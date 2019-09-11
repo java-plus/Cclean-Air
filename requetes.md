@@ -132,5 +132,36 @@ Code `200`
   },
 ```
 
+### Requête pour récupérer les communes de Loire-Atlantique
 
+[GET] https://geo.api.gouv.fr/departements/44/communes
 
+Réponse en cas de succès :
+
+Code `200` ou `304`
+
+Extrait du début du JSON :
+```JSON
+[
+  {
+    "nom": "Abbaretz",
+    "code": "44001",
+    "codeDepartement": "44",
+    "codeRegion": "52",
+    "codesPostaux": [
+      "44170"
+    ],
+    "population": 2068
+  },
+  {
+    "nom": "Aigrefeuille-sur-Maine",
+    "code": "44002",
+    "codeDepartement": "44",
+    "codeRegion": "52",
+    "codesPostaux": [
+      "44140"
+    ],
+    "population": 3763
+  }
+
+```
