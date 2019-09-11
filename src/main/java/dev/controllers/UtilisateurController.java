@@ -2,14 +2,11 @@ package dev.controllers;
 
 import dev.controllers.dto.UtilisateurDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
-import dev.entities.Administrateur;
-import dev.entities.Membre;
 import dev.entities.Statut;
+import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
-import dev.services.AdministrateurService;
 import dev.services.CommuneService;
-import dev.services.MembreService;
 import dev.services.UtilisateurService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +26,11 @@ public class UtilisateurController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(UtilisateurController.class);
     private UtilisateurService utilisateurService;
-    private MembreService membreService;
-    private AdministrateurService administrateurService;
     private CommuneService communeService;
 
     @Autowired
-    public UtilisateurController(UtilisateurService utilisateurService, MembreService membreService,
-                                 AdministrateurService administrateurService, CommuneService communeService) {
+    public UtilisateurController(UtilisateurService utilisateurService, CommuneService communeService) {
         this.utilisateurService = utilisateurService;
-        this.membreService = membreService;
-        this.administrateurService = administrateurService;
         this.communeService = communeService;
     }
 
@@ -62,12 +54,9 @@ public class UtilisateurController {
                     "données.");
         }
 
-        if(uDtoP.getStatut().equals(Statut.MEMBRE)) {
-            Membre membre = membreService.sauvegarderMembre(uDtoP);
-            return ResponseEntity.status(201).body(new UtilisateurDtoGet(membre));
-        } else if (uDtoP.getStatut().equals(Statut.ADMINISTRATEUR)) {
-            Administrateur admin = administrateurService.sauvegarderAdministrateur(uDtoP);
-            return ResponseEntity.status(201).body(new UtilisateurDtoGet(admin));
+        if(uDtoP.getStatuts().get(0).equals(Statut.MEMBRE) || uDtoP.getStatuts().get(0).equals(Statut.ADMINISTRATEUR)) {
+            Utilisateur utilisateur = utilisateurService.sauvegarderUtilisateur(uDtoP);
+            return ResponseEntity.status(201).body(new UtilisateurDtoGet(utilisateur));
         } else {
             throw new UtilisateurInvalideException("ERREUR : Le statut renseigné n'est pas valide (doit être " +
                     "utilisateur ou administrateur)");
