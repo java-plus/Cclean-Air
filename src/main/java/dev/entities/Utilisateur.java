@@ -1,12 +1,28 @@
 package dev.entities;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
@@ -66,7 +82,7 @@ public abstract class Utilisateur implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "uti_statut")
-	protected Statut statut;
+	protected List<Statut> statut = new ArrayList<Statut>();
 	/**
 	 * Indique si l'utilisateur souhaite, ou non, recevoir des notifications sur
 	 * certaines alertes
@@ -92,8 +108,10 @@ public abstract class Utilisateur implements Serializable {
 	public Utilisateur() {
 	}
 
-	public Utilisateur(String nom, String prenom, String email, String motDePasse, Statut statut,
-			Boolean statutNotification, Integer compteurTentativesConnexion) {
+	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
+			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
+			List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
+			List<Indicateur> listeIndicateurs, Commune commune) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -102,6 +120,8 @@ public abstract class Utilisateur implements Serializable {
 		this.statut = statut;
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
+		this.listeIndicateurs = listeIndicateurs;
+		this.commune = commune;
 	}
 
 	@Override
@@ -193,14 +213,14 @@ public abstract class Utilisateur implements Serializable {
 	/**
 	 * @return the statut
 	 */
-	public Statut getStatut() {
+	public List<Statut> getStatut() {
 		return statut;
 	}
 
 	/**
 	 * @param statut the statut to set
 	 */
-	public void setStatut(Statut statut) {
+	public void setStatut(List<Statut> statut) {
 		this.statut = statut;
 	}
 

@@ -46,8 +46,8 @@ public class Commune implements Serializable {
 	 * Donnes locales de la commune
 	 */
 	@OneToMany(mappedBy = "commune")
-	@Column(name = "com_donnes_locales")
-	private DonneesLocales donnesLocales;
+	@Column(name = "com_donnees_locales")
+	private List<DonneesLocales> donnesLocales;
 
 	/**
 	 * Liste des notifications et alertes concernant une commune spécifiques
@@ -80,7 +80,8 @@ public class Commune implements Serializable {
 	}
 
 	public Commune(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude,
-			List<Indicateur> listeIndicateurs, DonneesLocales donnesLocales, List<Notification> listeNotifications) {
+			List<Indicateur> listeIndicateurs, List<DonneesLocales> donnesLocales,
+			List<Notification> listeNotifications) {
 		super();
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
@@ -230,14 +231,14 @@ public class Commune implements Serializable {
 	/**
 	 * @return the donnesLocales
 	 */
-	public DonneesLocales getDonnesLocales() {
+	public List<DonneesLocales> getDonnesLocales() {
 		return donnesLocales;
 	}
 
 	/**
 	 * @param donnesLocales the donnesLocales to set
 	 */
-	public void setDonnesLocales(DonneesLocales donnesLocales) {
+	public void setDonnesLocales(List<DonneesLocales> donnesLocales) {
 		this.donnesLocales = donnesLocales;
 	}
 
