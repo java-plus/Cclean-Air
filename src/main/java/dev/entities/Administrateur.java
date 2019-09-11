@@ -22,7 +22,7 @@ public class Administrateur extends Utilisateur implements Serializable {
 	private static final long serialVersionUID = 137954808882912440L;
 
 	public Administrateur() {
-		this.statut = Collections.singletonList(Statut.ADMINISTRATEUR);
+		this.statut.add(Statut.ADMINISTRATEUR);
 	}
 
 	public Administrateur(String nom, String prenom, String email, String motDePasse, Boolean statutNotification,
@@ -32,12 +32,10 @@ public class Administrateur extends Utilisateur implements Serializable {
 		this.prenom = prenom;
 		this.email = email;
 		this.motDePasse = motDePasse;
-		this.statut = Collections.singletonList(Statut.ADMINISTRATEUR);
+		this.statut.add(Statut.ADMINISTRATEUR);
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
 	}
-
-
 
 	@Override
 	public String toString() {

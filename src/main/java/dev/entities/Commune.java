@@ -1,8 +1,16 @@
 package dev.entities;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * Classe représentant une commune géographique.
@@ -39,7 +47,7 @@ public class Commune implements Serializable {
 	 */
 	@OneToMany(mappedBy = "commune")
 	@Column(name = "com_donnees_locales")
-	private DonneesLocales donnesLocales;
+	private List<DonneesLocales> donnesLocales;
 
 	/**
 	 * Liste des notifications et alertes concernant une commune spécifiques
@@ -72,7 +80,8 @@ public class Commune implements Serializable {
 	}
 
 	public Commune(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude,
-			List<Indicateur> listeIndicateurs, DonneesLocales donnesLocales, List<Notification> listeNotifications) {
+			List<Indicateur> listeIndicateurs, List<DonneesLocales> donnesLocales,
+			List<Notification> listeNotifications) {
 		super();
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
@@ -222,14 +231,14 @@ public class Commune implements Serializable {
 	/**
 	 * @return the donnesLocales
 	 */
-	public DonneesLocales getDonnesLocales() {
+	public List<DonneesLocales> getDonnesLocales() {
 		return donnesLocales;
 	}
 
 	/**
 	 * @param donnesLocales the donnesLocales to set
 	 */
-	public void setDonnesLocales(DonneesLocales donnesLocales) {
+	public void setDonnesLocales(List<DonneesLocales> donnesLocales) {
 		this.donnesLocales = donnesLocales;
 	}
 

@@ -1,12 +1,12 @@
 package dev.entities;
 
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Collections;
 
 /**
  * @author Guillaume Classe regroupant les profils standards inscrits à
@@ -31,23 +31,23 @@ public class Membre extends Utilisateur implements Serializable {
 	 * Constructeur
 	 */
 	public Membre() {
-		this.statut = Collections.singletonList(Statut.MEMBRE);
+		this.statut.add(Statut.MEMBRE);
 	}
 
 	public Membre(ZonedDateTime dateDerniereConnexion) {
 		super();
-		this.statut = Collections.singletonList(Statut.MEMBRE);
+		this.statut.add(Statut.MEMBRE);
 		this.dateDerniereConnexion = dateDerniereConnexion;
 	}
 
 	public Membre(String nom, String prenom, String email, String motDePasse, Boolean statutNotification,
-				  Integer compteurTentativesConnexion, ZonedDateTime dateDerniereConnexion) {
+			Integer compteurTentativesConnexion, ZonedDateTime dateDerniereConnexion) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
 		this.email = email;
 		this.motDePasse = motDePasse;
-		this.statut = Collections.singletonList(Statut.MEMBRE);
+		this.statut.add(Statut.MEMBRE);
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
 		this.dateDerniereConnexion = dateDerniereConnexion;
