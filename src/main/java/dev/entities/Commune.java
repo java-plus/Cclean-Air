@@ -52,7 +52,7 @@ public class Commune implements Serializable {
 	/**
 	 * Liste des notifications et alertes concernant une commune spécifiques
 	 */
-	@OneToMany(mappedBy = "commune")
+	@OneToMany(mappedBy = "commune", cascade = CascadeType.ALL)
 	@Column(name = "com_liste_notifications")
 	private List<Notification> listeNotifications;
 
