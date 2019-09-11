@@ -2,11 +2,13 @@ package dev;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import dev.entities.Commune;
 import dev.entities.Utilisateur;
 
 @SpringBootApplication
+@EnableScheduling
 public class CcleanAirApplication {
 
 	public static void main(String[] args) {

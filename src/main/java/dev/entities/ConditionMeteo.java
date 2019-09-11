@@ -1,16 +1,9 @@
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * @author Guillaume Classe traitant les données météorologiques récupérés
@@ -53,16 +46,16 @@ public class ConditionMeteo implements Serializable {
 	private ZonedDateTime date;
 	@OneToMany(mappedBy = "conditionMeteo")
 	@Column(name = "con_donnees_locales")
-	private List<DonneesLocales> donnesLocales;
+	private List<DonneesLocales> donneesLocales;
 
 	public ConditionMeteo(Double ensoleillement, Double temperature, Double pluviometrie, ZonedDateTime date,
-			List<DonneesLocales> donnesLocales) {
+			List<DonneesLocales> donneesLocales) {
 		super();
 		this.ensoleillement = ensoleillement;
 		this.temperature = temperature;
 		this.pluviometrie = pluviometrie;
 		this.date = date;
-		this.donnesLocales = donnesLocales;
+		this.donneesLocales = donneesLocales;
 	}
 
 	public ConditionMeteo() {
@@ -72,7 +65,7 @@ public class ConditionMeteo implements Serializable {
 	@Override
 	public String toString() {
 		return "ConditionMeteo [id=" + id + ", ensoleillement=" + ensoleillement + ", temperature=" + temperature
-				+ ", pluviometrie=" + pluviometrie + ", date=" + date + ", donnesLocales=" + donnesLocales + "]";
+				+ ", pluviometrie=" + pluviometrie + ", date=" + date + ", donnesLocales=" + donneesLocales + "]";
 	}
 
 	@Override
@@ -80,7 +73,7 @@ public class ConditionMeteo implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((donnesLocales == null) ? 0 : donnesLocales.hashCode());
+		result = prime * result + ((donneesLocales == null) ? 0 : donneesLocales.hashCode());
 		result = prime * result + ((ensoleillement == null) ? 0 : ensoleillement.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((pluviometrie == null) ? 0 : pluviometrie.hashCode());
@@ -102,10 +95,10 @@ public class ConditionMeteo implements Serializable {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (donnesLocales == null) {
-			if (other.donnesLocales != null)
+		if (donneesLocales == null) {
+			if (other.donneesLocales != null)
 				return false;
-		} else if (!donnesLocales.equals(other.donnesLocales))
+		} else if (!donneesLocales.equals(other.donneesLocales))
 			return false;
 		if (ensoleillement == null) {
 			if (other.ensoleillement != null)
@@ -203,15 +196,15 @@ public class ConditionMeteo implements Serializable {
 	/**
 	 * @return the donnesLocales
 	 */
-	public List<DonneesLocales> getDonnesLocales() {
-		return donnesLocales;
+	public List<DonneesLocales> getDonneesLocales() {
+		return donneesLocales;
 	}
 
 	/**
-	 * @param donnesLocales the donnesLocales to set
+	 * @param donneesLocales the donnesLocales to set
 	 */
-	public void setDonnesLocales(List<DonneesLocales> donnesLocales) {
-		this.donnesLocales = donnesLocales;
+	public void setDonneesLocales(List<DonneesLocales> donneesLocales) {
+		this.donneesLocales = donneesLocales;
 	}
 
 }
