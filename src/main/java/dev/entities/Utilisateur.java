@@ -66,7 +66,7 @@ public abstract class Utilisateur implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "uti_statut")
-	protected Statut statut;
+	protected List<Statut> statut;
 	/**
 	 * Indique si l'utilisateur souhaite, ou non, recevoir des notifications sur
 	 * certaines alertes
@@ -92,9 +92,10 @@ public abstract class Utilisateur implements Serializable {
 	public Utilisateur() {
 	}
 
-	public Utilisateur(String nom, String prenom, String email, String motDePasse, Statut statut,
-			Boolean statutNotification, Integer compteurTentativesConnexion) {
-		super();
+	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email, @Pattern(regexp =
+			"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
+					   List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
+					   List<Indicateur> listeIndicateurs, Commune commune) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.email = email;
@@ -102,6 +103,8 @@ public abstract class Utilisateur implements Serializable {
 		this.statut = statut;
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
+		this.listeIndicateurs = listeIndicateurs;
+		this.commune = commune;
 	}
 
 	@Override
@@ -190,17 +193,11 @@ public abstract class Utilisateur implements Serializable {
 		this.motDePasse = motDePasse;
 	}
 
-	/**
-	 * @return the statut
-	 */
-	public Statut getStatut() {
+	public List<Statut> getStatut() {
 		return statut;
 	}
 
-	/**
-	 * @param statut the statut to set
-	 */
-	public void setStatut(Statut statut) {
+	public void setStatut(List<Statut> statut) {
 		this.statut = statut;
 	}
 

@@ -1,16 +1,8 @@
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * Classe représentant une commune géographique.
@@ -46,7 +38,7 @@ public class Commune implements Serializable {
 	 * Donnes locales de la commune
 	 */
 	@OneToMany(mappedBy = "commune")
-	@Column(name = "com_donnes_locales")
+	@Column(name = "com_donnees_locales")
 	private DonneesLocales donnesLocales;
 
 	/**

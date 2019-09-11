@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 
 /**
  * @author Guillaume Classe regroupant les profils standards inscrits à
@@ -30,12 +31,12 @@ public class Membre extends Utilisateur implements Serializable {
 	 * Constructeur
 	 */
 	public Membre() {
-		this.statut = Statut.MEMBRE;
+		this.statut = Collections.singletonList(Statut.MEMBRE);
 	}
 
 	public Membre(ZonedDateTime dateDerniereConnexion) {
 		super();
-		this.statut = Statut.MEMBRE;
+		this.statut = Collections.singletonList(Statut.MEMBRE);
 		this.dateDerniereConnexion = dateDerniereConnexion;
 	}
 
@@ -46,7 +47,7 @@ public class Membre extends Utilisateur implements Serializable {
 		this.prenom = prenom;
 		this.email = email;
 		this.motDePasse = motDePasse;
-		this.statut = Statut.MEMBRE;
+		this.statut = Collections.singletonList(Statut.MEMBRE);
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
 		this.dateDerniereConnexion = dateDerniereConnexion;

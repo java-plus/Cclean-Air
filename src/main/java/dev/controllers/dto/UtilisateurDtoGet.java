@@ -3,12 +3,15 @@ package dev.controllers.dto;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 
+import java.util.Collections;
+import java.util.List;
+
 public class UtilisateurDtoGet {
 
     private String nom;
     private String prenom;
     private String email;
-    private Statut statut;
+    private List<Statut> statut;
     private String nomCommune;
     private String codePostal;
     private Boolean statutNotification;
@@ -35,12 +38,12 @@ public class UtilisateurDtoGet {
         this.statutNotification = statutNotification;
     }
 
-    public Statut getStatut() {
+    public List<Statut> getStatut() {
         return statut;
     }
 
     public void setStatut(Statut statut) {
-        this.statut = statut;
+        this.statut = Collections.singletonList(statut);
     }
 
     public String getNom() {
