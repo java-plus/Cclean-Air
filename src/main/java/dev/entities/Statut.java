@@ -11,6 +11,6 @@ package dev.entities;
  */
 public enum Statut {
 
-	ADMINISTRATEUR, MEMBRE
+	ADMINISTRATEUR, MEMBRE;
 
 }
