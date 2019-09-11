@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.IndicateurDto;
 import dev.entities.Indicateur;
+import dev.entities.Utilisateur;
 import dev.exceptions.NombreIndicateursException;
+import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.IIndicateurRepository;
+import dev.utils.RecuperationUtilisateurConnecte;
 
 /**
  * @author Guillaume Classe regroupant l'intelligence métier liée aux
@@ -24,10 +28,18 @@ public class IndicateurService {
 	 */
 	private IIndicateurRepository repository;
 
-	@Autowired
-	public IndicateurService(IIndicateurRepository repository) {
+	/**
+	 * Injection de la méthode utilisataire de récupération de l'utilisateur
+	 * connecté
+	 */
+	private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
 
+	@Autowired
+	public IndicateurService(IIndicateurRepository repository,
+			RecuperationUtilisateurConnecte recuperationUtilisateurConnecte) {
+		super();
 		this.repository = repository;
+		this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
 	}
 
 	/**
@@ -51,12 +63,22 @@ public class IndicateurService {
 	 * @throws NombreIndicateursException : Exception déclenchée si l'utilisateur
 	 *                                    dispose déjà de 10 indicateurs
 	 */
-	public Indicateur sauvegarderNouvelIndicateur(Indicateur indicateur) throws NombreIndicateursException {
-		if (indicateur.getUtilisateur().getListeIndicateurs().size() < 11) {
-			repository.save(indicateur);
-			return indicateur;
-		} else {
-			throw new NombreIndicateursException("Nombre d'indicateurs autorisés atteint");
+	public IndicateurDto sauvegarderNouvelIndicateur(CommuneIndicateurDto indicateur)
+			throws NombreIndicateursException {
+		Utilisateur utilisateur;
+		try {
+			utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+			Indicateur response = new Indicateur();
+			response.setUtilisateur(utilisateur);
+			if (response.getUtilisateur().getListeIndicateurs().size() < 11) {
+				repository.save(response);
+				return new IndicateurDto(response.getUtilisateur(), response.getCommune());
+			} else {
+				throw new NombreIndicateursException("Nombre d'indicateurs autorisés atteint");
+			}
+		} catch (UtilisateurNonConnecteException e) {
+			e.getMessage();
+			return null;
 		}
 
 	}

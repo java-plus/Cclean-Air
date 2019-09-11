@@ -10,9 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.IndicateurDto;
+import dev.exceptions.NombreIndicateursException;
 import dev.services.IndicateurService;
 
 /**
@@ -49,10 +53,29 @@ public class IndicateurController {
 		} else {
 			email = principal.toString();
 		}
-		log.info("Identifiant récupéré : {0}", email);
+
 		List<CommuneIndicateurDto> response = service.recupererLesIndicateurs(email);
 		log.info("Indicateurs récupérés : {0}", response);
 		return new ResponseEntity<>(service.recupererLesIndicateurs(email), HttpStatus.OK);
+
+	}
+
+	/**
+	 * @param indicateur : nom de la commune concernée par l'indicateur, récupéré
+	 *                   depuis une requete HTTP
+	 * @return retourne le critère ajouté et un code http 201, en cas d'erreur,
+	 *         renvoie un code http 400
+	 */
+	@PostMapping(value = "/indicateurs")
+	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
+
+		try {
+			IndicateurDto response = service.sauvegarderNouvelIndicateur(indicateur);
+			return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+		} catch (NombreIndicateursException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 
 	}
 
