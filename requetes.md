@@ -28,7 +28,10 @@ Code `201`
   "nom" : "Dupuis",
   "prenom" : "Jean",
   "email" : "jean.dupuis@mail.com",
-  "statut" : "membre",
+  "motDePasse" : "ldjHSD$$53",
+  "statuts" : [
+  	"MEMBRE"
+  	],
   "nomCommune" : "Nantes",
   "codePostal" : "44000",
   "statutNotification" : "true"
