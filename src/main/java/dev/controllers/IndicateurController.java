@@ -70,8 +70,13 @@ public class IndicateurController {
 	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
 
 		try {
+
 			IndicateurDto response = service.sauvegarderNouvelIndicateur(indicateur);
-			return new ResponseEntity<>(response, HttpStatus.CREATED);
+			if (response != null) {
+				return new ResponseEntity<>(response, HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 
 		} catch (NombreIndicateursException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
