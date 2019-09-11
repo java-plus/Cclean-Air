@@ -1,5 +1,7 @@
 package dev.services;
 
+import dev.entities.Commune;
+import dev.exceptions.CommuneInvalideException;
 import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,11 @@ public class CommuneService {
 
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
+    }
+
+    public Commune recupererCommune(String commune) {
+        return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
+                ": Commune inexistante dans la base de données."));
     }
 
 }
