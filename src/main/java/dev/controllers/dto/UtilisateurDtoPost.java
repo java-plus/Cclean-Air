@@ -5,6 +5,7 @@ import dev.entities.Statut;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class UtilisateurDtoPost {
 
@@ -16,7 +17,7 @@ public class UtilisateurDtoPost {
     private String email;
     @NotBlank
     private String motDePasse;
-    private Statut statut;
+    private List<Statut> statuts;
     @NotBlank
     private String nomCommune;
     @NotBlank
@@ -27,24 +28,25 @@ public class UtilisateurDtoPost {
     public UtilisateurDtoPost() {
     }
 
-    public UtilisateurDtoPost(String nom, String prenom, String email, String motDePasse, Statut statut,
-                              String nomCommune, String codePostal, Boolean statutNotification) {
+    public UtilisateurDtoPost(@NotBlank String nom, @NotBlank String prenom, @Email String email,
+                              @NotBlank String motDePasse, List<Statut> statuts, @NotBlank String nomCommune,
+                              @NotBlank String codePostal, @NotNull Boolean statutNotification) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.motDePasse = motDePasse;
-        this.statut = statut;
+        this.statuts = statuts;
         this.nomCommune = nomCommune;
         this.codePostal = codePostal;
         this.statutNotification = statutNotification;
     }
 
-    public Statut getStatut() {
-        return statut;
+    public List<Statut> getStatuts() {
+        return statuts;
     }
 
-    public void setStatut(Statut statut) {
-        this.statut = statut;
+    public void setStatuts(List<Statut> statuts) {
+        this.statuts = statuts;
     }
 
     public String getNom() {
