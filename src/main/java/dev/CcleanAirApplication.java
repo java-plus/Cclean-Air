@@ -11,9 +11,10 @@ import java.util.Arrays;
 @SpringBootApplication
 public class CcleanAirApplication {
 
-	Utilisateur utilisateur = new Administrateur("peyras", "cecile", "cecile@test.fr", "test", Arrays.asList(Statut.MEMBRE), true, 0);
+
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(CcleanAirApplication.class, args);
 	}
 
