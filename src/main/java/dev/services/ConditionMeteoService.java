@@ -12,6 +12,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
 
+/**
+ * Classe regroupant les services liés aux données météorologiques.
+ */
 @Service
 public class ConditionMeteoService {
 

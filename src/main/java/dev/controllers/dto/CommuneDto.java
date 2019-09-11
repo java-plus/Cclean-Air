@@ -12,6 +12,14 @@ public class CommuneDto {
     public CommuneDto() {
     }
 
+    public CommuneDto(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude) {
+        this.nom = nom;
+        this.nbHabitants = nbHabitants;
+        this.codeInsee = codeInsee;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public CommuneDto(Commune commune) {
         this.nom = commune.getNom();
         this.nbHabitants = commune.getNbHabitants();

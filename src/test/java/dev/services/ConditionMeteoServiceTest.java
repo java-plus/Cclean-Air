@@ -13,13 +13,13 @@ public class ConditionMeteoServiceTest {
 
     @Autowired
     private CommuneService communeService;
-
     @Autowired
-    ConditionMeteoService conditionMeteoService;
+    private ConditionMeteoService conditionMeteoService;
 
     @Test
-    public void test_recupererConditionMeteoCommune() {
-        conditionMeteoService.recupererConditionMeteoCommune(new CommuneDto(communeService.recupererCommune("Nantes")));
+    public void test_recupererConditionMeteoCommune_pas_exception() {
+        conditionMeteoService.recupererConditionMeteoCommune(new CommuneDto(communeService.recupererCommune(
+                "Nantes")));
     }
 
 }

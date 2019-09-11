@@ -53,8 +53,6 @@ Code `404`
 
 #### Requête pour récupérer les données météorologiques d'une ville
 
-### Requête pour s'inscrire
-
 [GET] http://api.openweathermap.org/data/2.5/weather?lat=-1.553621&lon=47.218371&lang=fr&units=metric&APPID
 =633e2a135fc012a55447e2b1f366972d&units=metric
 
@@ -107,3 +105,32 @@ Code `200`
   "cod": 200
 }
 ```
+
+#### Requête pour récupérer les polluants
+
+[GET] http://www.airpl.org/api/polluants
+
+Réponse en cas de réussite (seulement le début du JSON) :
+
+Code `200`
+
+```JSON
+[
+  {
+    "id": "24",
+    "nom": "Particules fines",
+    "code": "PM10",
+    "famille": "",
+    "principal": false
+  },
+  {
+    "id": "08",
+    "nom": "Ozone",
+    "code": "O3",
+    "famille": "",
+    "principal": true
+  },
+```
+
+
+

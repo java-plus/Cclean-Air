@@ -1,4 +1,4 @@
-package dev.controllers.dto;
+package dev.controllers;
 
 import dev.exceptions.CommuneInvalideException;
 import org.springframework.http.ResponseEntity;
