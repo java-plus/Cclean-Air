@@ -5,6 +5,7 @@ import dev.entities.Statut;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class UtilisateurDtoPost {
 
@@ -14,6 +15,7 @@ public class UtilisateurDtoPost {
     private String prenom;
     @Email
     private String email;
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
     @NotBlank
     private String motDePasse;
     private Statut statut;

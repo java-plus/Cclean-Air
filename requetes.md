@@ -12,7 +12,7 @@
   "prenom" : "Jean",
   "email" : "jean.dupuis@mail.com",
   "motDePasse" : "ldjHSD$$53",
-  "statut" : "membre",
+  "statut" : "MEMBRE",
   "nomCommune" : "Nantes",
   "codePostal" : "44000",
   "statutNotification" : "true"
