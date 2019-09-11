@@ -1,7 +1,7 @@
 package dev.controllers;
 
 
-import dev.controllers.DTO.InfosConnexion;
+import dev.controllers.dto.InfosConnexion;
 import dev.repositories.IUtilisateurRepository;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;

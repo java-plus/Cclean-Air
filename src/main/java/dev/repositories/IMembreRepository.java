@@ -1,11 +1,9 @@
-/**
- * 
- */
 package dev.repositories;
 
+import dev.entities.Membre;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import dev.entities.Membre;
+import java.util.Optional;
 
 /**
  * @author Guillaume Repository pour les requêtes d'accès à la base de données
@@ -14,4 +12,5 @@ import dev.entities.Membre;
  */
 public interface IMembreRepository extends JpaRepository<Membre, Integer> {
 
+    Optional<Membre> findByEmailIgnoreCase(String email);
 }

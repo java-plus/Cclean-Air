@@ -1,4 +1,4 @@
-package dev.controllers.DTO;
+package dev.controllers.dto;
 
 import javax.validation.constraints.NotBlank;
 

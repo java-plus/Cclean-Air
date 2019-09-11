@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package dev.entities;
 
 import java.io.Serializable;
@@ -30,6 +28,9 @@ public class Membre extends Utilisateur implements Serializable {
 	@Column(name = "uti_date_derniere_connexion")
 	private ZonedDateTime dateDerniereConnexion;
 
+	/**
+	 * Constructeur
+	 */
 	public Membre() {
 		this.statut.add(Statut.MEMBRE);
 	}
@@ -37,6 +38,19 @@ public class Membre extends Utilisateur implements Serializable {
 	public Membre(ZonedDateTime dateDerniereConnexion) {
 		super();
 		this.statut.add(Statut.MEMBRE);
+		this.dateDerniereConnexion = dateDerniereConnexion;
+	}
+
+	public Membre(String nom, String prenom, String email, String motDePasse, Boolean statutNotification,
+			Integer compteurTentativesConnexion, ZonedDateTime dateDerniereConnexion) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.email = email;
+		this.motDePasse = motDePasse;
+		this.statut.add(Statut.MEMBRE);
+		this.statutNotification = statutNotification;
+		this.compteurTentativesConnexion = compteurTentativesConnexion;
 		this.dateDerniereConnexion = dateDerniereConnexion;
 	}
 
@@ -85,3 +99,4 @@ public class Membre extends Utilisateur implements Serializable {
 	}
 
 }
+

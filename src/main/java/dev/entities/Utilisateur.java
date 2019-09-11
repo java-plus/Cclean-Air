@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package dev.entities;
 
 import java.io.Serializable;
@@ -19,7 +17,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
@@ -47,17 +51,21 @@ public abstract class Utilisateur implements Serializable {
 	 * Nom de famille de l'utilisateur
 	 */
 	@Column(name = "uti_nom")
+	@NotBlank
 	protected String nom;
 	/**
 	 * Prénom de l'utilisateur
 	 */
 	@Column(name = "uti_prenom")
+	@NotBlank
 	protected String prenom;
 	/**
 	 * Email de l'utilisateur. Utilisé pour l'inscription et la connexion. Doit être
 	 * unique en base.
 	 */
-	@Column(name = "uti_email")
+	@Column(name = "uti_email", unique = true)
+	@NotBlank
+	@Email
 	protected String email;
 	/**
 	 * Mot de pase choisi par l'utilisateur lors de l'inscription. Utilisé pour se
@@ -65,20 +73,23 @@ public abstract class Utilisateur implements Serializable {
 	 * chiffre, une majuscule, une minuscule et un caractère spécial au minimum.
 	 */
 	@Column(name = "uti_mot_de_passe")
+	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
+	@NotBlank
 	protected String motDePasse;
 	/**
 	 * Énumération utilisée pour classifier les profils d'utilisateurs en
 	 * administrateur ou en utilisateur.
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
-	//@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Column(name = "uti_statut")
-	protected List<Statut> statut = new ArrayList<>();
+	protected List<Statut> statut = new ArrayList<Statut>();
 	/**
 	 * Indique si l'utilisateur souhaite, ou non, recevoir des notifications sur
 	 * certaines alertes
 	 */
 	@Column(name = "uti_statut_notification")
+	@NotNull
 	protected Boolean statutNotification;
 	/**
 	 * Attibut servant à comptabiliser les tentatives de connexion infructueuses sur
@@ -88,11 +99,21 @@ public abstract class Utilisateur implements Serializable {
 	@Column(name = "uti_tentative_connexion")
 	protected Integer compteurTentativesConnexion;
 
-	public Utilisateur() {
+	@OneToMany(mappedBy = "utilisateur")
+	@Column(name = "liste_indicateurs")
+	protected List<Indicateur> listeIndicateurs;
 
+	@ManyToOne
+	protected Commune commune;
+
+	public Utilisateur() {
 	}
 
-	public Utilisateur(String nom, String prenom, String email, String motDePasse, List<Statut> statut, Boolean statutNotification, Integer compteurTentativesConnexion) {
+	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
+			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
+			List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
+			List<Indicateur> listeIndicateurs, Commune commune) {
+		super();
 		this.nom = nom;
 		this.prenom = prenom;
 		this.email = email;
@@ -100,77 +121,24 @@ public abstract class Utilisateur implements Serializable {
 		this.statut = statut;
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
+        this.listeIndicateurs = listeIndicateurs;
+        this.commune = commune;
 	}
 
 	@Override
 	public String toString() {
 		return "Utilisateur [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", motDePasse="
 				+ motDePasse + ", statut=" + statut + ", statutNotification=" + statutNotification
-				+ ", compteurTentativesConnexion=" + compteurTentativesConnexion + "]";
+				+ ", compteurTentativesConnexion=" + compteurTentativesConnexion + ", listeIndicateurs="
+				+ listeIndicateurs + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((compteurTentativesConnexion == null) ? 0 : compteurTentativesConnexion.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((motDePasse == null) ? 0 : motDePasse.hashCode());
-		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-		result = prime * result + ((prenom == null) ? 0 : prenom.hashCode());
-		result = prime * result + ((statut == null) ? 0 : statut.hashCode());
-		result = prime * result + ((statutNotification == null) ? 0 : statutNotification.hashCode());
-		return result;
+	public Commune getCommune() {
+		return commune;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Utilisateur other = (Utilisateur) obj;
-		if (compteurTentativesConnexion == null) {
-			if (other.compteurTentativesConnexion != null)
-				return false;
-		} else if (!compteurTentativesConnexion.equals(other.compteurTentativesConnexion))
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (motDePasse == null) {
-			if (other.motDePasse != null)
-				return false;
-		} else if (!motDePasse.equals(other.motDePasse))
-			return false;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		if (prenom == null) {
-			if (other.prenom != null)
-				return false;
-		} else if (!prenom.equals(other.prenom))
-			return false;
-		if (statut != other.statut)
-			return false;
-		if (statutNotification == null) {
-			if (other.statutNotification != null)
-				return false;
-		} else if (!statutNotification.equals(other.statutNotification))
-			return false;
-		return true;
+	public void setCommune(Commune commune) {
+		this.commune = commune;
 	}
 
 	/**
@@ -277,6 +245,20 @@ public abstract class Utilisateur implements Serializable {
 	 */
 	public void setCompteurTentativesConnexion(Integer compteurTentativesConnexion) {
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
+	}
+
+	/**
+	 * @return the listeIndicateurs
+	 */
+	public List<Indicateur> getListeIndicateurs() {
+		return listeIndicateurs;
+	}
+
+	/**
+	 * @param listeIndicateurs the listeIndicateurs to set
+	 */
+	public void setListeIndicateurs(List<Indicateur> listeIndicateurs) {
+		this.listeIndicateurs = listeIndicateurs;
 	}
 
 }
