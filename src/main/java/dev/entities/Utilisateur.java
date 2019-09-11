@@ -1,26 +1,14 @@
 package dev.entities;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
@@ -106,9 +94,6 @@ public class Utilisateur implements Serializable {
 
 	@ManyToOne
 	private Commune commune;
-
-	public Utilisateur() {
-	}
 
 	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
 			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,

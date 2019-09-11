@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import dev.controllers.dto.UtilisateurDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
+import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.services.CommuneService;
@@ -26,12 +27,10 @@ public class UtilisateurController {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(UtilisateurController.class);
 	private UtilisateurService utilisateurService;
-
 	private CommuneService communeService;
 
 	@Autowired
 	public UtilisateurController(UtilisateurService utilisateurService, CommuneService communeService) {
-		super();
 		this.utilisateurService = utilisateurService;
 		this.communeService = communeService;
 	}
@@ -56,12 +55,10 @@ public class UtilisateurController {
 					"ERREUR : le nom de cette commune n'a pas été trouvé dans la base de " + "données.");
 		}
 
-		if (uDtoP.getStatut().equals(Statut.MEMBRE)) {
-			Membre membre = membreService.sauvegarderMembre(uDtoP);
-			return ResponseEntity.status(201).body(new UtilisateurDtoGet(membre));
-		} else if (uDtoP.getStatut().equals(Statut.ADMINISTRATEUR)) {
-			Administrateur admin = administrateurService.sauvegarderAdministrateur(uDtoP);
-			return ResponseEntity.status(201).body(new UtilisateurDtoGet(admin));
+		if (uDtoP.getStatuts().get(0).equals(Statut.MEMBRE)
+				|| uDtoP.getStatuts().get(0).equals(Statut.ADMINISTRATEUR)) {
+			Utilisateur utilisateur = utilisateurService.sauvegarderUtilisateur(uDtoP);
+			return ResponseEntity.status(201).body(new UtilisateurDtoGet(utilisateur));
 		} else {
 			throw new UtilisateurInvalideException(
 					"ERREUR : Le statut renseigné n'est pas valide (doit être " + "utilisateur ou administrateur)");

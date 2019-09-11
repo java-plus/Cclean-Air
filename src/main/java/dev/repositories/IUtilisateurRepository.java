@@ -1,7 +1,8 @@
 package dev.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
 
 import dev.entities.Utilisateur;
 
@@ -10,7 +11,7 @@ import dev.entities.Utilisateur;
  *         communes aux profils membre et utilisateur
  *
  */
-@NoRepositoryBean
-public interface IUtilisateurRepository<T extends Utilisateur> extends JpaRepository<T, Integer> {
 
+public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
+	Optional<Utilisateur> findByEmailIgnoreCase(String email);
 }

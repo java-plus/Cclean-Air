@@ -1,5 +1,6 @@
 package dev.services;
 
+import dev.entities.Commune;
 import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,11 @@ public class CommuneService {
 
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
+    }
+
+    // TODO: compléter
+    public Commune recupererCommune(String nom) {
+        return new Commune();
     }
 
 }
