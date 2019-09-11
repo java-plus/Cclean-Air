@@ -97,4 +97,24 @@ public class IndicateurService {
 
 	}
 
+	/**
+	 * @param indicateur : Nom de la commune représentant l'indicateur à supprimer
+	 * @return renvoie le mail tilisateur et le nom de la commune à supprimer
+	 */
+	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) {
+		try {
+			List<Indicateur> indicateurs = repository
+					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
+			Indicateur suppression = indicateurs.stream()
+					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList())
+					.get(0);
+			repository.delete(suppression);
+			return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
+					suppression.getCommune().getNom());
+		} catch (UtilisateurNonConnecteException e) {
+			e.getMessage();
+			return null;
+		}
+	}
+
 }
