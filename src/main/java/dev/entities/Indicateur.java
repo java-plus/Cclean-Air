@@ -33,6 +33,7 @@ public class Indicateur implements Serializable {
 	/**
 	 * Utilisateur à qui appartient l'indicateur en question
 	 */
+	@ManyToOne
 	@JoinColumn(name = "ind_utilisateur")
 	private Utilisateur utilisateur;
 
