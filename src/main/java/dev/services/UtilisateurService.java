@@ -1,13 +1,16 @@
 package dev.services;
 
+import dev.controllers.dto.UtilisateurDtoPost;
+import dev.entities.Indicateur;
+import dev.entities.Utilisateur;
+import dev.repositories.IUtilisateurRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.repositories.IAdministrateurRepository;
-import dev.repositories.IMembreRepository;
-import dev.repositories.IUtilisateurRepository;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 @Service
 public class UtilisateurService {
@@ -15,13 +18,12 @@ public class UtilisateurService {
 	private final Logger LOGGER = LoggerFactory.getLogger(UtilisateurService.class);
 
 	private IUtilisateurRepository utilisateurRepository;
+	private CommuneService communeService;
 
 	@Autowired
-	public UtilisateurService(IUtilisateurRepository utilisateurRepository,
-			IAdministrateurRepository administrateurRepository, IMembreRepository membreRepository) {
+	public UtilisateurService(IUtilisateurRepository utilisateurRepository, CommuneService communeService) {
 		this.utilisateurRepository = utilisateurRepository;
-		this.administrateurRepository = administrateurRepository;
-		this.membreRepository = membreRepository;
+		this.communeService = communeService;
 	}
 
 	/**
@@ -33,8 +35,21 @@ public class UtilisateurService {
 	 */
 	public boolean isEmailExistant(String email) {
 		LOGGER.info("isEmailExistant() lancé / email =" + email);
-		return administrateurRepository.findByEmailIgnoreCase(email).isPresent()
-				|| membreRepository.findByEmailIgnoreCase(email).isPresent();
+		return utilisateurRepository.findByEmailIgnoreCase(email).isPresent();
+	}
+
+	// TODO : passwordEncoder.encode(administrateur.getMotDePasse())
+	/**
+	 * Méthode pour sauvegarder un utilisateur dans la base de données.
+	 * @param dto : [UtilisateurDtoPost] l'utilisateur à sauvegarder.
+	 */
+	public Utilisateur sauvegarderUtilisateur(UtilisateurDtoPost dto) {
+		Utilisateur utilisateur = new Utilisateur(dto.getNom(), dto.getPrenom(),
+				dto.getEmail(),
+				dto.getMotDePasse(), dto.getStatuts(), dto.getStatutNotification(), 0, ZonedDateTime.now(),
+				new ArrayList<Indicateur>(), communeService.recupererCommune(dto.getNomCommune()));
+		utilisateurRepository.save(utilisateur);
+		return utilisateur;
 	}
 
 }
