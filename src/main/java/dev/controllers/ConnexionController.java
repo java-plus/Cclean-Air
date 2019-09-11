@@ -42,7 +42,7 @@ public class ConnexionController {
     PasswordEncoder passwordEncoder;
 
     /**
-     * Méthode qui permet de se connecter et d'installer le cookie dans le navigateur
+     * Méthode qui permet de se connecter l'utilisateur en vérifiant s'il est admin ou non et d'installer le cookie dans le navigateur correspondant dans le navigateur
      * @param infos
      * @return
      */

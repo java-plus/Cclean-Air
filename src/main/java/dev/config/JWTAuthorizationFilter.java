@@ -30,6 +30,7 @@ import io.jsonwebtoken.Jwts;
 @Configuration
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+
     @Value("${jwt.cookie}")
     private String TOKEN_COOKIE;
 
