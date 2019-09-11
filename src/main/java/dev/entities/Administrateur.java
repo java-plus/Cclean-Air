@@ -3,11 +3,11 @@
  */
 package dev.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Collections;
 
 /**
  * @author Guillaume Classe regroupant les profils administrateurs avec des
@@ -26,7 +26,7 @@ public class Administrateur extends Utilisateur implements Serializable {
 	}
 
 	public Administrateur(String nom, String prenom, String email, String motDePasse, Boolean statutNotification,
-			Integer compteurTentativesConnexion) {
+				  Integer compteurTentativesConnexion) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;

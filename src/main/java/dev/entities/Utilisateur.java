@@ -120,8 +120,8 @@ public abstract class Utilisateur implements Serializable {
 		this.statut = statut;
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
-		this.listeIndicateurs = listeIndicateurs;
-		this.commune = commune;
+        this.listeIndicateurs = listeIndicateurs;
+        this.commune = commune;
 	}
 
 	@Override
@@ -210,16 +210,10 @@ public abstract class Utilisateur implements Serializable {
 		this.motDePasse = motDePasse;
 	}
 
-	/**
-	 * @return the statut
-	 */
 	public List<Statut> getStatut() {
 		return statut;
 	}
 
-	/**
-	 * @param statut the statut to set
-	 */
 	public void setStatut(List<Statut> statut) {
 		this.statut = statut;
 	}

@@ -5,6 +5,8 @@ import java.util.List;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 
+import java.util.Collections;
+
 public class UtilisateurDtoGet {
 
 	private String nom;

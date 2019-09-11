@@ -1,18 +1,8 @@
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * @author Guillaume
@@ -29,7 +19,7 @@ public class Notification implements Serializable {
 	 * Identifiant unique de l'entité, clé primaire de la table associée en bdd
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.TABLE)
 	@Column(name = "not_id")
 	protected Integer id;
 

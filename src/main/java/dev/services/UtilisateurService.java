@@ -25,11 +25,6 @@ public class UtilisateurService {
         this.membreRepository = membreRepository;
     }
 
-    @Autowired
-    public UtilisateurService(IUtilisateurRepository utilisateurRepository) {
-        this.utilisateurRepository = utilisateurRepository;
-    }
-
     /**
      * Méthode vérifiant si l'email est utilisé par un compte dans la base de données.
      * @param email : email à vérifier
