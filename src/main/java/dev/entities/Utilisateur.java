@@ -2,11 +2,11 @@
 package dev.entities;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,8 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,15 +25,12 @@ import javax.validation.constraints.Pattern;
 
 /**
  * @author Guillaume Classe mère abstraite pour tous les profils utilisateurs.
- *         Les membres et administrateurs héritent de cette classe et sont
- *         différenciés en base par la colonne "STATUT".
+ * 
  *
  */
 @Entity
 @Table(name = "UTILISATEUR")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "uti_statut")
-public abstract class Utilisateur implements Serializable {
+public class Utilisateur implements Serializable {
 
 	private static final long serialVersionUID = 4564093892835148658L;
 
@@ -45,20 +40,20 @@ public abstract class Utilisateur implements Serializable {
 	@Id
 	@Column(name = "uti_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected Integer id;
+	private Integer id;
 
 	/**
 	 * Nom de famille de l'utilisateur
 	 */
 	@Column(name = "uti_nom")
 	@NotBlank
-	protected String nom;
+	private String nom;
 	/**
 	 * Prénom de l'utilisateur
 	 */
 	@Column(name = "uti_prenom")
 	@NotBlank
-	protected String prenom;
+	private String prenom;
 	/**
 	 * Email de l'utilisateur. Utilisé pour l'inscription et la connexion. Doit être
 	 * unique en base.
@@ -66,7 +61,7 @@ public abstract class Utilisateur implements Serializable {
 	@Column(name = "uti_email", unique = true)
 	@NotBlank
 	@Email
-	protected String email;
+	private String email;
 	/**
 	 * Mot de pase choisi par l'utilisateur lors de l'inscription. Utilisé pour se
 	 * connecter. Le mot de passe doit comporter au minimum 8 caractères dont un
@@ -75,7 +70,7 @@ public abstract class Utilisateur implements Serializable {
 	@Column(name = "uti_mot_de_passe")
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
 	@NotBlank
-	protected String motDePasse;
+	private String motDePasse;
 	/**
 	 * Énumération utilisée pour classifier les profils d'utilisateurs en
 	 * administrateur ou en utilisateur.
@@ -83,28 +78,35 @@ public abstract class Utilisateur implements Serializable {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "uti_statut")
-	protected List<Statut> statut = new ArrayList<Statut>();
+	private List<Statut> statut = new ArrayList<Statut>();
 	/**
 	 * Indique si l'utilisateur souhaite, ou non, recevoir des notifications sur
 	 * certaines alertes
 	 */
 	@Column(name = "uti_statut_notification")
 	@NotNull
-	protected Boolean statutNotification;
+	private Boolean statutNotification;
 	/**
 	 * Attibut servant à comptabiliser les tentatives de connexion infructueuses sur
 	 * un compte donnée. Au bout d'un certains nombres d'échecs, des restrictions
 	 * seront appliquées
 	 */
 	@Column(name = "uti_tentative_connexion")
-	protected Integer compteurTentativesConnexion;
+	private Integer compteurTentativesConnexion;
+
+	/**
+	 * Indique la date de dernière connexion du membre. Au bout d'une certaine
+	 * période d'innactivité, des actions seront entreprises.
+	 */
+	@Column(name = "uti_date_derniere_connexion")
+	private ZonedDateTime dateDerniereConnexion;
 
 	@OneToMany(mappedBy = "utilisateur")
 	@Column(name = "liste_indicateurs")
-	protected List<Indicateur> listeIndicateurs;
+	private List<Indicateur> listeIndicateurs;
 
 	@ManyToOne
-	protected Commune commune;
+	private Commune commune;
 
 	public Utilisateur() {
 	}
@@ -112,7 +114,7 @@ public abstract class Utilisateur implements Serializable {
 	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
 			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
 			List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
-			List<Indicateur> listeIndicateurs, Commune commune) {
+			ZonedDateTime dateDerniereConnexion, List<Indicateur> listeIndicateurs, Commune commune) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -121,24 +123,102 @@ public abstract class Utilisateur implements Serializable {
 		this.statut = statut;
 		this.statutNotification = statutNotification;
 		this.compteurTentativesConnexion = compteurTentativesConnexion;
-        this.listeIndicateurs = listeIndicateurs;
-        this.commune = commune;
+		this.dateDerniereConnexion = dateDerniereConnexion;
+		this.listeIndicateurs = listeIndicateurs;
+		this.commune = commune;
 	}
 
 	@Override
 	public String toString() {
 		return "Utilisateur [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", motDePasse="
 				+ motDePasse + ", statut=" + statut + ", statutNotification=" + statutNotification
-				+ ", compteurTentativesConnexion=" + compteurTentativesConnexion + ", listeIndicateurs="
-				+ listeIndicateurs + "]";
+				+ ", compteurTentativesConnexion=" + compteurTentativesConnexion + ", dateDerniereConnexion="
+				+ dateDerniereConnexion + ", listeIndicateurs=" + listeIndicateurs + ", commune=" + commune + "]";
 	}
 
-	public Commune getCommune() {
-		return commune;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((commune == null) ? 0 : commune.hashCode());
+		result = prime * result + ((compteurTentativesConnexion == null) ? 0 : compteurTentativesConnexion.hashCode());
+		result = prime * result + ((dateDerniereConnexion == null) ? 0 : dateDerniereConnexion.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((listeIndicateurs == null) ? 0 : listeIndicateurs.hashCode());
+		result = prime * result + ((motDePasse == null) ? 0 : motDePasse.hashCode());
+		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
+		result = prime * result + ((prenom == null) ? 0 : prenom.hashCode());
+		result = prime * result + ((statut == null) ? 0 : statut.hashCode());
+		result = prime * result + ((statutNotification == null) ? 0 : statutNotification.hashCode());
+		return result;
 	}
 
-	public void setCommune(Commune commune) {
-		this.commune = commune;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Utilisateur other = (Utilisateur) obj;
+		if (commune == null) {
+			if (other.commune != null)
+				return false;
+		} else if (!commune.equals(other.commune))
+			return false;
+		if (compteurTentativesConnexion == null) {
+			if (other.compteurTentativesConnexion != null)
+				return false;
+		} else if (!compteurTentativesConnexion.equals(other.compteurTentativesConnexion))
+			return false;
+		if (dateDerniereConnexion == null) {
+			if (other.dateDerniereConnexion != null)
+				return false;
+		} else if (!dateDerniereConnexion.equals(other.dateDerniereConnexion))
+			return false;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (listeIndicateurs == null) {
+			if (other.listeIndicateurs != null)
+				return false;
+		} else if (!listeIndicateurs.equals(other.listeIndicateurs))
+			return false;
+		if (motDePasse == null) {
+			if (other.motDePasse != null)
+				return false;
+		} else if (!motDePasse.equals(other.motDePasse))
+			return false;
+		if (nom == null) {
+			if (other.nom != null)
+				return false;
+		} else if (!nom.equals(other.nom))
+			return false;
+		if (prenom == null) {
+			if (other.prenom != null)
+				return false;
+		} else if (!prenom.equals(other.prenom))
+			return false;
+		if (statut == null) {
+			if (other.statut != null)
+				return false;
+		} else if (!statut.equals(other.statut))
+			return false;
+		if (statutNotification == null) {
+			if (other.statutNotification != null)
+				return false;
+		} else if (!statutNotification.equals(other.statutNotification))
+			return false;
+		return true;
 	}
 
 	/**
@@ -211,10 +291,16 @@ public abstract class Utilisateur implements Serializable {
 		this.motDePasse = motDePasse;
 	}
 
+	/**
+	 * @return the statut
+	 */
 	public List<Statut> getStatut() {
 		return statut;
 	}
 
+	/**
+	 * @param statut the statut to set
+	 */
 	public void setStatut(List<Statut> statut) {
 		this.statut = statut;
 	}
@@ -248,6 +334,20 @@ public abstract class Utilisateur implements Serializable {
 	}
 
 	/**
+	 * @return the dateDerniereConnexion
+	 */
+	public ZonedDateTime getDateDerniereConnexion() {
+		return dateDerniereConnexion;
+	}
+
+	/**
+	 * @param dateDerniereConnexion the dateDerniereConnexion to set
+	 */
+	public void setDateDerniereConnexion(ZonedDateTime dateDerniereConnexion) {
+		this.dateDerniereConnexion = dateDerniereConnexion;
+	}
+
+	/**
 	 * @return the listeIndicateurs
 	 */
 	public List<Indicateur> getListeIndicateurs() {
@@ -261,4 +361,19 @@ public abstract class Utilisateur implements Serializable {
 		this.listeIndicateurs = listeIndicateurs;
 	}
 
+	/**
+	 * @return the commune
+	 */
+	public Commune getCommune() {
+		return commune;
+	}
+
+	/**
+	 * @param commune the commune to set
+	 */
+	public void setCommune(Commune commune) {
+		this.commune = commune;
+	}
+
 }
+

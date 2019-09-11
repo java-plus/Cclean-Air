@@ -1,7 +1,6 @@
 package dev.services;
 
 import dev.controllers.dto.UtilisateurDtoPost;
-import dev.entities.Administrateur;
 import dev.repositories.IAdministrateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

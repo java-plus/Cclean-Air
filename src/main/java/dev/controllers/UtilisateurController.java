@@ -2,8 +2,6 @@ package dev.controllers;
 
 import dev.controllers.dto.UtilisateurDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
-import dev.entities.Administrateur;
-import dev.entities.Membre;
 import dev.entities.Statut;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
