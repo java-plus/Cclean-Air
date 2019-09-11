@@ -4,6 +4,7 @@
 package dev.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -22,8 +23,10 @@ public class Administrateur extends Utilisateur implements Serializable {
 	private static final long serialVersionUID = 137954808882912440L;
 
 	public Administrateur() {
-		this.statut = Statut.ADMINISTRATEUR;
+		this.statut.add(Statut.ADMINISTRATEUR);
 	}
+
+
 
 	@Override
 	public String toString() {

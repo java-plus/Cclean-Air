@@ -46,7 +46,7 @@ public class ConnexionController {
      * @param infos
      * @return
      */
-    @PostMapping(value = "connexion")
+    @PostMapping(value = "/connexion")
     public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
         return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
                 .filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
@@ -54,18 +54,18 @@ public class ConnexionController {
 
                     Map<String, Object> infosSupplementaireToken = new HashMap<>();
 
-                    infosSupplementaireToken.put("roles", utilisateur.getStatut());
+                    infosSupplementaireToken.put("statuts", utilisateur.getStatut());
 
                     String jetonJTW = Jwts.builder()
                             .setSubject(utilisateur.getEmail())
                             .addClaims(infosSupplementaireToken)
-                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 90))
+                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
                             .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET)
                             .compact();
 
                     ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW)
                             .httpOnly(true)
-                            .maxAge(EXPIRES_IN * 90)
+                            .maxAge(EXPIRES_IN * 1000)
                             .path("/")
                             .build();
 

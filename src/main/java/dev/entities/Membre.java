@@ -31,12 +31,12 @@ public class Membre extends Utilisateur implements Serializable {
 	private ZonedDateTime dateDerniereConnexion;
 
 	public Membre() {
-		this.statut = Statut.MEMBRE;
+		this.statut.add(Statut.MEMBRE);
 	}
 
 	public Membre(ZonedDateTime dateDerniereConnexion) {
 		super();
-		this.statut = Statut.MEMBRE;
+		this.statut.add(Statut.MEMBRE);
 		this.dateDerniereConnexion = dateDerniereConnexion;
 	}
 
