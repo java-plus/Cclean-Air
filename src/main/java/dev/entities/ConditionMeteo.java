@@ -45,7 +45,7 @@ public class ConditionMeteo implements Serializable {
 	 * taux de pluviometrie
 	 */
 	@Column(name = "con_pluviometrie")
-	private Double pluviometrie;
+	private Double humidite;
 	/**
 	 * Indicateur temporel de la donnée
 	 */
@@ -55,12 +55,12 @@ public class ConditionMeteo implements Serializable {
 	@Column(name = "con_donnees_locales")
 	private List<DonneesLocales> donnesLocales;
 
-	public ConditionMeteo(Double ensoleillement, Double temperature, Double pluviometrie, ZonedDateTime date,
-			List<DonneesLocales> donnesLocales) {
+	public ConditionMeteo(Double ensoleillement, Double temperature, Double humidite, ZonedDateTime date,
+						  List<DonneesLocales> donnesLocales) {
 		super();
 		this.ensoleillement = ensoleillement;
 		this.temperature = temperature;
-		this.pluviometrie = pluviometrie;
+		this.humidite = humidite;
 		this.date = date;
 		this.donnesLocales = donnesLocales;
 	}
@@ -72,7 +72,7 @@ public class ConditionMeteo implements Serializable {
 	@Override
 	public String toString() {
 		return "ConditionMeteo [id=" + id + ", ensoleillement=" + ensoleillement + ", temperature=" + temperature
-				+ ", pluviometrie=" + pluviometrie + ", date=" + date + ", donnesLocales=" + donnesLocales + "]";
+				+ ", humidite=" + humidite + ", date=" + date + ", donnesLocales=" + donnesLocales + "]";
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ConditionMeteo implements Serializable {
 		result = prime * result + ((donnesLocales == null) ? 0 : donnesLocales.hashCode());
 		result = prime * result + ((ensoleillement == null) ? 0 : ensoleillement.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((pluviometrie == null) ? 0 : pluviometrie.hashCode());
+		result = prime * result + ((humidite == null) ? 0 : humidite.hashCode());
 		result = prime * result + ((temperature == null) ? 0 : temperature.hashCode());
 		return result;
 	}
@@ -117,10 +117,10 @@ public class ConditionMeteo implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (pluviometrie == null) {
-			if (other.pluviometrie != null)
+		if (humidite == null) {
+			if (other.humidite != null)
 				return false;
-		} else if (!pluviometrie.equals(other.pluviometrie))
+		} else if (!humidite.equals(other.humidite))
 			return false;
 		if (temperature == null) {
 			if (other.temperature != null)
@@ -175,15 +175,15 @@ public class ConditionMeteo implements Serializable {
 	/**
 	 * @return the pluviometrie
 	 */
-	public Double getPluviometrie() {
-		return pluviometrie;
+	public Double getHumidite() {
+		return humidite;
 	}
 
 	/**
-	 * @param pluviometrie the pluviometrie to set
+	 * @param humidite the pluviometrie to set
 	 */
-	public void setPluviometrie(Double pluviometrie) {
-		this.pluviometrie = pluviometrie;
+	public void setHumidite(Double humidite) {
+		this.humidite = humidite;
 	}
 
 	/**
