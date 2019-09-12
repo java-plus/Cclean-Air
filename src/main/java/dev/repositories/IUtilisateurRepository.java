@@ -20,4 +20,3 @@ public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integ
      */
     Optional<Utilisateur> findByEmailIgnoreCase(String email);
 }
-

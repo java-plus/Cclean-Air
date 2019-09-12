@@ -1,16 +1,8 @@
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * Classe représentant une commune géographique.
@@ -36,6 +28,13 @@ public class Commune implements Serializable {
 	private Double longitude;
 
 	/**
+	 * Codes postaux de la commune.
+	 */
+	@OneToMany(mappedBy = "commune")
+	@Column(name = "com_codes_postaux")
+	private List<CodePostal> codesPostaux;
+
+	/**
 	 * Indicateurs qui concernent la commune en question
 	 */
 	@OneToMany(mappedBy = "commune", cascade = CascadeType.ALL)
@@ -43,11 +42,11 @@ public class Commune implements Serializable {
 	private List<Indicateur> listeIndicateurs;
 
 	/**
-	 * Donnes locales de la commune
+	 * Donnees locales de la commune
 	 */
 	@OneToMany(mappedBy = "commune")
 	@Column(name = "com_donnees_locales")
-	private List<DonneesLocales> donnesLocales;
+	private List<DonneesLocales> donneesLocales;
 
 	/**
 	 * Liste des notifications et alertes concernant une commune spécifiques
@@ -80,16 +79,16 @@ public class Commune implements Serializable {
 	}
 
 	public Commune(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude,
-			List<Indicateur> listeIndicateurs, List<DonneesLocales> donnesLocales,
-			List<Notification> listeNotifications) {
-		super();
+				   List<CodePostal> codesPostaux, List<Indicateur> listeIndicateurs,
+				   List<DonneesLocales> donneesLocales, List<Notification> listeNotifications) {
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
 		this.codeInsee = codeInsee;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.codesPostaux = codesPostaux;
 		this.listeIndicateurs = listeIndicateurs;
-		this.donnesLocales = donnesLocales;
+		this.donneesLocales = donneesLocales;
 		this.listeNotifications = listeNotifications;
 	}
 
@@ -98,7 +97,7 @@ public class Commune implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((codeInsee == null) ? 0 : codeInsee.hashCode());
-		result = prime * result + ((donnesLocales == null) ? 0 : donnesLocales.hashCode());
+		result = prime * result + ((donneesLocales == null) ? 0 : donneesLocales.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
 		result = prime * result + ((listeIndicateurs == null) ? 0 : listeIndicateurs.hashCode());
@@ -123,10 +122,10 @@ public class Commune implements Serializable {
 				return false;
 		} else if (!codeInsee.equals(other.codeInsee))
 			return false;
-		if (donnesLocales == null) {
-			if (other.donnesLocales != null)
+		if (donneesLocales == null) {
+			if (other.donneesLocales != null)
 				return false;
-		} else if (!donnesLocales.equals(other.donnesLocales))
+		} else if (!donneesLocales.equals(other.donneesLocales))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -231,15 +230,15 @@ public class Commune implements Serializable {
 	/**
 	 * @return the donnesLocales
 	 */
-	public List<DonneesLocales> getDonnesLocales() {
-		return donnesLocales;
+	public List<DonneesLocales> getDonneesLocales() {
+		return donneesLocales;
 	}
 
 	/**
-	 * @param donnesLocales the donnesLocales to set
+	 * @param donneesLocales the donnesLocales to set
 	 */
-	public void setDonnesLocales(List<DonneesLocales> donnesLocales) {
-		this.donnesLocales = donnesLocales;
+	public void setDonneesLocales(List<DonneesLocales> donneesLocales) {
+		this.donneesLocales = donneesLocales;
 	}
 
 	/**
@@ -256,10 +255,18 @@ public class Commune implements Serializable {
 		this.listeNotifications = listeNotifications;
 	}
 
+	public List<CodePostal> getCodesPostaux() {
+		return codesPostaux;
+	}
+
+	public void setCodesPostaux(List<CodePostal> codesPostaux) {
+		this.codesPostaux = codesPostaux;
+	}
+
 	@Override
 	public String toString() {
 		return "Commune [id=" + id + ", nom=" + nom + ", nbHabitants=" + nbHabitants + ", codeInsee=" + codeInsee
 				+ ", latitude=" + latitude + ", longitude=" + longitude + ", listeIndicateurs=" + listeIndicateurs
-				+ ", donnesLocales=" + donnesLocales + ", listeNotifications=" + listeNotifications + "]";
+				+ ", donnesLocales=" + donneesLocales + ", listeNotifications=" + listeNotifications + "]";
 	}
 }
