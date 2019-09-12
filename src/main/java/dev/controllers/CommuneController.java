@@ -19,8 +19,6 @@ import java.time.ZonedDateTime;
 @RestController 
 public class CommuneController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
-
     @Autowired
     CommuneService communeService;
 
@@ -29,13 +27,14 @@ public class CommuneController {
         return ResponseEntity.status(404).body(e.getMessage());
     }
 
+    /**
+     * Méthode qui affiche les données locales pour l'utilisateur
+     * @param codeInsee
+     * @return
+     */
     @GetMapping(value = "communes/{codeInsee}" )
     public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {
 
-        ZonedDateTime date = ZonedDateTime.now();
-        LOGGER.info("Je suis passé dans le controller communes donnees locales");
-        return communeService.creerDonneesLocalesCommune(codeInsee, date);
-
-
+        return communeService.creerDonneesLocalesCommune(codeInsee);
     }
 }

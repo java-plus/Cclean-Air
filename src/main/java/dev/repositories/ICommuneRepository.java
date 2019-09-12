@@ -16,8 +16,6 @@ public interface ICommuneRepository extends JpaRepository<Commune, Integer> {
 
     Optional<Commune> findByNomIgnoreCase(String nomCommune);
 
-    Commune findByCodeInsee(String codeInsee);
+    Optional<Commune> findByCodeInsee(String codeInsee);
 
-//    @Query("select new dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation(c.nom, c.nbHabitants) from Commune c")
-//    Optional<CommuneDtoVisualisation> findByCodeInsee(String codeInsee);
 }

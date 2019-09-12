@@ -1,18 +1,16 @@
 package dev.services;
 
 import dev.controllers.dto.visualiserDonnees.*;
-import dev.entities.Commune;
-import dev.entities.DonneesLocales;
-import dev.entities.Polluant;
-import dev.entities.QualiteAir;
+import dev.entities.*;
+import dev.exceptions.CommuneInvalideException;
 import dev.repositories.*;
+import dev.repositories.IConditionMeteoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,26 +22,24 @@ public class CommuneService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
 
-    @Autowired
     private IDonneesLocalesRepository donneesLocalesRepository;
 
-    @Autowired
     private ICommuneRepository communeRepository;
 
-    @Autowired
-    private IQualiteAirRepository qualiteAirRepository;
+   private IQualiteAirRepository qualiteAirRepository;
 
-    @Autowired
-    private IConditionMeteoRepository conditionMeteoRepository;
+   private IConditionMeteoRepository conditionMeteoRepository;
 
-    @Autowired
     private IPolluantRepository polluantRepository;
 
-//    @Autowired
-//    public CommuneService(ICommuneRepository communeRepository) {
-//        this.communeRepository = communeRepository;
-//    }
-
+    @Autowired
+    public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository, IQualiteAirRepository qualiteAirRepository, IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
+        this.donneesLocalesRepository = donneesLocalesRepository;
+        this.communeRepository = communeRepository;
+        this.qualiteAirRepository = qualiteAirRepository;
+        this.conditionMeteoRepository = conditionMeteoRepository;
+        this.polluantRepository = polluantRepository;
+    }
 
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
@@ -54,79 +50,59 @@ public class CommuneService {
         return new Commune();
     }
 
-    public DonneesLocalesDto creerDonneesLocalesCommune(String codeInsee, ZonedDateTime date) {
+    /**
+     * Méthode qui permet de créer les données locales à partir des différentes entités
+     * @param codeInsee
+     * @return
+     */
+    public DonneesLocalesDto creerDonneesLocalesCommune(String codeInsee) {
 
-        LOGGER.info("Je passe dans la classe servie creer donnees locales commune");
+        //récupération de la commune
+        Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
+
+        if(!commune.isPresent()){
+            throw new CommuneInvalideException("La commune n'existe pas");
+        }
+
+        //Récupération de l'objet communeDtovisualisation
+        CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(commune.get().getNom(), commune.get().getNbHabitants());
+
+        //Récupération de la dernière date d'enregistrements pour la commune
+        ZonedDateTime date = donneesLocalesRepository.findByCommune(commune);
+        //Récupération des données locales
+        DonneesLocales donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
+
+        //Récupéartion des id qualiteAir et conditionMeteo
+        Integer qualiteAirId = null;
+        Integer conditionMeteoId = null;
+        if (donneesLocales != null) {
+            qualiteAirId = donneesLocales.getQualiteAir().getId();
+            conditionMeteoId = donneesLocales.getConditionMeteo().getId();
+        }
+
+        //Récupération qualitéAir
+        Optional<QualiteAir> qualiteAir = null;
+        if (qualiteAirId != null) {
+            qualiteAir = qualiteAirRepository.findById(qualiteAirId);
+        }
+
+        //Récupération ConditionMeteo et création du conditionMeteoDtoVisualisation
+        Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
+        ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(), conditionMeteo.get().getHumidite());
 
         //Création de l'objet DonneesLocalesDto
         DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
-
-        //modification de  l'heure pour avoir l'heure de la dernière recherche et ajout à donneesLocalesDto
-        date = date.withMinute(0);
-        date = date.withSecond(0);
-        date = date.withNano(0);
-
         donneesLocalesDto.setDate(date);
-
-        Commune commune = communeRepository.findByCodeInsee(codeInsee);
-
-        Optional<DonneesLocales> donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
-
-        Integer qualiteAirId = null;
-        Integer conditionMeteoId = null;
-
-
-        if (donneesLocales.isPresent()){
-            qualiteAirId = donneesLocales.get().getQualiteAir().getId();
-            conditionMeteoId = donneesLocales.get().getConditionMeteo().getId();
-
-        }
-
-        //Création de l'objet communeDtoVisaliation pour remplir donneesLocalesDto
-      //Optional<CommuneDtoVisualisation> communeDtoVisualisation = communeRepository.findByCodeInsee(codeInsee);
-
-//        if (communeDtoVisualisation.isPresent()) {
-//            donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation.get());
-//        } else {
-            donneesLocalesDto.setCommuneDtoVisualisation(null);
-//        }
-
-        Optional<QualiteAir> qualiteAir = null;
-        if(qualiteAirId !=null){
-            qualiteAirRepository.findById(qualiteAirId);
-        }
-
-
-
-
-
-        //Récupération de la qualiteAir avec la date pour retrouver les polluants
-
-      // Optional<QualiteAir> qualiteAir = qualiteAirRepository.findByDate(date);
-
-        //Création d'une liste de Polluants pour afficher dans donneesLocalesDto
-
-        if (qualiteAir.isPresent()){
+        donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
+        if (qualiteAir.isPresent()) {
             List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
             donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
         } else {
             donneesLocalesDto.setListePolluantDtoVisualisation(null);
         }
+        donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
 
-
-        LOGGER.info("liste polluant : " + donneesLocalesDto.getListePolluantDtoVisualisation());
-
-        //Création de l'objet conditionMetoDtoVisualisation pour remplir donneesLocalesDto
-
-        //Optional<ConditionMeteoDtoVisualisation> conditionMeteoDtoVisualisation = conditionMeteoRepository.findByDate(date);
-
-//        if(conditionMeteoDtoVisualisation.isPresent()){
-//            donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation.get());
-//        } else  {
-            donneesLocalesDto.setConditionMeteoDtoVisualisation(null);
-//        }
-
-        LOGGER.info("meteo : " + donneesLocalesDto.getConditionMeteoDtoVisualisation());
+        LOGGER.info("création des données locales à afficher /classe CommuneService");
 
         return donneesLocalesDto;
     }
