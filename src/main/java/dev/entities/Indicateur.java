@@ -31,6 +31,13 @@ public class Indicateur implements Serializable {
 	private Integer id;
 
 	/**
+	 * Si l'utilisateur souhaite ou non recevoir des alertes pour l'indicateur en
+	 * question
+	 */
+	@Column(name = "int_alerte")
+	private Boolean alerte;
+
+	/**
 	 * Utilisateur à qui appartient l'indicateur en question
 	 */
 	@ManyToOne
@@ -44,10 +51,11 @@ public class Indicateur implements Serializable {
 	@JoinColumn(name = "ind_commune")
 	private Commune commune;
 
-	public Indicateur(Integer id, Utilisateur utilisateur) {
+	public Indicateur(Boolean alerte, Utilisateur utilisateur, Commune commune) {
 		super();
-		this.id = id;
+		this.alerte = alerte;
 		this.utilisateur = utilisateur;
+		this.commune = commune;
 	}
 
 	public Indicateur() {
@@ -56,13 +64,15 @@ public class Indicateur implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Indicateur [id=" + id + ", utilisateur=" + utilisateur + ", commune=" + commune + "]";
+		return "Indicateur [id=" + id + ", alerte=" + alerte + ", utilisateur=" + utilisateur + ", commune=" + commune
+				+ "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((alerte == null) ? 0 : alerte.hashCode());
 		result = prime * result + ((commune == null) ? 0 : commune.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((utilisateur == null) ? 0 : utilisateur.hashCode());
@@ -78,6 +88,11 @@ public class Indicateur implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Indicateur other = (Indicateur) obj;
+		if (alerte == null) {
+			if (other.alerte != null)
+				return false;
+		} else if (!alerte.equals(other.alerte))
+			return false;
 		if (commune == null) {
 			if (other.commune != null)
 				return false;
@@ -136,6 +151,20 @@ public class Indicateur implements Serializable {
 	 */
 	public void setCommune(Commune commune) {
 		this.commune = commune;
+	}
+
+	/**
+	 * @return the alerte
+	 */
+	public Boolean getAlerte() {
+		return alerte;
+	}
+
+	/**
+	 * @param alerte the alerte to set
+	 */
+	public void setAlerte(Boolean alerte) {
+		this.alerte = alerte;
 	}
 
 }

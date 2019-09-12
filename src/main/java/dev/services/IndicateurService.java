@@ -57,7 +57,8 @@ public class IndicateurService {
 	 */
 	public List<CommuneIndicateurDto> recupererLesIndicateurs(String mailUtilisateur) {
 		return repository.findByUtilisateurEmail(mailUtilisateur).stream()
-				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom())).collect(Collectors.toList());
+				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom(), i.getAlerte()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -77,6 +78,7 @@ public class IndicateurService {
 			utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
 			Indicateur response = new Indicateur();
 			response.setUtilisateur(utilisateur);
+			response.setAlerte(indicateur.getAlerte());
 			Optional<Commune> commune = communeRepository.findByNomIgnoreCase(indicateur.getCommune());
 			if (commune.isPresent()) {
 				response.setCommune(commune.get());
@@ -86,7 +88,8 @@ public class IndicateurService {
 
 			if (response.getUtilisateur().getListeIndicateurs().size() < 11) {
 				repository.save(response);
-				return new IndicateurDto(response.getUtilisateur().getEmail(), response.getCommune().getNom());
+				return new IndicateurDto(response.getUtilisateur().getEmail(), response.getCommune().getNom(),
+						response.getAlerte());
 			} else {
 				throw new NombreIndicateursException("Nombre d'indicateurs autorisés atteint");
 			}
@@ -105,14 +108,14 @@ public class IndicateurService {
 		try {
 			List<Indicateur> indicateurs = repository
 					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
-			List<Indicateur> indicateursFiltrés = indicateurs.stream()
+			List<Indicateur> indicateursFiltres = indicateurs.stream()
 					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
 			Indicateur suppression = null;
-			if (!indicateursFiltrés.isEmpty()) {
-				suppression = indicateursFiltrés.get(0);
+			if (!indicateursFiltres.isEmpty()) {
+				suppression = indicateursFiltres.get(0);
 				repository.delete(suppression);
 				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
-						suppression.getCommune().getNom());
+						suppression.getCommune().getNom(), suppression.getAlerte());
 			}
 			return null;
 
