@@ -92,7 +92,12 @@ public class IndicateurController {
 	 */
 	@DeleteMapping(value = "indicateurs")
 	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
-		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
+		if (service.supprimerUnIndicateur(indicateur) != null) {
+			return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
 	}
 
 }
