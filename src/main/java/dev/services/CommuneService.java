@@ -2,10 +2,9 @@ package dev.services;
 
 import dev.controllers.dto.CommuneDto;
 import dev.controllers.dto.CommuneDtoGet;
+import dev.entities.CodePostal;
 import dev.entities.Commune;
-import dev.entities.ConditionMeteo;
 import dev.exceptions.CommuneInvalideException;
-import dev.exceptions.ConditionMeteoException;
 import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +30,12 @@ public class CommuneService {
     private String URL_API_COMMUNES;
 
     private ICommuneRepository communeRepository;
+    private CodePostalService codePostalService;
 
     @Autowired
-    public CommuneService(ICommuneRepository communeRepository) {
+    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService) {
         this.communeRepository = communeRepository;
+        this.codePostalService = codePostalService;
     }
 
     public Boolean isCommuneExistante(String nomCommune) {
@@ -50,10 +51,9 @@ public class CommuneService {
         return communeRepository.findAllWithCodeDenomination();
     }
 
-    // FIXME: méthode
-    public ConditionMeteo recupererCommunesDeApi() {
+    public void recupererCommunesDeApi() throws CommuneInvalideException {
 
-        LOGGER.info("recupererConditionMeteoCommune() lancé");
+        LOGGER.info("recupererCommunesDeApi() lancé");
 
         LOGGER.info("url de l'api = " + URL_API_COMMUNES);
 
@@ -66,10 +66,20 @@ public class CommuneService {
                     new ParameterizedTypeReference<List<CommuneDtoGet>>(){});
             List<CommuneDtoGet> communes = response.getBody();
 
+            for (CommuneDtoGet c: communes) {
+                Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
+                        c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
+                communeRepository.save(commune);
+                for (String cp: c.getCodesPostaux()) {
+                    CodePostal codePostal = new CodePostal(cp, commune);
+                    codePostalService.sauvegarderCodePostal(codePostal);
+                }
+            }
+
             LOGGER.info(communes.toString());
-            return null;
         } catch (Exception e) {
-            throw new ConditionMeteoException("ERREUR : la récupération des données de l'API météo a échouché. \n" + e);
+            throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
+                    "\n" + e);
         }
     }
 }

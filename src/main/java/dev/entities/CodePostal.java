@@ -23,6 +23,11 @@ public class CodePostal implements Serializable {
     public CodePostal() {
     }
 
+    public CodePostal(String valeur, Commune commune) {
+        this.valeur = valeur;
+        this.commune = commune;
+    }
+
     public CodePostal(Integer id, String valeur, Commune commune) {
         this.id = id;
         this.valeur = valeur;
