@@ -15,13 +15,13 @@ public class CommuneDtoVisualisation {
     /**
      * Nombre d'habitants dans la commune
      */
-    private String nbHabitants;
+    private Long nbHabitants;
 
 
     public CommuneDtoVisualisation() {
     }
 
-    public CommuneDtoVisualisation(String nom, String nbHabitants) {
+    public CommuneDtoVisualisation(String nom, Long nbHabitants) {
         this.nom = nom;
         this.nbHabitants = nbHabitants;
     }
@@ -34,11 +34,11 @@ public class CommuneDtoVisualisation {
         this.nom = nom;
     }
 
-    public String getNbHabitants() {
+    public Long getNbHabitants() {
         return nbHabitants;
     }
 
-    public void setNbHabitants(String nbHabitants) {
+    public void setNbHabitants(Long nbHabitants) {
         this.nbHabitants = nbHabitants;
     }
 }

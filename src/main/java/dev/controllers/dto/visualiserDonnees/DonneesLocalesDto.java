@@ -1,6 +1,7 @@
 package dev.controllers.dto.visualiserDonnees;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * @author Cécile
@@ -8,22 +9,22 @@ import java.time.ZonedDateTime;
  */
 public class DonneesLocalesDto {
 
-    CommuneDtoVisualisation communeDtoVisualisation;
+   private CommuneDtoVisualisation communeDtoVisualisation;
 
     //Alerte -> Voir comment récupérer si la commune est en alerte ou pas
 
-    PolluantDtoVisualisation polluantDtoVisualisation;
+   private List<PolluantDtoVisualisation> listePolluantDtoVisualisation;
 
-    ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation;
+   private ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation;
 
     private ZonedDateTime date;
 
     public DonneesLocalesDto() {
     }
 
-    public DonneesLocalesDto(CommuneDtoVisualisation communeDtoVisualisation, PolluantDtoVisualisation polluantDtoVisualisation, ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation, ZonedDateTime date) {
+    public DonneesLocalesDto(CommuneDtoVisualisation communeDtoVisualisation, List<PolluantDtoVisualisation> listePolluantDtoVisualisation, ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation, ZonedDateTime date) {
         this.communeDtoVisualisation = communeDtoVisualisation;
-        this.polluantDtoVisualisation = polluantDtoVisualisation;
+        this.listePolluantDtoVisualisation = listePolluantDtoVisualisation;
         this.conditionMeteoDtoVisualisation = conditionMeteoDtoVisualisation;
         this.date = date;
     }
@@ -36,12 +37,12 @@ public class DonneesLocalesDto {
         this.communeDtoVisualisation = communeDtoVisualisation;
     }
 
-    public PolluantDtoVisualisation getPolluantDtoVisualisation() {
-        return polluantDtoVisualisation;
+    public List<PolluantDtoVisualisation> getListePolluantDtoVisualisation() {
+        return listePolluantDtoVisualisation;
     }
 
-    public void setPolluantDtoVisualisation(PolluantDtoVisualisation polluantDtoVisualisation) {
-        this.polluantDtoVisualisation = polluantDtoVisualisation;
+    public void setListePolluantDtoVisualisation(List<PolluantDtoVisualisation> listePolluantDtoVisualisation) {
+        this.listePolluantDtoVisualisation = listePolluantDtoVisualisation;
     }
 
     public ConditionMeteoDtoVisualisation getConditionMeteoDtoVisualisation() {

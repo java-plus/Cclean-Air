@@ -3,7 +3,10 @@ package dev.controllers;
 
 import dev.controllers.dto.InfosConnexion;
 import dev.repositories.IUtilisateurRepository;
+import dev.services.CommuneService;
 import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -48,6 +51,7 @@ public class ConnexionController {
      */
     @PostMapping(value = "/connexion")
     public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+
         return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
                 .filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
                 .map(utilisateur -> {
