@@ -1,10 +1,6 @@
 package dev.repositories;
 
-<<<<<<< HEAD
-import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
-=======
 import dev.controllers.dto.CommuneDto;
->>>>>>> master
 import dev.entities.Commune;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

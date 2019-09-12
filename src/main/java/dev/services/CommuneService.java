@@ -38,6 +38,7 @@ public class CommuneService {
 
     @Value("${url.communes_api}")
     private String URL_API_COMMUNES;
+
     private ICommuneRepository communeRepository;
     private CodePostalService codePostalService;
 
@@ -47,9 +48,9 @@ public class CommuneService {
 
     private IPolluantRepository polluantRepository;
 
-    public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, String URL_API_COMMUNES, ICommuneRepository communeRepository, CodePostalService codePostalService, IQualiteAirRepository qualiteAirRepository, IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
+    @Autowired
+    public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository, CodePostalService codePostalService, IQualiteAirRepository qualiteAirRepository, IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
         this.donneesLocalesRepository = donneesLocalesRepository;
-        this.URL_API_COMMUNES = URL_API_COMMUNES;
         this.communeRepository = communeRepository;
         this.codePostalService = codePostalService;
         this.qualiteAirRepository = qualiteAirRepository;
@@ -57,7 +58,6 @@ public class CommuneService {
         this.polluantRepository = polluantRepository;
     }
 
-    @Autowired
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
     }
