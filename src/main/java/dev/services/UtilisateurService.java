@@ -77,6 +77,7 @@ public class UtilisateurService {
 		List<CommuneIndicateurDto> listeIndicateurs = utilisateur.getListeIndicateurs().stream()
 				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom(), i.getAlerte()))
 				.collect(Collectors.toList());
+
 		return new ProfilDtoGet(utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getEmail(),
 				utilisateur.getCommune().getNom(), listeIndicateurs, utilisateur.getStatutNotification(),
 				utilisateur.getMotDePasse());
