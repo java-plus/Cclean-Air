@@ -1,6 +1,7 @@
 package dev.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,13 @@ import org.springframework.stereotype.Service;
 
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.IndicateurDto;
+import dev.entities.Commune;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
+import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.NombreIndicateursException;
 import dev.exceptions.UtilisateurNonConnecteException;
+import dev.repositories.ICommuneRepository;
 import dev.repositories.IIndicateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
 
@@ -28,6 +32,8 @@ public class IndicateurService {
 	 */
 	private IIndicateurRepository repository;
 
+	private ICommuneRepository communeRepository;
+
 	/**
 	 * Injection de la méthode utilisataire de récupération de l'utilisateur
 	 * connecté
@@ -35,10 +41,11 @@ public class IndicateurService {
 	private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
 
 	@Autowired
-	public IndicateurService(IIndicateurRepository repository,
+	public IndicateurService(IIndicateurRepository repository, ICommuneRepository communeRepository,
 			RecuperationUtilisateurConnecte recuperationUtilisateurConnecte) {
 		super();
 		this.repository = repository;
+		this.communeRepository = communeRepository;
 		this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
 	}
 
@@ -70,9 +77,16 @@ public class IndicateurService {
 			utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
 			Indicateur response = new Indicateur();
 			response.setUtilisateur(utilisateur);
+			Optional<Commune> commune = communeRepository.findByNomIgnoreCase(indicateur.getCommune());
+			if (commune.isPresent()) {
+				response.setCommune(commune.get());
+			} else {
+				throw new CommuneInvalideException("Commune invalide");
+			}
+
 			if (response.getUtilisateur().getListeIndicateurs().size() < 11) {
 				repository.save(response);
-				return new IndicateurDto(response.getUtilisateur(), response.getCommune());
+				return new IndicateurDto(response.getUtilisateur().getEmail(), response.getCommune().getNom());
 			} else {
 				throw new NombreIndicateursException("Nombre d'indicateurs autorisés atteint");
 			}
@@ -81,6 +95,31 @@ public class IndicateurService {
 			return null;
 		}
 
+	}
+
+	/**
+	 * @param indicateur : Nom de la commune représentant l'indicateur à supprimer
+	 * @return renvoie le mail tilisateur et le nom de la commune à supprimer
+	 */
+	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) {
+		try {
+			List<Indicateur> indicateurs = repository
+					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
+			List<Indicateur> indicateursFiltrés = indicateurs.stream()
+					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
+			Indicateur suppression = null;
+			if (!indicateursFiltrés.isEmpty()) {
+				suppression = indicateursFiltrés.get(0);
+				repository.delete(suppression);
+				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
+						suppression.getCommune().getNom());
+			}
+			return null;
+
+		} catch (UtilisateurNonConnecteException e) {
+			e.getMessage();
+			return null;
+		}
 	}
 
 }

@@ -10,8 +10,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dev.controllers.ConnexionController;
 import dev.entities.Statut;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +32,7 @@ import io.jsonwebtoken.Jwts;
  */
 @Configuration
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-
+    private final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
     @Value("${jwt.cookie}")
     private String TOKEN_COOKIE;
@@ -66,6 +69,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                         });
             }
         } catch (ExpiredJwtException e){
+            LOGGER.info("Le cookie est expiré");
             System.out.println("cookie expiré");
         }
 

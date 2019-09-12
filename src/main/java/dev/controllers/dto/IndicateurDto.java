@@ -1,8 +1,5 @@
 package dev.controllers.dto;
 
-import dev.entities.Commune;
-import dev.entities.Utilisateur;
-
 /**
  * @author Guillaume Classe utilisé pour l'affichage de la confirmation de
  *         création d'un indicateur
@@ -10,30 +7,30 @@ import dev.entities.Utilisateur;
  */
 public class IndicateurDto {
 
-	private Utilisateur utilisateur;
-	private Commune commune;
-
-	public IndicateurDto(Utilisateur utilisateur, Commune commune) {
-		super();
-		this.utilisateur = utilisateur;
-		this.commune = commune;
-	}
+	private String mailUtilisateur;
+	private String nomCommune;
 
 	public IndicateurDto() {
 		super();
 	}
 
+	public IndicateurDto(String mailUtilisateur, String nomCommune) {
+		super();
+		this.mailUtilisateur = mailUtilisateur;
+		this.nomCommune = nomCommune;
+	}
+
 	@Override
 	public String toString() {
-		return "IndicateurDto [utilisateur=" + utilisateur + ", commune=" + commune + "]";
+		return "IndicateurDto [mailUtilisateur=" + mailUtilisateur + ", nomCommune=" + nomCommune + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((commune == null) ? 0 : commune.hashCode());
-		result = prime * result + ((utilisateur == null) ? 0 : utilisateur.hashCode());
+		result = prime * result + ((mailUtilisateur == null) ? 0 : mailUtilisateur.hashCode());
+		result = prime * result + ((nomCommune == null) ? 0 : nomCommune.hashCode());
 		return result;
 	}
 
@@ -46,45 +43,45 @@ public class IndicateurDto {
 		if (getClass() != obj.getClass())
 			return false;
 		IndicateurDto other = (IndicateurDto) obj;
-		if (commune == null) {
-			if (other.commune != null)
+		if (mailUtilisateur == null) {
+			if (other.mailUtilisateur != null)
 				return false;
-		} else if (!commune.equals(other.commune))
+		} else if (!mailUtilisateur.equals(other.mailUtilisateur))
 			return false;
-		if (utilisateur == null) {
-			if (other.utilisateur != null)
+		if (nomCommune == null) {
+			if (other.nomCommune != null)
 				return false;
-		} else if (!utilisateur.equals(other.utilisateur))
+		} else if (!nomCommune.equals(other.nomCommune))
 			return false;
 		return true;
 	}
 
 	/**
-	 * @return the utilisateur
+	 * @return the mailUtilisateur
 	 */
-	public Utilisateur getUtilisateur() {
-		return utilisateur;
+	public String getMailUtilisateur() {
+		return mailUtilisateur;
 	}
 
 	/**
-	 * @param utilisateur the utilisateur to set
+	 * @param mailUtilisateur the mailUtilisateur to set
 	 */
-	public void setUtilisateur(Utilisateur utilisateur) {
-		this.utilisateur = utilisateur;
+	public void setMailUtilisateur(String mailUtilisateur) {
+		this.mailUtilisateur = mailUtilisateur;
 	}
 
 	/**
-	 * @return the commune
+	 * @return the nomCommune
 	 */
-	public Commune getCommune() {
-		return commune;
+	public String getNomCommune() {
+		return nomCommune;
 	}
 
 	/**
-	 * @param commune the commune to set
+	 * @param nomCommune the nomCommune to set
 	 */
-	public void setCommune(Commune commune) {
-		this.commune = commune;
+	public void setNomCommune(String nomCommune) {
+		this.nomCommune = nomCommune;
 	}
 
 }

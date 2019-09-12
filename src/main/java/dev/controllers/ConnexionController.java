@@ -44,6 +44,8 @@ public class ConnexionController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    private final Logger LOGGER = LoggerFactory.getLogger(ConnexionController.class);
+
     /**
      * Méthode qui permet de se connecter l'utilisateur en vérifiant s'il est admin ou non et d'installer le cookie dans le navigateur correspondant dans le navigateur
      * @param infos
@@ -73,6 +75,8 @@ public class ConnexionController {
                             .path("/")
                             .build();
 
+                    LOGGER.info("Le cookie est créé");
+
                     return ResponseEntity.ok()
                             .header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
                             .build();
@@ -80,5 +84,6 @@ public class ConnexionController {
                 })
 
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+
     }
 }
