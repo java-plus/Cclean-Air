@@ -42,9 +42,9 @@ public class CommuneService {
     private ICommuneRepository communeRepository;
     private CodePostalService codePostalService;
 
-   private IQualiteAirRepository qualiteAirRepository;
+    private IQualiteAirRepository qualiteAirRepository;
 
-   private IConditionMeteoRepository conditionMeteoRepository;
+    private IConditionMeteoRepository conditionMeteoRepository;
 
     private IPolluantRepository polluantRepository;
 
@@ -69,6 +69,7 @@ public class CommuneService {
 
     /**
      * Méthode qui permet de créer les données locales à partir des différentes entités
+     *
      * @param codeInsee
      * @return
      */
@@ -77,7 +78,7 @@ public class CommuneService {
         //récupération de la commune
         Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
 
-        if(!commune.isPresent()){
+        if (!commune.isPresent()) {
             throw new CommuneInvalideException("La commune n'existe pas");
         }
 
@@ -104,18 +105,21 @@ public class CommuneService {
         }
 
         //Récupération ConditionMeteo et création du conditionMeteoDtoVisualisation
-        Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
-        ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(), conditionMeteo.get().getHumidite());
-
+        ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = null;
+        if (conditionMeteoId != null) {
+            Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
+            conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(), conditionMeteo.get().getHumidite());
+        }
         //Création de l'objet DonneesLocalesDto
         DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
         donneesLocalesDto.setDate(date);
         donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
-        if (qualiteAir.isPresent()) {
+        if (!qualiteAir.isPresent()) {
+            donneesLocalesDto.setListePolluantDtoVisualisation(null);
+        } else {
             List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
             donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
-        } else {
-            donneesLocalesDto.setListePolluantDtoVisualisation(null);
+
         }
         donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
 
@@ -141,14 +145,15 @@ public class CommuneService {
                     URL_API_COMMUNES,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<List<CommuneDtoGet>>(){});
+                    new ParameterizedTypeReference<List<CommuneDtoGet>>() {
+                    });
             List<CommuneDtoGet> communes = response.getBody();
 
-            for (CommuneDtoGet c: communes) {
+            for (CommuneDtoGet c : communes) {
                 Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
                         c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
                 communeRepository.save(commune);
-                for (String cp: c.getCodesPostaux()) {
+                for (String cp : c.getCodesPostaux()) {
                     CodePostal codePostal = new CodePostal(cp, commune);
                     codePostalService.sauvegarderCodePostal(codePostal);
                 }

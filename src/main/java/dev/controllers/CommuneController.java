@@ -10,8 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping(value = "/communes")
 public class CommuneController {
 
     @Autowired
@@ -27,7 +30,7 @@ public class CommuneController {
      * @param codeInsee
      * @return
      */
-    @GetMapping(value = "communes/{codeInsee}" )
+    @GetMapping(value = "/{codeInsee}" )
     public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {
 
         return communeService.creerDonneesLocalesCommune(codeInsee);
