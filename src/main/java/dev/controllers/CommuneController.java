@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
 
-@RestController (value = "/communes")
+@RestController 
 public class CommuneController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
@@ -29,7 +29,7 @@ public class CommuneController {
         return ResponseEntity.status(404).body(e.getMessage());
     }
 
-    @GetMapping(value = "/{codeInsee}" )
+    @GetMapping(value = "communes/{codeInsee}" )
     public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {
 
         ZonedDateTime date = ZonedDateTime.now();

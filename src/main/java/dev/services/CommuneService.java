@@ -2,12 +2,10 @@ package dev.services;
 
 import dev.controllers.dto.visualiserDonnees.*;
 import dev.entities.Commune;
+import dev.entities.DonneesLocales;
 import dev.entities.Polluant;
 import dev.entities.QualiteAir;
-import dev.repositories.ICommuneRepository;
-import dev.repositories.IConditionMeteoRepository;
-import dev.repositories.IPolluantRepository;
-import dev.repositories.IQualiteAirRepository;
+import dev.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,9 @@ import java.util.Optional;
 public class CommuneService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
+
+    @Autowired
+    private IDonneesLocalesRepository donneesLocalesRepository;
 
     @Autowired
     private ICommuneRepository communeRepository;
@@ -60,18 +61,6 @@ public class CommuneService {
         //Création de l'objet DonneesLocalesDto
         DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
 
-
-        //Création de l'objet communeDtoVisaliation pour remplir donneesLocalesDto
-        Optional<CommuneDtoVisualisation> communeDtoVisualisation = communeRepository.findByCodeInsee(codeInsee);
-
-        if (communeDtoVisualisation.isPresent()) {
-            donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation.get());
-        } else {
-            donneesLocalesDto.setCommuneDtoVisualisation(null);
-        }
-
-        LOGGER.info("commune dto : " + donneesLocalesDto.getCommuneDtoVisualisation());
-
         //modification de  l'heure pour avoir l'heure de la dernière recherche et ajout à donneesLocalesDto
         date = date.withMinute(0);
         date = date.withSecond(0);
@@ -79,12 +68,41 @@ public class CommuneService {
 
         donneesLocalesDto.setDate(date);
 
-        LOGGER.info("date : " + donneesLocalesDto.getDate());
+        Commune commune = communeRepository.findByCodeInsee(codeInsee);
+
+        Optional<DonneesLocales> donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
+
+        Integer qualiteAirId = null;
+        Integer conditionMeteoId = null;
+
+
+        if (donneesLocales.isPresent()){
+            qualiteAirId = donneesLocales.get().getQualiteAir().getId();
+            conditionMeteoId = donneesLocales.get().getConditionMeteo().getId();
+
+        }
+
+        //Création de l'objet communeDtoVisaliation pour remplir donneesLocalesDto
+      //Optional<CommuneDtoVisualisation> communeDtoVisualisation = communeRepository.findByCodeInsee(codeInsee);
+
+//        if (communeDtoVisualisation.isPresent()) {
+//            donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation.get());
+//        } else {
+            donneesLocalesDto.setCommuneDtoVisualisation(null);
+//        }
+
+        Optional<QualiteAir> qualiteAir = null;
+        if(qualiteAirId !=null){
+            qualiteAirRepository.findById(qualiteAirId);
+        }
+
+
+
 
 
         //Récupération de la qualiteAir avec la date pour retrouver les polluants
 
-        Optional<QualiteAir> qualiteAir = qualiteAirRepository.findByDate(date);
+      // Optional<QualiteAir> qualiteAir = qualiteAirRepository.findByDate(date);
 
         //Création d'une liste de Polluants pour afficher dans donneesLocalesDto
 
@@ -100,13 +118,13 @@ public class CommuneService {
 
         //Création de l'objet conditionMetoDtoVisualisation pour remplir donneesLocalesDto
 
-        Optional<ConditionMeteoDtoVisualisation> conditionMeteoDtoVisualisation = conditionMeteoRepository.findByDate(date);
+        //Optional<ConditionMeteoDtoVisualisation> conditionMeteoDtoVisualisation = conditionMeteoRepository.findByDate(date);
 
-        if(conditionMeteoDtoVisualisation.isPresent()){
-            donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation.get());
-        } else  {
+//        if(conditionMeteoDtoVisualisation.isPresent()){
+//            donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation.get());
+//        } else  {
             donneesLocalesDto.setConditionMeteoDtoVisualisation(null);
-        }
+//        }
 
         LOGGER.info("meteo : " + donneesLocalesDto.getConditionMeteoDtoVisualisation());
 
