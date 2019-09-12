@@ -12,9 +12,12 @@ public class CommuneIndicateurDto {
 	 */
 	private String commune;
 
-	public CommuneIndicateurDto(String commune) {
+	private Boolean alerte;
+
+	public CommuneIndicateurDto(String commune, Boolean alerte) {
 		super();
 		this.commune = commune;
+		this.alerte = alerte;
 	}
 
 	public CommuneIndicateurDto() {
@@ -23,13 +26,14 @@ public class CommuneIndicateurDto {
 
 	@Override
 	public String toString() {
-		return "CommuneIndicateurDto [commune=" + commune + "]";
+		return "CommuneIndicateurDto [commune=" + commune + ", alerte=" + alerte + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((alerte == null) ? 0 : alerte.hashCode());
 		result = prime * result + ((commune == null) ? 0 : commune.hashCode());
 		return result;
 	}
@@ -43,6 +47,11 @@ public class CommuneIndicateurDto {
 		if (getClass() != obj.getClass())
 			return false;
 		CommuneIndicateurDto other = (CommuneIndicateurDto) obj;
+		if (alerte == null) {
+			if (other.alerte != null)
+				return false;
+		} else if (!alerte.equals(other.alerte))
+			return false;
 		if (commune == null) {
 			if (other.commune != null)
 				return false;
@@ -63,6 +72,20 @@ public class CommuneIndicateurDto {
 	 */
 	public void setCommune(String commune) {
 		this.commune = commune;
+	}
+
+	/**
+	 * @return the alerte
+	 */
+	public Boolean getAlerte() {
+		return alerte;
+	}
+
+	/**
+	 * @param alerte the alerte to set
+	 */
+	public void setAlerte(Boolean alerte) {
+		this.alerte = alerte;
 	}
 
 }

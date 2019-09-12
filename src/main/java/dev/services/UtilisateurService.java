@@ -1,17 +1,18 @@
 package dev.services;
 
-import dev.controllers.dto.UtilisateurDtoPost;
-import dev.entities.Indicateur;
-import dev.entities.Utilisateur;
-import dev.repositories.IUtilisateurRepository;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import dev.controllers.dto.UtilisateurDtoPost;
+import dev.entities.Indicateur;
+import dev.entities.Utilisateur;
+import dev.repositories.IUtilisateurRepository;
 
 @Service
 public class UtilisateurService {
@@ -24,7 +25,7 @@ public class UtilisateurService {
 
 	@Autowired
 	public UtilisateurService(PasswordEncoder passwordEncoder, IUtilisateurRepository utilisateurRepository,
-							  CommuneService communeService) {
+			CommuneService communeService) {
 		this.passwordEncoder = passwordEncoder;
 		this.utilisateurRepository = utilisateurRepository;
 		this.communeService = communeService;
@@ -49,9 +50,8 @@ public class UtilisateurService {
 	 */
 	public Utilisateur sauvegarderUtilisateur(UtilisateurDtoPost dto) {
 		Utilisateur utilisateur = new Utilisateur(dto.getNom(), dto.getPrenom(), dto.getEmail(),
-                passwordEncoder.encode(dto.getMotDePasse()),
-				dto.getStatuts(), dto.getStatutNotification(), 0, ZonedDateTime.now(), new ArrayList<Indicateur>(),
-				communeService.recupererCommune(dto.getNomCommune()));
+				passwordEncoder.encode(dto.getMotDePasse()), dto.getStatuts(), dto.getStatutNotification(), 0,
+				ZonedDateTime.now(), new ArrayList<Indicateur>(), communeService.recupererCommune(dto.getNomCommune()));
 		utilisateurRepository.save(utilisateur);
 		return utilisateur;
 
