@@ -89,8 +89,7 @@ public class IndicateurController {
 	 * @throws UtilisateurNonConnecteException
 	 */
 	@DeleteMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur)
-			throws UtilisateurNonConnecteException {
+	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
 		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
 	}
 
