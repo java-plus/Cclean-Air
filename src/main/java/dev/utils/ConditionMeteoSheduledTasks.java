@@ -26,7 +26,7 @@ public class ConditionMeteoSheduledTasks {
         this.communeService = communeService;
     }
 
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(cron="0 * * * * *")
     public void recupererDonneesApiMeteoEtSauvegarder() {
         LOGGER.info("lancement de recupererDonneesApiMeteoEtSauvegarder()");
         List<CommuneDto> communes = communeService.recupererToutesLesCommunesDto();
@@ -34,8 +34,6 @@ public class ConditionMeteoSheduledTasks {
             ConditionMeteo conditionMeteo = conditionMeteoService.recupererConditionMeteoCommune(c);
             conditionMeteoService.sauvegarderConditionMeteo(conditionMeteo);
         }
-
-
 
     }
 

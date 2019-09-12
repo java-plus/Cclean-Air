@@ -53,6 +53,8 @@ Code `404`
 
 #### Requête pour récupérer les données météorologiques d'une ville
 
+-> Cette requête sera exécutée toutes les heures pour 10 villes de la base de données.
+
 [GET] http://api.openweathermap.org/data/2.5/weather?lat=-1.553621&lon=47.218371&lang=fr&units=metric&APPID
 =633e2a135fc012a55447e2b1f366972d&units=metric
 
@@ -108,6 +110,8 @@ Code `200`
 
 #### Requête pour récupérer les polluants
 
+-> Cette requête sera exécutée toutes les heures.
+
 [GET] http://www.airpl.org/api/polluants
 
 Réponse en cas de réussite (seulement le début du JSON) :
@@ -134,7 +138,9 @@ Code `200`
 
 ### Requête pour récupérer les communes de Loire-Atlantique
 
-[GET] https://geo.api.gouv.fr/departements/44/communes
+-> Cette requête sera exécutée tous les 15 jours.
+
+[GET] https://geo.api.gouv.fr/communes?codeDepartement=44&fields=nom,code,codesPostaux,centre,codeRegion,population&format=json&geometry=centre
 
 Réponse en cas de succès :
 
