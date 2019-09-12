@@ -105,12 +105,17 @@ public class IndicateurService {
 		try {
 			List<Indicateur> indicateurs = repository
 					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
-			Indicateur suppression = indicateurs.stream()
-					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList())
-					.get(0);
-			repository.delete(suppression);
-			return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
-					suppression.getCommune().getNom());
+			List<Indicateur> indicateursFiltrés = indicateurs.stream()
+					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
+			Indicateur suppression = null;
+			if (!indicateursFiltrés.isEmpty()) {
+				suppression = indicateursFiltrés.get(0);
+				repository.delete(suppression);
+				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
+						suppression.getCommune().getNom());
+			}
+			return null;
+
 		} catch (UtilisateurNonConnecteException e) {
 			e.getMessage();
 			return null;
