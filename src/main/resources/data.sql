@@ -13,4 +13,5 @@ insert into UTILISATEUR_STATUT values (1 , 'ADMINISTRATEUR' );
 insert into condition_meteo values (1, '2019-09-12 14:00:00', 10, 20, 20);
 insert into polluant (pol_id, pol_nom, pol_unite, pol_valeur) values (1, 'azote', 'µg', 12);
 insert into  qualite_air values (1, '2019-09-12 14:00:00');
-insert into donnees_locales (don_id, don_date,don_condition_meteo, don_qualite_air ) values (1,'2019-09-12 14:00:00', 1, 1 );
+insert into donnees_locales (don_id, don_date,don_condition_meteo, don_qualite_air ) values (1,'2019-09-09 14:00:00', 1, 1 );
+insert into donnees_locales (don_id, don_date,don_condition_meteo, don_qualite_air ) values (2,'2019-09-12 14:00:00', 1, 1 );

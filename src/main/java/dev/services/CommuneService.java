@@ -1,13 +1,12 @@
 package dev.services;
 
 
+import dev.controllers.dto.*;
 import dev.controllers.dto.visualiserDonnees.*;
 import dev.entities.*;
 import dev.exceptions.CommuneInvalideException;
 import dev.repositories.*;
 import dev.repositories.IConditionMeteoRepository;
-import dev.controllers.dto.CommuneDto;
-import dev.controllers.dto.CommuneDtoGet;
 import dev.entities.CodePostal;
 import dev.entities.Commune;
 import dev.repositories.ICommuneRepository;
@@ -21,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.time.ZonedDateTime;
@@ -164,5 +166,63 @@ public class CommuneService {
             throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
                     "\n" + e);
         }
+    }
+
+    public List<DonneesLocalesHistorique> creerHistorique(DonneesLocalesRecherchees donneesLocalesRecherchees, String codeInsee) {
+
+        //création de la date de début de recherche
+        LocalDateTime dateDebutLdt = donneesLocalesRecherchees.getDateDebut().atTime(donneesLocalesRecherchees.getHeureDebut());
+        ZonedDateTime dateDebut = dateDebutLdt.atZone(ZoneId.systemDefault());
+        //création de la date de fin de recherche
+        LocalDateTime dateFinLdt = donneesLocalesRecherchees.getDateFin().atTime(donneesLocalesRecherchees.getHeureFin());
+        ZonedDateTime dateFin = dateFinLdt.atZone(ZoneId.systemDefault());
+
+        //récupération de la commune
+        Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
+        if (!commune.isPresent()) {
+            throw new CommuneInvalideException("Le code insee est incorrect");
+        }
+
+        //Récupération de la liste de données locales bornées par les dates
+        List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository.findAllByDateDebutAndDateFin(dateDebut, dateFin, commune.get());
+
+        //Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par DonneesLocalesHistorique
+        List<DonneesLocalesHistorique> listeDonneesLocalesHistorique = new ArrayList<>();
+
+        //Création de donneesLocalesRetourHistorique qui comprends :
+        //-PolluantDtoViualisation
+        //-CommuneDtovisualition
+        //-Date
+        DonneesLocalesHistorique donneesLocalesRetourHistorique = new DonneesLocalesHistorique();
+
+        //Les données locales sont transformée en donnéesLocalesRetourHistorique pour les ajouter à la liste
+        for (DonneesLocales donneesLocales:listeDonneesLocalesBornees) {
+            //création du polluantDtoVisualisation
+            PolluantDtoVisualisation polluantDtoVisualisation = new PolluantDtoVisualisation();
+            //récupération de la liste de polluant de la donnée locale
+            List<Polluant> listePolluant = donneesLocales.getQualiteAir().getListePolluants();
+            //recherche sur le nom du polluant pour retourner l'objet polluantDtoVisualisation
+            for(Polluant polluants : listePolluant){
+                if(polluants.getNom().equals(donneesLocalesRecherchees.getPolluant())){
+                    polluantDtoVisualisation.setNom(polluants.getNom());
+                    polluantDtoVisualisation.setUnite(polluants.getUnite());
+                    polluantDtoVisualisation.setValeur(polluants.getValeur());
+                }
+            }
+            //Création de la communeDtoVisualisation
+            CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(donneesLocales.getCommune().getNom(), donneesLocales.getCommune().getNbHabitants());
+            //Création de la date
+            ZonedDateTime date = donneesLocales.getDate();
+
+            //Remplissage de l'objet donneesLocalesRetourHistorique
+            donneesLocalesRetourHistorique.setCommuneDtoVisualisation(communeDtoVisualisation);
+            donneesLocalesRetourHistorique.setDate(date);
+            donneesLocalesRetourHistorique.setPolluantDtoVisualisation(polluantDtoVisualisation);
+
+            //ajout à la liste qui sera retournée par la classe donneesLocalesHistorique
+            listeDonneesLocalesHistorique.add(donneesLocalesRetourHistorique);
+        }
+
+        return listeDonneesLocalesHistorique;
     }
 }

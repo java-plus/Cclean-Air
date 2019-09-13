@@ -1,17 +1,15 @@
 package dev.controllers;
 
+import dev.controllers.dto.DonneesLocalesRecherchees;
+import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
-import dev.entities.Commune;
 import dev.exceptions.CommuneInvalideException;
 import dev.services.CommuneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/communes")
@@ -34,5 +32,13 @@ public class CommuneController {
     public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {
 
         return communeService.creerDonneesLocalesCommune(codeInsee);
+    }
+
+    @PostMapping("/historiques/{codeInsee}")
+    public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee, @RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees){
+
+        return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
+
+
     }
 }
