@@ -1,19 +1,21 @@
 package dev.utils;
 
-import dev.controllers.dto.CommuneDto;
-import dev.entities.ConditionMeteo;
-import dev.services.CommuneService;
-import dev.services.ConditionMeteoService;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import dev.controllers.dto.CommuneDto;
+import dev.entities.ConditionMeteo;
+import dev.services.CommuneService;
+import dev.services.ConditionMeteoService;
 
 @Component
 public class ConditionMeteoSheduledTasks {
+
 
 //    private final Logger LOGGER = LoggerFactory.getLogger(ConditionMeteoSheduledTasks.class);
 //
