@@ -72,13 +72,20 @@ public class UtilisateurService {
 		return  utilisateurRepository.findAllwithNomPrenomEmail();
 	}
 
+	/**
+	 * Méthode qui supprime un utilisateur
+	 * Elle vérifie que la  personne connectée n'est pas un admin qui supprime son propre compte
+	 * @param email
+	 */
 	public void supprimerUtilisateur(String email)  {
+		//récupération utilisateur via l'email
 		Optional <Utilisateur> utilisateur = utilisateurRepository.findByEmailIgnoreCase(email);
 
+		//récupération de l'email de la personne connectée et création d'un objet Utilisateur pour l'utilisateur connecté
 		String emailConnecte = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
 		Optional<Utilisateur> utilisateurConnecte = utilisateurRepository.findByEmailIgnoreCase(emailConnecte);
 
+		//Vérification du statut de l'utilisateur et suppression si autorisé à surpprimer.
 		List<Statut> statut = utilisateurConnecte.get().getStatut();
 
 		if(statut.contains(Statut.ADMINISTRATEUR)){

@@ -70,12 +70,21 @@ public class UtilisateurController {
         return ResponseEntity.status(404).body(e.getMessage());
     }
 
+    /**
+     * Méthode qui affiche la liste des utilisateur
+     * @return
+     */
     @GetMapping("/admin/membres")
     public List<UtilisateurDtoAdmin> afficherListeUtilisateur() {
         return utilisateurService.creerListeUtilisateur();
     }
 
 
+    /**
+     * Méthode qui récupère la suppression de l'utilisateur
+     * @param email
+     * @return
+     */
     @DeleteMapping("/admin/membres/suppression/{email}")
     public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email)  {
         if (utilisateurService.isEmailExistant(email)) {
