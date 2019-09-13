@@ -70,7 +70,7 @@ public class CommuneService {
     }
 
     /**
-     * Méthode qui permet de créer les données locales à partir des différentes entités
+     * Méthode qui permet de créer un objet donnéeslocalesDto pour une commune
      *
      * @param codeInsee
      * @return
