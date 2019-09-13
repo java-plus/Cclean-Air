@@ -3,6 +3,8 @@ package dev.services;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import dev.entities.Utilisateur;
 import dev.repositories.IUtilisateurRepository;
 
 @Service
+@Transactional
 public class UtilisateurService {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(UtilisateurService.class);
