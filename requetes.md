@@ -46,6 +46,40 @@ Code `404`
 ## Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 
 
+### Cas d’utilisation “Visualiser données pollution” 
+[GET] / communes/{codeInsee}
+
+Réponse en cas de réussite : 
+
+Code : `200`
+
+```JSON
+{
+    "communeDtoVisualisation": {
+        "nom": "Nantes",
+        "nbHabitants": 303382
+    },
+    "listePolluantDtoVisualisation": [
+        {
+            "nom": "azote",
+            "unite": "µg",
+            "valeur": 12.0
+        }
+    ],
+    "conditionMeteoDtoVisualisation": {
+        "ensoleillement": 10.0,
+        "temperature": 20.0,
+        "humidite": 20.0
+    },
+    "date": "2019-09-12T14:00:00+02:00"
+} 
+```
+
+Réponse en cas d'erreur : 
+
+Code `404`
+
+
 
 ## API externes
 
@@ -171,3 +205,4 @@ Extrait du début du JSON :
   }
 
 ```
+

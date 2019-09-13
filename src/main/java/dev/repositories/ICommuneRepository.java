@@ -16,8 +16,12 @@ import java.util.Optional;
 public interface ICommuneRepository extends JpaRepository<Commune, Integer> {
 
     Optional<Commune> findByNomIgnoreCase(String nomCommune);
+
+    Optional<Commune> findByCodeInsee(String codeInsee);
+
     @Query("select new dev.controllers.dto.CommuneDto(c.nom, c.nbHabitants, c.codeInsee, c.latitude, c" +
             ".longitude) from Commune c")
     List<CommuneDto> findAllWithCodeDenomination();
+
 
 }
