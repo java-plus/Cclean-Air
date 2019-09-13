@@ -6,16 +6,23 @@ import dev.controllers.dto.UtilisateurDtoAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import dev.controllers.dto.ProfilDtoGet;
 import dev.controllers.dto.UtilisateurDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
+import dev.exceptions.UtilisateurNonConnecteException;
 import dev.services.CommuneService;
 import dev.services.UtilisateurService;
 
@@ -72,6 +79,7 @@ public class UtilisateurController {
 
     /**
      * Méthode qui affiche la liste des utilisateur
+     *
      * @return
      */
     @GetMapping("/admin/membres")
@@ -82,19 +90,25 @@ public class UtilisateurController {
 
     /**
      * Méthode qui récupère la suppression de l'utilisateur
+     *
      * @param email
      * @return
      */
     @DeleteMapping("/admin/membres/suppression/{email}")
-    public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email)  {
+    public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email) {
         if (utilisateurService.isEmailExistant(email)) {
             utilisateurService.supprimerUtilisateur(email);
             return ResponseEntity.status(200).body("L'utilisateur " + email + " est bien supprimé !");
         } else {
-        	return  ResponseEntity.status(400).body("L'email ne correspond à aucun compte");
-		}
-
-
+            return ResponseEntity.status(400).body("L'email ne correspond à aucun compte");
+        }
     }
 
+    @GetMapping(value = "/profil")
+    public ResponseEntity<ProfilDtoGet> visualiserProfil() throws UtilisateurNonConnecteException {
+
+        return new ResponseEntity<>(utilisateurService.visualiserProfil(), HttpStatus.OK);
+
+    }
 }
+

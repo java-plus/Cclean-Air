@@ -76,7 +76,7 @@ public class IndicateurController {
 	 */
 	@PostMapping(value = "/indicateurs")
 	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur)
-			throws UtilisateurNonConnecteException, NombreIndicateursException, CommuneDejaSuivieException {
+			throws NombreIndicateursException {
 
 		return new ResponseEntity<>(service.sauvegarderNouvelIndicateur(indicateur), HttpStatus.CREATED);
 
