@@ -5,20 +5,24 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import dev.controllers.dto.ProfilDtoGet;
 import dev.controllers.dto.UtilisateurDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
+import dev.exceptions.UtilisateurNonConnecteException;
 import dev.services.CommuneService;
 import dev.services.UtilisateurService;
 
@@ -63,6 +67,13 @@ public class UtilisateurController {
 			throw new UtilisateurInvalideException(
 					"ERREUR : Le statut renseigné n'est pas valide (doit être " + "utilisateur ou administrateur)");
 		}
+	}
+
+	@GetMapping(value = "/profil")
+	public ResponseEntity<ProfilDtoGet> visualiserProfil() throws UtilisateurNonConnecteException {
+
+		return new ResponseEntity<>(utilisateurService.visualiserProfil(), HttpStatus.OK);
+
 	}
 
 	@ExceptionHandler(UtilisateurInvalideException.class)
