@@ -61,6 +61,7 @@ public class ConnexionController {
                     Map<String, Object> infosSupplementaireToken = new HashMap<>();
 
                     infosSupplementaireToken.put("statuts", utilisateur.getStatut());
+                    infosSupplementaireToken.put("email", utilisateur.getEmail()); 
 
                     String jetonJTW = Jwts.builder()
                             .setSubject(utilisateur.getEmail())

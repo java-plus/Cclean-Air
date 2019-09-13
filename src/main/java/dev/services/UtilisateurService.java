@@ -3,6 +3,7 @@ package dev.services;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -10,14 +11,18 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.UtilisateurDtoAdmin;
 import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Indicateur;
+import dev.entities.Statut;
 import dev.entities.Utilisateur;
+import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
@@ -46,7 +51,7 @@ public class UtilisateurService {
 	/**
 	 * Méthode vérifiant si l'email est utilisé par un compte dans la base de
 	 * données.
-	 * 
+	 *
 	 * @param email : email à vérifier
 	 * @return true (email existant) ou false (email non utilisé)
 	 */
@@ -57,7 +62,7 @@ public class UtilisateurService {
 
 	/**
 	 * Méthode pour sauvegarder un utilisateur dans la base de données.
-	 * 
+	 *
 	 * @param dto : [UtilisateurDtoPost] l'utilisateur à sauvegarder.
 	 */
 	public Utilisateur sauvegarderUtilisateur(UtilisateurDtoPost dto) {
@@ -66,6 +71,46 @@ public class UtilisateurService {
 				ZonedDateTime.now(), new ArrayList<Indicateur>(), communeService.recupererCommune(dto.getNomCommune()));
 		utilisateurRepository.save(utilisateur);
 		return utilisateur;
+
+	}
+
+	/**
+	 * Méthode qui retourne la liste des utilisateurs avec le nom et leur prénom
+	 *
+	 * @return
+	 */
+	public List<UtilisateurDtoAdmin> creerListeUtilisateur() {
+		return utilisateurRepository.findAllwithNomPrenomEmail();
+	}
+
+	/**
+	 * Méthode qui supprime un utilisateur Elle vérifie que la personne connectée
+	 * n'est pas un admin qui supprime son propre compte
+	 *
+	 * @param email
+	 */
+	public void supprimerUtilisateur(String email) {
+		// récupération utilisateur via l'email
+		Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmailIgnoreCase(email);
+
+		// récupération de l'email de la personne connectée et création d'un objet
+		// Utilisateur pour l'utilisateur connecté
+		String emailConnecte = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<Utilisateur> utilisateurConnecte = utilisateurRepository.findByEmailIgnoreCase(emailConnecte);
+
+		// Vérification du statut de l'utilisateur et suppression si autorisé à
+		// surpprimer.
+		List<Statut> statut = utilisateurConnecte.get().getStatut();
+
+		if (statut.contains(Statut.ADMINISTRATEUR)) {
+			if (!utilisateur.get().getEmail().equals(emailConnecte)) {
+				if (utilisateur.isPresent()) {
+					utilisateurRepository.delete(utilisateur.get());
+				}
+			} else {
+				throw new UtilisateurInvalideException("Un admin ne peut pas supprimer son propre compte");
+			}
+		}
 
 	}
 
