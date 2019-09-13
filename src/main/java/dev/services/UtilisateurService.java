@@ -2,10 +2,15 @@ package dev.services;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.entities.Statut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,4 +62,33 @@ public class UtilisateurService {
 
 	}
 
+	/**
+	 * Méthode qui retourne la liste des utilisateurs avec le nom et leur prénom
+	 * @return
+	 */
+	public List<UtilisateurDtoAdmin> creerListeUtilisateur(){
+		return  utilisateurRepository.findAllwithNomPrenomEmail();
+	}
+
+	public void supprimerUtilisateur(String email)  {
+		Optional <Utilisateur> utilisateur = utilisateurRepository.findByEmailIgnoreCase(email);
+
+		Utilisateur utilisateurConnecte = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+		String emailconnecte = utilisateurConnecte.getEmail();
+
+		if(utilisateurConnecte.getStatut().equals(Statut.ADMINISTRATEUR)){
+			if(!utilisateur.get().getEmail().equals(emailconnecte)){
+				if(utilisateur.isPresent()){
+					utilisateurRepository.delete(utilisateur.get());
+				}
+			}
+		}
+
+
+
+
+
+
+	}
 }
