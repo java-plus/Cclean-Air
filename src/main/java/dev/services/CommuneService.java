@@ -6,6 +6,7 @@ import dev.entities.CodePostal;
 import dev.entities.Commune;
 import dev.exceptions.CommuneInvalideException;
 import dev.repositories.ICommuneRepository;
+import dev.utils.CalculUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,24 +32,48 @@ public class CommuneService {
 
     private ICommuneRepository communeRepository;
     private CodePostalService codePostalService;
+    private CalculUtils calculUtils;
 
     @Autowired
-    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService) {
+    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService,
+                          CalculUtils calculUtils) {
         this.communeRepository = communeRepository;
         this.codePostalService = codePostalService;
+        this.calculUtils = calculUtils;
     }
 
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
     }
 
-    public Commune recupererCommune(String commune) {
+    public Commune recupererCommune(String commune) throws CommuneInvalideException {
         return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
                 ": Commune inexistante dans la base de données."));
     }
 
     public List<CommuneDto> recupererToutesLesCommunesDto() {
         return communeRepository.findAllWithCodeDenomination();
+    }
+
+    public List<Commune> recupererToutesLesCommunes() {
+        return communeRepository.findAll();
+    }
+
+    public Commune recupererCommuneLaPlusProcheSelonCoordonnees(Double longitude, Double latitude) {
+
+        List<Commune> listeCommunes = communeRepository.findAll();
+        Double distance = Double.MAX_VALUE;
+        Commune communeLaPlusProche = null;
+
+        for (Commune c: listeCommunes) {
+            Double resultat = calculUtils.calculerDistanceEntreDeuxPoints(c.getLongitude(), c.getLatitude(), longitude,
+                    latitude);
+            if(resultat < distance) {
+                communeLaPlusProche = c;
+                distance = resultat;
+            }
+        }
+        return communeLaPlusProche;
     }
 
     public void recupererCommunesDeApi() throws CommuneInvalideException {

@@ -44,7 +44,7 @@ public class Commune implements Serializable {
 	/**
 	 * Donnees locales de la commune
 	 */
-	@OneToMany(mappedBy = "commune")
+	@OneToMany(mappedBy = "commune", cascade = CascadeType.ALL)
 	@Column(name = "com_donnees_locales")
 	private List<DonneesLocales> donneesLocales;
 

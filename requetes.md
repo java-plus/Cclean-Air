@@ -136,11 +136,66 @@ Code `200`
   },
 ```
 
+### Requête pour récupérer les données de pollution d'un polluant pour les communes de Loire-Atlantique
+
+[GET] http://www.airpl.org/api/mesures?debut=2019-09-12T10:00:00&fin=2019-09-12T10:00:00&zones=all&polluant=24
+
+Réponse en cas de succès : 
+
+Code `200`
+
+Extrait du début du JSON :
+
+```JSON
+{
+  "polluant": {
+    "id": "24",
+    "nom": "Particules fines",
+    "code": "PM10",
+    "unite": "microg/m3",
+    "seuils": [
+      
+    ]
+  },
+  "intervalle": "quart-horaire",
+  "download_url": "/api/mesures.csv?debut=2019-09-12T10%3A00%3A00&fin=2019-09-12T10%3A00%3A00&zones=all&polluant=24",
+  "next": "/api/mesures?debut=2019-09-12&fin=2019-09-12&zones=all&polluant=24",
+  "prev": "/api/mesures?debut=2019-09-12&fin=2019-09-12&zones=all&polluant=24",
+  "moyenne": "horaire",
+  "mesures": {
+    "68": {
+      "departement": "Loire-Atlantique",
+      "zone": "Basse Loire",
+      "name": "Frossay",
+      "code": "68",
+      "data": [
+        {
+          "nom_departement": "Loire-Atlantique",
+          "nom_zone": "Basse Loire",
+          "nom_station": "Frossay",
+          "code_station": "68",
+          "polluant": "PM10",
+          "niveau": 0,
+          "unite": "microg/m3",
+          "mesure": "moyenne horaire",
+          "etat": "B",
+          "date": "2019-09-12T08:00:00",
+          "TZ": "UTC"
+        }
+      ]
+    }
+```
+
+
 ### Requête pour récupérer les communes de Loire-Atlantique
 
 -> Cette requête sera exécutée tous les 15 jours.
 
+[GET] https://geo.api.gouv.fr/communes?codeRegion=52&fields=nom,code,codesPostaux,centre,codeRegion,population&format=json&geometry=centre
+
+Pas celle-ci :
 [GET] https://geo.api.gouv.fr/communes?codeDepartement=44&fields=nom,code,codesPostaux,centre,codeRegion,population&format=json&geometry=centre
+
 
 Réponse en cas de succès :
 

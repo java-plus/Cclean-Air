@@ -20,4 +20,5 @@ public interface ICommuneRepository extends JpaRepository<Commune, Integer> {
             ".longitude) from Commune c")
     List<CommuneDto> findAllWithCodeDenomination();
 
+    List<Commune> findAll();
 }
