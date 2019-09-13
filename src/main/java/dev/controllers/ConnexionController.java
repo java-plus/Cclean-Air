@@ -53,6 +53,7 @@ public class ConnexionController {
      */
     @PostMapping(value = "/connexion")
     public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+
         return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
                 .filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
                 .map(utilisateur -> {
