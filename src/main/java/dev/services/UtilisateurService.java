@@ -2,6 +2,8 @@ package dev.services;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -11,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.ProfilDtoGet;
 import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
+import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.IUtilisateurRepository;
+import dev.utils.RecuperationUtilisateurConnecte;
 
 @Service
 @Transactional
@@ -24,13 +30,16 @@ public class UtilisateurService {
 
 	private PasswordEncoder passwordEncoder;
 	private IUtilisateurRepository utilisateurRepository;
+	private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
 	private CommuneService communeService;
 
 	@Autowired
 	public UtilisateurService(PasswordEncoder passwordEncoder, IUtilisateurRepository utilisateurRepository,
-			CommuneService communeService) {
+			RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService) {
+		super();
 		this.passwordEncoder = passwordEncoder;
 		this.utilisateurRepository = utilisateurRepository;
+		this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
 		this.communeService = communeService;
 	}
 
@@ -57,6 +66,24 @@ public class UtilisateurService {
 				ZonedDateTime.now(), new ArrayList<Indicateur>(), communeService.recupererCommune(dto.getNomCommune()));
 		utilisateurRepository.save(utilisateur);
 		return utilisateur;
+
+	}
+
+	/**
+	 * @return renvoie les informations nécessaire à l'affichage de la vue du profil
+	 *         utilisateur via un objet ProfilDtoGet
+	 * @throws UtilisateurNonConnecteException
+	 */
+	public ProfilDtoGet visualiserProfil() throws UtilisateurNonConnecteException {
+		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+		LOGGER.info("Utilisateur : {0}", utilisateur);
+		List<CommuneIndicateurDto> listeIndicateurs = utilisateur.getListeIndicateurs().stream()
+				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom(), i.getAlerte()))
+				.collect(Collectors.toList());
+
+		return new ProfilDtoGet(utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getEmail(),
+				utilisateur.getCommune().getNom(), listeIndicateurs, utilisateur.getStatutNotification(),
+				utilisateur.getMotDePasse());
 
 	}
 

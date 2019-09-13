@@ -2,8 +2,10 @@ package dev.utils;
 
 import java.util.List;
 
+<<<<<<<HEAD
 import javax.transaction.Transactional;
 
+=======>>>>>>>master
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +21,29 @@ import dev.services.ConditionMeteoService;
 @Transactional
 public class ConditionMeteoSheduledTasks {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(ConditionMeteoSheduledTasks.class);
 
-	private ConditionMeteoService conditionMeteoService;
-	private CommuneService communeService;
 
-	@Autowired
-	public ConditionMeteoSheduledTasks(ConditionMeteoService conditionMeteoService, CommuneService communeService) {
-		this.conditionMeteoService = conditionMeteoService;
-		this.communeService = communeService;
-	}
-
-	@Scheduled(cron = "0 * * * * *")
-	public void recupererDonneesApiMeteoEtSauvegarder() {
-		LOGGER.info("lancement de recupererDonneesApiMeteoEtSauvegarder()");
-		List<CommuneDto> communes = communeService.recupererToutesLesCommunesDto();
-		for (CommuneDto c : communes) {
-			ConditionMeteo conditionMeteo = conditionMeteoService.recupererConditionMeteoCommune(c);
-			conditionMeteoService.sauvegarderConditionMeteo(conditionMeteo);
-		}
-
-	}
+//    private final Logger LOGGER = LoggerFactory.getLogger(ConditionMeteoSheduledTasks.class);
+//
+//    private ConditionMeteoService conditionMeteoService;
+//    private CommuneService communeService;
+//
+//    @Autowired
+//    public ConditionMeteoSheduledTasks(ConditionMeteoService conditionMeteoService, CommuneService communeService) {
+//        this.conditionMeteoService = conditionMeteoService;
+//        this.communeService = communeService;
+//    }
+//
+//    @Scheduled(cron="0 * * * * *")
+//    public void recupererDonneesApiMeteoEtSauvegarder() {
+//        LOGGER.info("lancement de recupererDonneesApiMeteoEtSauvegarder()");
+//        List<CommuneDto> communes = communeService.recupererToutesLesCommunesDto();
+//        for (CommuneDto c : communes) {
+//            ConditionMeteo conditionMeteo = conditionMeteoService.recupererConditionMeteoCommune(c);
+//            conditionMeteoService.sauvegarderConditionMeteo(conditionMeteo);
+//        }
+//
+//    }
+>>>>>>> master
 
 }
