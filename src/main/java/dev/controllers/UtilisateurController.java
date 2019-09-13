@@ -75,6 +75,7 @@ public class UtilisateurController {
         return utilisateurService.creerListeUtilisateur();
     }
 
+
     @DeleteMapping("/admin/membres/suppression/{email}")
     public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email)  {
         if (utilisateurService.isEmailExistant(email)) {
