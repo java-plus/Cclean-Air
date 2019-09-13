@@ -11,13 +11,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.IndicateurDto;
+import dev.controllers.dto.ModificationCommuneIndicateurDto;
+import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.NombreIndicateursException;
+import dev.exceptions.UtilisateurNonConnecteException;
 import dev.services.IndicateurService;
 
 /**
@@ -66,22 +70,15 @@ public class IndicateurController {
 	 *                   depuis une requete HTTP
 	 * @return retourne le critère ajouté et un code http 201, en cas d'erreur,
 	 *         renvoie un code http 400
+	 * @throws UtilisateurNonConnecteException
+	 * @throws CommuneDejaSuivieException
+	 * @throws NombreIndicateursException
 	 */
 	@PostMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
+	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur)
+			throws NombreIndicateursException {
 
-		try {
-
-			IndicateurDto response = service.sauvegarderNouvelIndicateur(indicateur);
-			if (response != null) {
-				return new ResponseEntity<>(response, HttpStatus.CREATED);
-			} else {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-
-		} catch (NombreIndicateursException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<>(service.sauvegarderNouvelIndicateur(indicateur), HttpStatus.CREATED);
 
 	}
 
@@ -89,14 +86,25 @@ public class IndicateurController {
 	 * @param indicateur : L'indicateur à supprimer, identifié par le nom de la
 	 *                   commune et les informations de l'utilisateur connecté
 	 * @return renvoie un code 204 en cas de suppression réussie
+	 * @throws UtilisateurNonConnecteException
 	 */
-	@DeleteMapping(value = "indicateurs")
+	@DeleteMapping(value = "/indicateurs")
 	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
-		if (service.supprimerUnIndicateur(indicateur) != null) {
-			return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
+	}
+
+	/**
+	 * @param nouvelIndicateur L'indicateur nouvellement créé
+	 * @param ancienIndicateur L'indicateur qui va être remplacé
+	 * @return renvoie le nom de la commune du nouvelle indicateur
+	 * @throws CommuneDejaSuivieException
+	 * @throws UtilisateurNonConnecteException
+	 */
+	@PatchMapping(value = "/indicateurs")
+	public ResponseEntity<IndicateurDto> modifierIndicateur(@RequestBody ModificationCommuneIndicateurDto indicateurs,
+			CommuneIndicateurDto ancienIndicateur) throws UtilisateurNonConnecteException, CommuneDejaSuivieException {
+
+		return new ResponseEntity<>(service.modifierIndicateur(indicateurs), HttpStatus.OK);
 
 	}
 

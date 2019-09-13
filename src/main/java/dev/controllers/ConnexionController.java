@@ -53,6 +53,7 @@ public class ConnexionController {
      */
     @PostMapping(value = "/connexion")
     public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+
         return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
                 .filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
                 .map(utilisateur -> {
@@ -60,6 +61,7 @@ public class ConnexionController {
                     Map<String, Object> infosSupplementaireToken = new HashMap<>();
 
                     infosSupplementaireToken.put("statuts", utilisateur.getStatut());
+                    infosSupplementaireToken.put("email", utilisateur.getEmail()); 
 
                     String jetonJTW = Jwts.builder()
                             .setSubject(utilisateur.getEmail())

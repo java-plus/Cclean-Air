@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.IndicateurDto;
+import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.entities.Commune;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
+import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.NombreIndicateursException;
 import dev.exceptions.UtilisateurNonConnecteException;
@@ -57,7 +59,8 @@ public class IndicateurService {
 	 */
 	public List<CommuneIndicateurDto> recupererLesIndicateurs(String mailUtilisateur) {
 		return repository.findByUtilisateurEmail(mailUtilisateur).stream()
-				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom())).collect(Collectors.toList());
+				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom(), i.getAlerte()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -77,6 +80,7 @@ public class IndicateurService {
 			utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
 			Indicateur response = new Indicateur();
 			response.setUtilisateur(utilisateur);
+			response.setAlerte(indicateur.getAlerte());
 			Optional<Commune> commune = communeRepository.findByNomIgnoreCase(indicateur.getCommune());
 			if (commune.isPresent()) {
 				response.setCommune(commune.get());
@@ -86,7 +90,8 @@ public class IndicateurService {
 
 			if (response.getUtilisateur().getListeIndicateurs().size() < 11) {
 				repository.save(response);
-				return new IndicateurDto(response.getUtilisateur().getEmail(), response.getCommune().getNom());
+				return new IndicateurDto(response.getUtilisateur().getEmail(), response.getCommune().getNom(),
+						response.getAlerte());
 			} else {
 				throw new NombreIndicateursException("Nombre d'indicateurs autorisés atteint");
 			}
@@ -105,14 +110,14 @@ public class IndicateurService {
 		try {
 			List<Indicateur> indicateurs = repository
 					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
-			List<Indicateur> indicateursFiltrés = indicateurs.stream()
+			List<Indicateur> indicateursFiltres = indicateurs.stream()
 					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
 			Indicateur suppression = null;
-			if (!indicateursFiltrés.isEmpty()) {
-				suppression = indicateursFiltrés.get(0);
+			if (!indicateursFiltres.isEmpty()) {
+				suppression = indicateursFiltres.get(0);
 				repository.delete(suppression);
 				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
-						suppression.getCommune().getNom());
+						suppression.getCommune().getNom(), suppression.getAlerte());
 			}
 			return null;
 
@@ -120,6 +125,59 @@ public class IndicateurService {
 			e.getMessage();
 			return null;
 		}
+	}
+
+	/**
+	 * @param nouvelIndicateur L'indicateur a modifier en base
+	 * @return renvoie l'indicateur modifié
+	 * @throws UtilisateurNonConnecteException
+	 * @throws CommuneDejaSuivieException
+	 */
+	public IndicateurDto modifierIndicateur(ModificationCommuneIndicateurDto indicateurs)
+			throws UtilisateurNonConnecteException, CommuneDejaSuivieException {
+
+		// Recherche l'indicateur utilisateur à modifier
+		Indicateur indicateurAModifier = repository
+				.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail())
+				.stream().filter(i -> i.getCommune().getNom().equals(indicateurs.getCommunes()[0]))
+				.collect(Collectors.toList()).get(0);
+
+		// Vérifie si le nouvel indicateur ne créérait pas de doublon dans la liste
+		// existante de l'utilisateur. Si ok, on le modifie puis on retourne un objet
+		// dto avec le mail de l'utilisateur connecté et le nom de la commune de
+		// l'indicateur modifié
+
+		if (verifierDoublonIndicateur(new CommuneIndicateurDto(indicateurs.getCommunes()[1], true))) {
+			Optional<Commune> nouvelleCommune = communeRepository.findByNomIgnoreCase(indicateurs.getCommunes()[1]);
+			if (nouvelleCommune.isPresent()) {
+				indicateurAModifier.setCommune(nouvelleCommune.get());
+				repository.save(indicateurAModifier);
+				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
+						indicateurAModifier.getCommune().getNom(), indicateurAModifier.getAlerte());
+			} else {
+				throw new CommuneInvalideException("Commune invalide");
+			}
+		} else {
+			throw new CommuneDejaSuivieException("Commune déjà présente dans la liste des indicateurs.");
+		}
+
+	}
+
+	/**
+	 * Cette méthode vérifie la présence de doublon lorsqu'on souhaite ajouter ou
+	 * modifier un indicateur
+	 * 
+	 * @param commune Nom d'une commune
+	 * @return renvoie true si la commune n'existe pas encore dans la liste des
+	 *         indicateurs d'un utilisateur, sinon false
+	 * @throws UtilisateurNonConnecteException renvoie une exception si aucun
+	 *                                         utilisateur n'est connecté
+	 */
+	public Boolean verifierDoublonIndicateur(CommuneIndicateurDto commune) throws UtilisateurNonConnecteException {
+		return recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getListeIndicateurs().stream()
+				.filter(i -> i.getCommune().getNom().equals(commune.getCommune())).collect(Collectors.toList())
+				.isEmpty();
+
 	}
 
 }

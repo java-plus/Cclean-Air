@@ -1,10 +1,15 @@
 package dev.services;
 
+
+import dev.controllers.dto.visualiserDonnees.*;
+import dev.entities.*;
+import dev.exceptions.CommuneInvalideException;
+import dev.repositories.*;
+import dev.repositories.IConditionMeteoRepository;
 import dev.controllers.dto.CommuneDto;
 import dev.controllers.dto.CommuneDtoGet;
 import dev.entities.CodePostal;
 import dev.entities.Commune;
-import dev.exceptions.CommuneInvalideException;
 import dev.repositories.ICommuneRepository;
 import dev.utils.CalculUtils;
 import org.slf4j.Logger;
@@ -19,6 +24,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 /**
  * Classe regroupant les services d'une commune géographique.
  */
@@ -27,6 +35,8 @@ public class CommuneService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
 
+    private IDonneesLocalesRepository donneesLocalesRepository;
+
     @Value("${url.communes_api}")
     private String URL_API_COMMUNES;
 
@@ -34,12 +44,22 @@ public class CommuneService {
     private CodePostalService codePostalService;
     private CalculUtils calculUtils;
 
+    private IQualiteAirRepository qualiteAirRepository;
+
+    private IConditionMeteoRepository conditionMeteoRepository;
+
+    private IPolluantRepository polluantRepository;
+
+    // TODO: corriger constructeur ici
     @Autowired
-    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService,
-                          CalculUtils calculUtils) {
+    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService) {
         this.communeRepository = communeRepository;
         this.codePostalService = codePostalService;
         this.calculUtils = calculUtils;
+        this.qualiteAirRepository = qualiteAirRepository;
+        this.conditionMeteoRepository = conditionMeteoRepository;
+        this.polluantRepository = polluantRepository;
+        this.donneesLocalesRepository = donneesLocales;
     }
 
     public Boolean isCommuneExistante(String nomCommune) {
@@ -50,6 +70,68 @@ public class CommuneService {
         return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
                 ": Commune inexistante dans la base de données."));
     }
+
+    /**
+     * Méthode qui permet de créer les données locales à partir des différentes entités
+     *
+     * @param codeInsee
+     * @return
+     */
+    public DonneesLocalesDto creerDonneesLocalesCommune(String codeInsee) {
+
+        //récupération de la commune
+        Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
+
+        if (!commune.isPresent()) {
+            throw new CommuneInvalideException("La commune n'existe pas");
+        }
+
+        //Récupération de l'objet communeDtovisualisation
+        CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(commune.get().getNom(), commune.get().getNbHabitants());
+
+        //Récupération de la dernière date d'enregistrements pour la commune
+        ZonedDateTime date = donneesLocalesRepository.findByCommune(commune);
+        //Récupération des données locales
+        DonneesLocales donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
+
+        //Récupéartion des id qualiteAir et conditionMeteo
+        Integer qualiteAirId = null;
+        Integer conditionMeteoId = null;
+        if (donneesLocales != null) {
+            qualiteAirId = donneesLocales.getQualiteAir().getId();
+            conditionMeteoId = donneesLocales.getConditionMeteo().getId();
+        }
+
+        //Récupération qualitéAir
+        Optional<QualiteAir> qualiteAir = null;
+        if (qualiteAirId != null) {
+            qualiteAir = qualiteAirRepository.findById(qualiteAirId);
+        }
+
+        //Récupération ConditionMeteo et création du conditionMeteoDtoVisualisation
+        ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = null;
+        if (conditionMeteoId != null) {
+            Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
+            conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(), conditionMeteo.get().getHumidite());
+        }
+        //Création de l'objet DonneesLocalesDto
+        DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
+        donneesLocalesDto.setDate(date);
+        donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
+        if (!qualiteAir.isPresent()) {
+            donneesLocalesDto.setListePolluantDtoVisualisation(null);
+        } else {
+            List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
+            donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
+
+        }
+        donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
+
+        LOGGER.info("création des données locales à afficher /classe CommuneService");
+
+        return donneesLocalesDto;
+    }
+
 
     public List<CommuneDto> recupererToutesLesCommunesDto() {
         return communeRepository.findAllWithCodeDenomination();
@@ -88,14 +170,15 @@ public class CommuneService {
                     URL_API_COMMUNES,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<List<CommuneDtoGet>>(){});
+                    new ParameterizedTypeReference<List<CommuneDtoGet>>() {
+                    });
             List<CommuneDtoGet> communes = response.getBody();
 
-            for (CommuneDtoGet c: communes) {
+            for (CommuneDtoGet c : communes) {
                 Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
                         c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
                 communeRepository.save(commune);
-                for (String cp: c.getCodesPostaux()) {
+                for (String cp : c.getCodesPostaux()) {
                     CodePostal codePostal = new CodePostal(cp, commune);
                     codePostalService.sauvegarderCodePostal(codePostal);
                 }
