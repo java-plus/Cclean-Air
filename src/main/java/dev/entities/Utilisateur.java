@@ -16,6 +16,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -107,15 +108,16 @@ public class Utilisateur implements Serializable {
 	private List<Indicateur> listeIndicateurs;
 
 	@ManyToOne
+	@JoinColumn(name = "uti_commune")
 	private Commune commune;
 
 	public Utilisateur() {
 	}
 
 	public Utilisateur(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
-			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")@NotBlank String motDePasse,
-					   List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
-					   ZonedDateTime dateDerniereConnexion, List<Indicateur> listeIndicateurs, Commune commune) {
+			@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$") @NotBlank String motDePasse,
+			List<Statut> statut, @NotNull Boolean statutNotification, Integer compteurTentativesConnexion,
+			ZonedDateTime dateDerniereConnexion, List<Indicateur> listeIndicateurs, Commune commune) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -377,4 +379,3 @@ public class Utilisateur implements Serializable {
 	}
 
 }
-
