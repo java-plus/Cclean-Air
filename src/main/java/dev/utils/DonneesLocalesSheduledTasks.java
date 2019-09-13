@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe gérant le lancement automatique des méthodes nécessaires à la génération et à la sauvegarde des données
+ * locales.
+ */
 @Component
 public class DonneesLocalesSheduledTasks {
 

@@ -2,6 +2,9 @@ package dev.utils;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe utilitaire regroupant des méthodes de calcul.
+ */
 @Component
 public class CalculUtils {
 

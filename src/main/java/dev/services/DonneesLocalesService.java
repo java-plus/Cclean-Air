@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * Classe regroupant les services liés aux données locales.
+ */
 @Service
 public class DonneesLocalesService {
 
@@ -28,9 +31,11 @@ public class DonneesLocalesService {
     @Autowired
     private CommuneService communeService;
 
+    /**
+     * Méthode assurant la sauvegarde des données locales dans la base de données.
+     */
     public void sauvegarderDonneesLocalesHeureCourranteMoinsUn() {
 
-        // List<CommuneDto> listeCommunesDto = communeService.recupererToutesLesCommunesDto();
         List<Commune> listeCommunes = communeService.recupererToutesLesCommunes();
         qualiteAirService.recupererEtSauvegarderQualiteAir();
         List<QualiteAir> liisteQualiteAir = qualiteAirService.recupererListeQualitesAirsSelonDate(qualiteAirService.recupererDateDerniereQualiteAirDeLaBase());
@@ -39,12 +44,9 @@ public class DonneesLocalesService {
             ConditionMeteo conditionMeteo =
                     conditionMeteoService.recupererConditionMeteoCommune(new CommuneDto(c.getNom(),
                             c.getNbHabitants(), c.getCodeInsee(), c.getLatitude(), c.getLongitude()));
-            // String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude
             QualiteAir qualiteAir = qualiteAirService.recupererQualiteAirCorrespondantACoordonnees(liisteQualiteAir,
                     c.getLongitude(),
                     c.getLongitude());
-
-            // String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude
             DonneesLocales donneesLocales =
                     new DonneesLocales(ZonedDateTime.now().minusHours(1).withMinute(0).withSecond(0).withNano(0),
                             c, conditionMeteo, qualiteAir);

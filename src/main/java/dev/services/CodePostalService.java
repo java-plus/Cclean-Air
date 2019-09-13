@@ -5,6 +5,9 @@ import dev.repositories.ICodePostalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Classe regroupant les services liés au Code Postal d'une commune.
+ */
 @Service
 public class CodePostalService {
 

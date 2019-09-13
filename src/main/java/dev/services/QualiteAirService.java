@@ -32,7 +32,7 @@ import java.util.Map;
 public class QualiteAirService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(QualiteAirService.class);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private PolluantService polluantService;
     private IQualiteAirRepository qualiteAirRepository;
     private CommuneService communeService;
