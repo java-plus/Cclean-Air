@@ -27,7 +27,7 @@ public class DonneesLocalesSheduledTasks {
         this.donneesLocalesService = donneesLocalesService;
     }
 
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(cron="0 * * * * *")
     public void recupererEtSauvegarderDonneesLocales() {
         LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
         donneesLocalesService.sauvegarderDonneesLocalesHeureCourranteMoinsUn();

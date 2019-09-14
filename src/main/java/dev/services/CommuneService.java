@@ -1,16 +1,15 @@
 package dev.services;
 
 
-import dev.controllers.dto.visualiserDonnees.*;
+import dev.controllers.dto.CommuneDto;
+import dev.controllers.dto.CommuneDtoGet;
+import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
 import dev.entities.*;
 import dev.exceptions.CommuneInvalideException;
 import dev.repositories.*;
-import dev.repositories.IConditionMeteoRepository;
-import dev.controllers.dto.CommuneDto;
-import dev.controllers.dto.CommuneDtoGet;
-import dev.entities.CodePostal;
-import dev.entities.Commune;
-import dev.repositories.ICommuneRepository;
 import dev.utils.CalculUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -50,16 +48,18 @@ public class CommuneService {
 
     private IPolluantRepository polluantRepository;
 
-    // TODO: corriger constructeur ici
     @Autowired
-    public CommuneService(ICommuneRepository communeRepository, CodePostalService codePostalService) {
+    public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository,
+                          CodePostalService codePostalService, CalculUtils calculUtils,
+                          IQualiteAirRepository qualiteAirRepository,
+                          IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
+        this.donneesLocalesRepository = donneesLocalesRepository;
         this.communeRepository = communeRepository;
         this.codePostalService = codePostalService;
         this.calculUtils = calculUtils;
         this.qualiteAirRepository = qualiteAirRepository;
         this.conditionMeteoRepository = conditionMeteoRepository;
         this.polluantRepository = polluantRepository;
-        this.donneesLocalesRepository = donneesLocales;
     }
 
     public Boolean isCommuneExistante(String nomCommune) {
