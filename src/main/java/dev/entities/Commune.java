@@ -1,8 +1,16 @@
 package dev.entities;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * Classe représentant une commune géographique.
@@ -44,7 +52,7 @@ public class Commune implements Serializable {
 	/**
 	 * Donnees locales de la commune
 	 */
-	@OneToMany(mappedBy = "commune", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "commune", cascade = CascadeType.PERSIST)
 	@Column(name = "com_donnees_locales")
 	private List<DonneesLocales> donneesLocales;
 
@@ -79,8 +87,8 @@ public class Commune implements Serializable {
 	}
 
 	public Commune(String nom, Long nbHabitants, String codeInsee, Double latitude, Double longitude,
-				   List<CodePostal> codesPostaux, List<Indicateur> listeIndicateurs,
-				   List<DonneesLocales> donneesLocales, List<Notification> listeNotifications) {
+			List<CodePostal> codesPostaux, List<Indicateur> listeIndicateurs, List<DonneesLocales> donneesLocales,
+			List<Notification> listeNotifications) {
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
 		this.codeInsee = codeInsee;
