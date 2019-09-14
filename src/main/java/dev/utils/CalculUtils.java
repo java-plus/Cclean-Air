@@ -8,6 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class CalculUtils {
 
+    /**
+     * Méthode permettant de calculer la distance séparant deux éléments sur un axe x/y.
+     * @param x1 : [double] valeur de coordonnée sur l'axe x de l'élément 1
+     * @param y1 : [double] valeur de coordonnée sur l'axe y de l'élément 1
+     * @param x2 : [double] valeur de coordonnée sur l'axe x de l'élément 2
+     * @param y2 : [double] valeur de coordonnée sur l'axe y de l'élément 2
+     * @return : [double] valeur de distance entre les deux éléments
+     */
     public double calculerDistanceEntreDeuxPoints(
             double x1,
             double y1,

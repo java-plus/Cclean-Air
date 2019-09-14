@@ -22,6 +22,9 @@ public class CommuneSheduledTasks {
         this.communeService = communeService;
     }
 
+    /**
+     * Méthode lançant périodiquement la méthode de récupération de toutes les communes de l'API.
+     */
     @Scheduled(initialDelay=1000, fixedRate=1296000000)
     public void recupererDonneesApiCommunesEtSauvegarder() {
         LOGGER.info("lancement de recupererDonneesApiCommunesEtSauvegarder()");

@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe regroupant les méthodes de service associées à la qualité de l'air.
+ */
 @Service
 public class QualiteAirService {
 
@@ -49,7 +52,13 @@ public class QualiteAirService {
         this.calculUtils = calculUtils;
     }
 
-    public void recupererEtSauvegarderQualiteAir() {
+    /**
+     * Méthode récupérant les données de la qualité de l'air de l'api pour chaque polluant et pour chaque station de
+     * mesure.
+     * @return Map<String, List<Polluant>> : une map contenant pour chaque station (key=le nom de la station), la liste
+     * des polluants (value).
+     */
+    public Map<String, List<Polluant>> recupererDonneesQualiteAirDeApi() {
         LOGGER.info("recupererEtSauvegarderQualiteAir() lancé");
 
         Map<String, List<Polluant>> mapPolluants = new HashMap<>();
@@ -76,10 +85,7 @@ public class QualiteAirService {
 
                 QualiteAirDtoApi qualiteAirDtoApi = null;
                 ObjectMapper mapper = new ObjectMapper();
-
                 qualiteAirDtoApi = mapper.readValue(result, QualiteAirDtoApi.class);
-
-                LOGGER.info("objet qualité air dto = " + qualiteAirDtoApi);
 
                 for (Mesure m : qualiteAirDtoApi.getMesures()) {
                     Polluant polluant = new Polluant(m.getData().get(0).getUnite(),
@@ -116,6 +122,15 @@ public class QualiteAirService {
 
         }
 
+        return mapPolluants;
+    }
+
+    /**
+     * Méthode sauvegardant la liste des polluants pour chaque station dans la table QualiteAir.
+     * @param mapPolluants Map<String, List<Polluant>> : une map contenant pour chaque station (key=le nom de
+     *                     la station), la liste des polluants (value).
+     */
+    public void sauvegarderQualiteAir(Map<String, List<Polluant>> mapPolluants) {
         mapPolluants.forEach(
                 (key, value) -> {
                     QualiteAir qualiteAir =
@@ -128,6 +143,11 @@ public class QualiteAirService {
         );
     }
 
+    /**
+     * Méthode retournant la date du dernier enregistrement dans la table de la qualité d'air.
+     * @return : [ZonedDateTime] la date/heure du dernier enregistrement.
+     * @throws QualiteAirInvalideException : exception dans le cas où aucune ligne n'a été trouvée.
+     */
     public ZonedDateTime recupererDateDerniereQualiteAirDeLaBase() throws QualiteAirInvalideException {
         QualiteAir qualiteAir =
                 qualiteAirRepository.findFirstByOrderByIdDesc().orElseThrow(() -> new QualiteAirInvalideException("ERREUR" +
@@ -137,10 +157,22 @@ public class QualiteAirService {
         return qualiteAir.getDate();
     }
 
-    public List<QualiteAir> recupererListeQualitesAirsSelonDate(ZonedDateTime date) {
+    /**
+     * Méthode retournant la liste des QualiteAir de la date/heure indiquée de la base de données.
+     * @param date : [ZonedDateTime] date/heure des QualiteAir à retourner.
+     * @return [List<QualiteAir>] la liste des QualiteAir.
+     */
+    public List<QualiteAir> recupererListeQualitesAirSelonDate(ZonedDateTime date) {
         return qualiteAirRepository.findByDate(date);
     }
 
+    /**
+     * Méthode retournant la QualiteAir dont la station était la plus proche des coordonnées indiquées.
+     * @param listeQualiteAir : [List<QualiteAir>] liste des QualiteAir où chercher.
+     * @param longitude : [Double] longitude de la commune.
+     * @param latitude : [Double] latitude de la commune.
+     * @return [QualiteAir] la QualiteAir la plus proche géographiquement de la commune.
+     */
     public QualiteAir recupererQualiteAirCorrespondantACoordonnees(List<QualiteAir> listeQualiteAir, Double longitude,
                                                                    Double latitude) {
         Double distance = Double.MAX_VALUE;

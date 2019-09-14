@@ -1,9 +1,10 @@
 package dev;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import dev.entities.Statut;
+import dev.entities.Utilisateur;
+import dev.repositories.ICodePostalRepository;
+import dev.repositories.ICommuneRepository;
+import dev.repositories.IUtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,13 +13,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import dev.entities.CodePostal;
-import dev.entities.Commune;
-import dev.entities.Statut;
-import dev.entities.Utilisateur;
-import dev.repositories.ICodePostalRepository;
-import dev.repositories.ICommuneRepository;
-import dev.repositories.IUtilisateurRepository;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @EnableScheduling
@@ -52,7 +49,7 @@ public class CcleanAirApplication {
 				listeStatuts2, Boolean.FALSE, Integer.valueOf(0), ZonedDateTime.now(), null, null);
 
 		// Création communes
-		var commune1 = new Commune("Quimper", Long.valueOf(50000), "29000", Double.valueOf(-1), Double.valueOf(2));
+		/*var commune1 = new Commune("Quimper", Long.valueOf(50000), "29000", Double.valueOf(-1), Double.valueOf(2));
 		communeRepository.save(commune1);
 		List<CodePostal> CP = new ArrayList<>();
 		user1.setCommune(commune1);
@@ -71,7 +68,7 @@ public class CcleanAirApplication {
 		commune2.setCodesPostaux(CP2);
 
 		utilisateurRepository.save(user1);
-		utilisateurRepository.save(user2);
+		utilisateurRepository.save(user2);*/
 
 	}
 

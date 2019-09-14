@@ -1,7 +1,6 @@
 package dev.services;
 
 
-import dev.controllers.dto.CommuneDto;
 import dev.controllers.dto.CommuneDtoGet;
 import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
 import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
@@ -132,37 +131,29 @@ public class CommuneService {
         return donneesLocalesDto;
     }
 
-
-    public List<CommuneDto> recupererToutesLesCommunesDto() {
-        return communeRepository.findAllWithCodeDenomination();
-    }
-
-    public List<Commune> recupererToutesLesCommunes() {
-        return communeRepository.findAll();
-    }
-
-    public Commune recupererCommuneLaPlusProcheSelonCoordonnees(Double longitude, Double latitude) {
-
-        List<Commune> listeCommunes = communeRepository.findAll();
-        Double distance = Double.MAX_VALUE;
-        Commune communeLaPlusProche = null;
-
-        for (Commune c: listeCommunes) {
-            Double resultat = calculUtils.calculerDistanceEntreDeuxPoints(c.getLongitude(), c.getLatitude(), longitude,
-                    latitude);
-            if(resultat < distance) {
-                communeLaPlusProche = c;
-                distance = resultat;
-            }
+    /**
+     * Méthode permettant de récupérer toutes les communes de la base de données.
+     * @return [List<Commune>] Une liste de toutes les communes de la base de données.
+     * @throws CommuneInvalideException : exception lancée si la liste retournée est null ou vide.
+     */
+    public List<Commune> recupererToutesLesCommunesDeLaBase() throws CommuneInvalideException {
+        LOGGER.info("recupererToutesLesCommunesDeLaBase() lancée");
+        if(communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
+            return communeRepository.findAll();
+        } else {
+            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échouée" +
+                    ".");
         }
-        return communeLaPlusProche;
     }
 
+    /**
+     * Méthode permettant de récupérer toutes les données de communes des Pays de la Loire de l'API des communes et
+     * de les sauvegarder dans la base de données.
+     * @throws CommuneInvalideException : exception lancée si la récupération a échoué.
+     */
     public void recupererCommunesDeApi() throws CommuneInvalideException {
-
-        LOGGER.info("recupererCommunesDeApi() lancé");
-
-        LOGGER.info("url de l'api = " + URL_API_COMMUNES);
+        LOGGER.info("recupererCommunesDeApi() lancée");
+        LOGGER.info("url de l'api communes = " + URL_API_COMMUNES);
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -183,9 +174,8 @@ public class CommuneService {
                     codePostalService.sauvegarderCodePostal(codePostal);
                 }
             }
-
-            LOGGER.info(communes.toString());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            LOGGER.info("RuntimeException, CommuneInvalideException \n" + e);
             throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
                     "\n" + e);
         }
