@@ -23,11 +23,12 @@ public class CommuneSheduledTasks {
     }
 
     /**
-     * Méthode lançant périodiquement la méthode de récupération de toutes les communes de l'API.
+     * Méthode lançant périodiquement la méthode de récupération de toutes les communes de l'API (tous les 15 jours).
      */
     @Scheduled(initialDelay=1000, fixedRate=1296000000)
     public void recupererDonneesApiCommunesEtSauvegarder() {
         LOGGER.info("lancement de recupererDonneesApiCommunesEtSauvegarder()");
         communeService.recupererCommunesDeApi();
+        LOGGER.info("nombre de communes dans la base : " + communeService.recupererToutesLesCommunesDeLaBase().size());
     }
 }

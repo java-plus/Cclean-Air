@@ -1,13 +1,15 @@
 package dev.services;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import dev.controllers.dto.*;
+import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
+import dev.entities.*;
+import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.IndicateurFuturException;
+import dev.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,30 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dev.controllers.dto.AffichageResultatCommuneDto;
-import dev.controllers.dto.CommuneDtoGet;
-import dev.controllers.dto.CommuneRechercheDto;
-import dev.controllers.dto.DonneesLocalesHistorique;
-import dev.controllers.dto.DonneesLocalesRecherchees;
-import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
-import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
-import dev.entities.CodePostal;
-import dev.entities.Commune;
-import dev.entities.ConditionMeteo;
-import dev.entities.DonneesLocales;
-import dev.entities.Polluant;
-import dev.entities.QualiteAir;
-import dev.exceptions.AucuneDonneeException;
-import dev.exceptions.CommuneInvalideException;
-import dev.exceptions.IndicateurFuturException;
-import dev.repositories.ICommuneRepository;
-import dev.repositories.IConditionMeteoRepository;
-import dev.repositories.IDonneesLocalesRepository;
-import dev.repositories.IPolluantRepository;
-import dev.repositories.IQualiteAirRepository;
-import dev.utils.CalculUtils;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Classe regroupant les services d'une commune géographique.
@@ -51,38 +36,48 @@ public class CommuneService {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
 
-	@Value("${url.communes_api}")
-	private String URL_API_COMMUNES;
+    private IDonneesLocalesRepository donneesLocalesRepository;
 
-	private IDonneesLocalesRepository donneesLocalesRepository;
+    @Value("${url.communes_api}")
+    private String URL_API_COMMUNES;
+
 	private ICommuneRepository communeRepository;
 	private CodePostalService codePostalService;
-	private CalculUtils calculUtils;
 	private IQualiteAirRepository qualiteAirRepository;
 	private IConditionMeteoRepository conditionMeteoRepository;
 	private IPolluantRepository polluantRepository;
 
-	@Autowired
-	public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository,
-			CodePostalService codePostalService, CalculUtils calculUtils, IQualiteAirRepository qualiteAirRepository,
-			IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
-		this.donneesLocalesRepository = donneesLocalesRepository;
-		this.communeRepository = communeRepository;
-		this.codePostalService = codePostalService;
-		this.calculUtils = calculUtils;
-		this.qualiteAirRepository = qualiteAirRepository;
-		this.conditionMeteoRepository = conditionMeteoRepository;
-		this.polluantRepository = polluantRepository;
-	}
+    @Autowired
+    public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository,
+                          CodePostalService codePostalService, IQualiteAirRepository qualiteAirRepository,
+                          IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
+        this.donneesLocalesRepository = donneesLocalesRepository;
+        this.communeRepository = communeRepository;
+        this.codePostalService = codePostalService;
+        this.qualiteAirRepository = qualiteAirRepository;
+        this.conditionMeteoRepository = conditionMeteoRepository;
+        this.polluantRepository = polluantRepository;
+    }
 
-	public Boolean isCommuneExistante(String nomCommune) {
-		return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
-	}
+    /**
+     * Méthode vérifiant si la commune existe déjà dans la base de données.
+     * @param nomCommune : [String] nom de la commune
+     * @return [Boolean] : true si la commune existe, false sinon
+     */
+    public Boolean isCommuneExistante(String nomCommune) {
+        return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
+    }
 
-	public Commune recupererCommune(String commune) throws CommuneInvalideException {
-		return communeRepository.findByNomIgnoreCase(commune).orElseThrow(
-				() -> new CommuneInvalideException("ERREUR " + ": Commune inexistante dans la base de données."));
-	}
+    /**
+     * Méthode récupérant un objet commune de la base de données portant le nom indiqué.
+     * @param commune : [String] le nom de la commune à récupérer
+     * @return [Commune] l'objet commune récupéré
+     * @throws CommuneInvalideException : exeception lancée si aucune commune n'a été trouvée avec ce nom.
+     */
+    public Commune recupererCommune(String commune) throws CommuneInvalideException {
+        return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
+                ": Commune inexistante dans la base de données."));
+    }
 
 	/**
 	 * Méthode qui permet de créer un objet donnéeslocalesDto pour une commune
@@ -148,62 +143,72 @@ public class CommuneService {
 		return donneesLocalesDto;
 	}
 
-	/**
-	 * Méthode permettant de récupérer toutes les communes de la base de données.
-	 * 
-	 * @return [List<Commune>] Une liste de toutes les communes de la base de
-	 *         données.
-	 * @throws CommuneInvalideException : exception lancée si la liste retournée est
-	 *                                  null ou vide.
-	 */
-	public List<Commune> recupererToutesLesCommunesDeLaBase() throws CommuneInvalideException {
-		LOGGER.info("recupererToutesLesCommunesDeLaBase() lancée");
-		if (communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
-			return communeRepository.findAll();
-		} else {
-			throw new CommuneInvalideException(
-					"ERREUR : la récupération des communes de la base de données a échouée" + ".");
-		}
-	}
+    /**
+     * Méthode permettant de récupérer toutes les communes de la base de données.
+     * @return [List<Commune>] Une liste de toutes les communes de la base de données.
+     * @throws CommuneInvalideException : exception lancée si la liste retournée est null ou vide.
+     */
+    public List<Commune> recupererToutesLesCommunesDeLaBase() throws CommuneInvalideException {
+        LOGGER.info("recupererToutesLesCommunesDeLaBase() lancée");
+        if(communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
+            return communeRepository.findAll();
+        } else {
+            LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
+            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échoué" +
+                    ".");
+        }
+    }
 
-	/**
-	 * Méthode permettant de récupérer toutes les données de communes des Pays de la
-	 * Loire de l'API des communes et de les sauvegarder dans la base de données.
-	 * 
-	 * @throws CommuneInvalideException : exception lancée si la récupération a
-	 *                                  échoué.
-	 */
-	public void recupererCommunesDeApi() throws CommuneInvalideException {
-		LOGGER.info("recupererCommunesDeApi() lancée");
-		LOGGER.info("url de l'api communes = " + URL_API_COMMUNES);
+    /**
+     * Méthode permettant de récupérer toutes les données de communes des Pays de la Loire de l'API des communes et
+     * de les sauvegarder dans la base de données.
+     * @throws CommuneInvalideException : exception lancée si la récupération a échoué.
+     */
+    public void recupererCommunesDeApi() throws CommuneInvalideException {
+        LOGGER.info("recupererCommunesDeApi() lancée");
+        LOGGER.info("url de l'api communes = " + URL_API_COMMUNES);
 
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<List<CommuneDtoGet>> response = restTemplate.exchange(URL_API_COMMUNES, HttpMethod.GET, null,
-					new ParameterizedTypeReference<List<CommuneDtoGet>>() {
-					});
-			List<CommuneDtoGet> communes = response.getBody();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<List<CommuneDtoGet>> response = restTemplate.exchange(
+                    URL_API_COMMUNES,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<CommuneDtoGet>>() {
+                    });
+            List<CommuneDtoGet> communes = response.getBody();
 
-			for (CommuneDtoGet c : communes) {
-				Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
-						c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
-				communeRepository.save(commune);
-				for (String cp : c.getCodesPostaux()) {
-					CodePostal codePostal = new CodePostal(cp, commune);
-					codePostalService.sauvegarderCodePostal(codePostal);
-				}
-			}
-		} catch (RuntimeException e) {
-			LOGGER.info("RuntimeException, CommuneInvalideException \n" + e);
-			throw new CommuneInvalideException(
-					"ERREUR : la récupération des données de l'API communes a échouché. " + "\n" + e);
-		}
-	}
+            for (CommuneDtoGet c : communes) {
+
+                if(isCommuneExistante(c.getNom())) {
+                    Commune communeExistante = recupererCommune(c.getNom());
+                    if(communeExistante.getNbHabitants() != c.getPopulation()) {
+                        communeExistante.setNbHabitants(c.getPopulation());
+                    }
+                    communeRepository.save(communeExistante);
+                } else {
+                    LOGGER.warn("La commune " + c.getNom() + " dont le code est " + c.getCode() + " n'a pas été " +
+                            "trouvée dans la base de données.");
+                    Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
+                            c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
+                    communeRepository.save(commune);
+                    for (String cp : c.getCodesPostaux()) {
+                        CodePostal codePostal = new CodePostal(cp, commune);
+                        codePostalService.sauvegarderCodePostal(codePostal);
+                    }
+                }
+            }
+        } catch (RuntimeException e) {
+            LOGGER.error("RuntimeException, CommuneInvalideException \n" + e);
+            throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
+                    "\n" + e);
+        }
+    }
 
 	/**
 	 * Méthode qui permet de créer un historique de données en fonction des infos
 	 * saisi par l'utilisateur
-	 * 
+	 *
 	 * @param donneesLocalesRecherchees
 	 * @param codeInsee
 	 * @return

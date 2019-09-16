@@ -1,5 +1,10 @@
 package dev.controllers;
 
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.exceptions.CommuneInvalideException;
+import dev.services.CommuneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
@@ -27,8 +33,10 @@ import dev.services.CommuneService;
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
-	@Autowired
-	CommuneService communeService;
+    private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
+
+    @Autowired
+    private CommuneService communeService;
 
 	@ExceptionHandler(CommuneInvalideException.class)
 	public ResponseEntity<String> handleException(CommuneInvalideException e) {
@@ -37,7 +45,7 @@ public class CommuneController {
 
 	/**
 	 * Méthode qui affiche les données locales pour l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
 	 * @return
 	 */
@@ -64,7 +72,7 @@ public class CommuneController {
 
 	/**
 	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
 	 * @param donneesLocalesRecherchees
 	 * @return

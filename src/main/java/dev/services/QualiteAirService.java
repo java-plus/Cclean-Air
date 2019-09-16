@@ -196,4 +196,24 @@ public class QualiteAirService {
         }
         return qualiteAirCorrespondante;
     }
+
+    /**
+     * Méthode permettant de supprimer de la base de données les données de qualité d'air antérieures à la date-heure
+     * indiquée.
+     * @param dateExpiration : [ZonedDateTime] date-heure au-delà de laquelle les données sont à supprimer
+     */
+    public void purgerQualiteAir(ZonedDateTime dateExpiration) {
+        LOGGER.info("purgerQualiteAir()");
+        qualiteAirRepository.deleteAllExpiredSince(dateExpiration);
+    }
+
+    public List<QualiteAir> recupererLesQualitesAirAvantDate(ZonedDateTime dateHeureLimite) throws QualiteAirInvalideException {
+        LOGGER.info("recupererQualiteAirAvantDate() lancé, dateheure = " + dateHeureLimite);
+        try {
+            return qualiteAirRepository.findByDateBefore(dateHeureLimite);
+        } catch(RuntimeException e) {
+            LOGGER.error("QualiteAirInvalideException \n" + e);
+            throw new QualiteAirInvalideException("ERREUR : impossible de récupérer la liste des qualités d'air. \n" + e);
+        }
+    }
 }
