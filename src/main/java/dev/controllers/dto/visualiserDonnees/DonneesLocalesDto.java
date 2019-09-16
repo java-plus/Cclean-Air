@@ -9,14 +9,25 @@ import java.util.List;
  */
 public class DonneesLocalesDto {
 
+	// Alerte -> Voir comment récupérer si la commune est en alerte ou pas
+
+	/**
+	 * Objet dto qui reprend le nom et le nombre d'habitant de la commune
+	 */
 	private CommuneDtoVisualisation communeDtoVisualisation;
 
 	// Alerte -> Voir comment récupérer si la commune est en alerte ou pas
-
+	/**
+	 * liste d'objet dto qui reprend le nom, l'unité et la valeur d'un polluant
+	 */
 	private List<PolluantDtoVisualisation> listePolluantDtoVisualisation;
-
+	/**
+	 * objet dto qui reprend le tx d'ensoleilleemnt, l'humidité et la température
+	 */
 	private ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation;
-
+	/**
+	 * date
+	 */
 	private ZonedDateTime date;
 
 	public DonneesLocalesDto() {

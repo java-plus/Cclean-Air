@@ -1,11 +1,22 @@
 package dev.controllers.dto.visualiserDonnees;
 
+/**
+ * objet dto qui retourne les information utile pour l'affichage : nom, valeur,
+ * unité
+ */
 public class PolluantDtoVisualisation {
 
+	/**
+	 * nom du polluant
+	 */
 	private String nom;
-
+	/**
+	 * valeur du polluant
+	 */
 	private Double Valeur;
-
+	/**
+	 * untié du polluant
+	 */
 	private String unite;
 
 	public PolluantDtoVisualisation() {

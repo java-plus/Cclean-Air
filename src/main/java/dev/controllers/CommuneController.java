@@ -1,5 +1,7 @@
 package dev.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
+import dev.controllers.dto.DonneesLocalesHistorique;
+import dev.controllers.dto.DonneesLocalesRecherchees;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneInvalideException;
@@ -57,4 +61,20 @@ public class CommuneController {
 			@RequestBody CommuneRechercheDto commune) throws IndicateurFuturException, AucuneDonneeException {
 		return new ResponseEntity<>(communeService.rechercheCommune(commune), HttpStatus.OK);
 	}
+
+	/**
+	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
+	 * 
+	 * @param codeInsee
+	 * @param donneesLocalesRecherchees
+	 * @return
+	 */
+	@PostMapping("/historiques/{codeInsee}")
+	public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee,
+			@RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees) {
+
+		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
+
+	}
+
 }

@@ -4,8 +4,14 @@ import java.util.List;
 
 import dev.entities.Polluant;
 
+/**
+ * @author Cécile Objet dto qui retourne la qualité de l'air
+ */
 public class QualiteAirDtoVisualisation {
 
+	/**
+	 * liste de polluants
+	 */
 	private List<Polluant> listePolluants;
 
 	public QualiteAirDtoVisualisation() {
