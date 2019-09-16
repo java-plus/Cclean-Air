@@ -46,7 +46,7 @@ public class QualiteAir implements Serializable {
 	private List<DonneesLocales> listeDonnees;
 
 	/**
-	 * Liste des polluants associées à la donnée de qualité d'air pécifique
+	 * Liste des polluants associées à la donnée de qualité d'air spécifique
 	 */
 	@OneToMany(mappedBy = "qualiteAir")
 	@Column(name = "qua_liste_polluants")
