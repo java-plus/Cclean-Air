@@ -27,56 +27,49 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 /**
- * @author Cécile Peyras
- * Classe filter qui gère les cookies
+ * @author Cécile Peyras Classe filter qui gère les cookies
  */
 @Configuration
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-    private final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+	/** LOGGER : Logger */
+	private final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
-    @Value("${jwt.cookie}")
-    private String TOKEN_COOKIE;
+	/** TOKEN_COOKIE : String */
+	@Value("${jwt.cookie}")
+	private String TOKEN_COOKIE;
 
-    @Value("${jwt.secret}")
-    private String SECRET;
+	/** SECRET : String */
+	@Value("${jwt.secret}")
+	private String SECRET;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
+		// Recherche du jeton par Cookie
 
+		try {
+			if (request.getCookies() != null) {
+				Stream.of(request.getCookies()).filter(cookie -> cookie.getName().equals(TOKEN_COOKIE))
+						.map(cookie -> cookie.getValue()).forEach(token -> {
+							Claims body = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
 
-        // Recherche du jeton par Cookie
+							String username = body.getSubject();
 
-        try{
-            if(request.getCookies() != null) {
-                Stream.of(request.getCookies()).filter(cookie -> cookie.getName().equals(TOKEN_COOKIE))
-                        .map(cookie -> cookie.getValue())
-                        .forEach(token -> {
-                            Claims body = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+							List<String> statuts = body.get("statuts", List.class);
+							List<SimpleGrantedAuthority> authorities = statuts.stream().map(SimpleGrantedAuthority::new)
+									.collect(Collectors.toList());
+							Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
+									authorities);
+							SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                            String username = body.getSubject();
+						});
+			}
+		} catch (ExpiredJwtException e) {
+			LOGGER.info("Le cookie est expiré");
+			System.out.println("cookie expiré");
+		}
 
-
-                            List<String> statuts = body.get("statuts", List.class);
-                            List<SimpleGrantedAuthority> authorities = statuts
-                                    .stream()
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList());
-                            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                        });
-            }
-        } catch (ExpiredJwtException e){
-            LOGGER.info("Le cookie est expiré");
-            System.out.println("cookie expiré");
-        }
-
-
-
-        filterChain.doFilter(request, response);
-    }
+		filterChain.doFilter(request, response);
+	}
 }
-
-

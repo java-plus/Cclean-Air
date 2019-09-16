@@ -27,9 +27,14 @@ import dev.services.CommuneService;
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
+	/** communeService : CommuneService */
 	@Autowired
 	CommuneService communeService;
 
+	/**
+	 * @param exception
+	 * @return le code 404 + le message
+	 */
 	@ExceptionHandler(CommuneInvalideException.class)
 	public ResponseEntity<String> handleException(CommuneInvalideException e) {
 		return ResponseEntity.status(404).body(e.getMessage());
@@ -39,7 +44,7 @@ public class CommuneController {
 	 * Méthode qui affiche les données locales pour l'utilisateur
 	 * 
 	 * @param codeInsee
-	 * @return
+	 * @return 
 	 */
 	@GetMapping(value = "/{codeInsee}")
 	public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {

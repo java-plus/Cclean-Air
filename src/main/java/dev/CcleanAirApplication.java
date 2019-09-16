@@ -21,15 +21,19 @@ import java.util.List;
 @EnableScheduling
 public class CcleanAirApplication {
 
+	/** utilisateurRepository : IUtilisateurRepository */
 	@Autowired
 	IUtilisateurRepository utilisateurRepository;
 
+	/** communeRepository : ICommuneRepository */
 	@Autowired
 	ICommuneRepository communeRepository;
 
+	/** codePostalRepository : ICodePostalRepository */
 	@Autowired
 	ICodePostalRepository codePostalRepository;
 
+	/** passwordEncoder : PasswordEncoder */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
