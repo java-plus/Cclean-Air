@@ -2,7 +2,8 @@ package dev.controllers;
 
 import javax.validation.Valid;
 
-import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.*;
+import dev.exceptions.MotDePasseInvalideException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.UtilisateurDtoGet;
-import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
@@ -108,6 +106,18 @@ public class UtilisateurController {
     public ResponseEntity<ProfilDtoGet> visualiserProfil() throws UtilisateurNonConnecteException {
 
         return new ResponseEntity<>(utilisateurService.visualiserProfil(), HttpStatus.OK);
+
+    }
+
+    @PatchMapping("profil/modification")
+    public void afficherProfilModifie(@RequestBody ProfilModificationPost profilModificationPost) throws UtilisateurNonConnecteException, MotDePasseInvalideException {
+
+        ProfilModifcationGet profilModifcationGet = null;
+
+        if(profilModificationPost.getNom() != null){
+           utilisateurService.modifierProfil(profilModificationPost);
+        }
+
 
     }
 }

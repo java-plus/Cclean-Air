@@ -207,6 +207,10 @@ public class CommuneService {
         }
 
         //Récupération de la liste de données locales bornées par les dates
+
+        ZonedDateTime dateTest=  donneesLocalesRepository.findByCommune(commune);
+        DonneesLocales donneesTest = donneesLocalesRepository.findByCommuneAndDate(commune, dateTest);
+
         List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository.findAllByDateDebutAndDateFin(dateDebut, dateFin, commune.get());
 
         //Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par DonneesLocalesHistorique

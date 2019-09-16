@@ -6,23 +6,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.*;
+import dev.entities.Commune;
 import dev.entities.Statut;
+import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
+import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import dev.controllers.dto.CommuneIndicateurDto;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
+
+import javax.transaction.Transactional;
 
 @Service
 public class UtilisateurService {
@@ -33,16 +35,17 @@ public class UtilisateurService {
     private IUtilisateurRepository utilisateurRepository;
     private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
     private CommuneService communeService;
+    private ICommuneRepository communeRepository;
 
     @Autowired
-    public UtilisateurService(PasswordEncoder passwordEncoder, IUtilisateurRepository utilisateurRepository,
-                              RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService) {
-        super();
+    public UtilisateurService(PasswordEncoder passwordEncoder, IUtilisateurRepository utilisateurRepository, RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService, ICommuneRepository communeRepository) {
         this.passwordEncoder = passwordEncoder;
         this.utilisateurRepository = utilisateurRepository;
         this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
         this.communeService = communeService;
+        this.communeRepository = communeRepository;
     }
+
 
     /**
      * Méthode vérifiant si l'email est utilisé par un compte dans la base de
@@ -126,5 +129,71 @@ public class UtilisateurService {
 
     }
 
+    @Transactional
+    public void modifierProfil(ProfilModificationPost profilModificationPost) throws UtilisateurNonConnecteException, MotDePasseInvalideException {
 
+        var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+        LOGGER.info("Utilisateur : {0}", utilisateur);
+
+        if (profilModificationPost.getNom() != null && !profilModificationPost.getNom().equals("")) {
+            utilisateur.setNom(profilModificationPost.getNom());
+        }
+
+        if (profilModificationPost.getPrenom() != null && !profilModificationPost.getPrenom().equals("")) {
+            utilisateur.setPrenom(profilModificationPost.getPrenom());
+        }
+
+        if (profilModificationPost.getEmail() != null && !profilModificationPost.getEmail().equals("")) {
+            utilisateur.setEmail(profilModificationPost.getEmail());
+        }
+
+        if (profilModificationPost.getCommune() != null && !profilModificationPost.getCommune().equals("")) {
+            String nomCommune = profilModificationPost.getCommune();
+            Optional<Commune> commune = communeRepository.findByNomIgnoreCase(nomCommune);
+            if (commune.isPresent()) {
+                utilisateur.setCommune(commune.get());
+            }
+
+        }
+
+        List<Indicateur> listeIndicateur = new ArrayList<>();
+
+        List<CommuneIndicateurDto> listPost = profilModificationPost.getListeIndicateurs();
+
+        for (CommuneIndicateurDto indicateursPost: listPost) {
+
+            if(indicateursPost.getAlerte().equals(true)) {
+                Indicateur indicateur = new Indicateur();
+                indicateur.setCommune(utilisateur.getCommune());
+                indicateur.setAlerte(true);
+                indicateur.setUtilisateur(utilisateur);
+                listeIndicateur.add(indicateur);
+            }
+        }
+
+        if(listeIndicateur != null){
+
+            utilisateur.setListeIndicateurs(listeIndicateur);
+        }
+
+
+        if (profilModificationPost.getMotDePasseActuel() != null && !profilModificationPost.getMotDePasseActuel().equals("")) {
+            if (passwordEncoder.encode(profilModificationPost.getMotDePasseActuel()).equals(passwordEncoder.encode(utilisateur.getMotDePasse()))) {
+                if (passwordEncoder.encode(profilModificationPost.getMotDePasseNouveau()).equals(passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()))) {
+                    utilisateur.setMotDePasse(profilModificationPost.getGetMotDePasseNouveauValidation());
+                } else {
+                    throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
+                }
+            } else {
+                throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
+            }
+
+            utilisateurRepository.save(utilisateur);
+
+
+        }
+
+
+    }
 }
+

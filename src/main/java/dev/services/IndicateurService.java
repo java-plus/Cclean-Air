@@ -52,7 +52,7 @@ public class IndicateurService {
 	}
 
 	/**
-	 * @param Email de l'utilisateur qui va être utilisé pour récupérer les
+	 * @param @Email de l'utilisateur qui va être utilisé pour récupérer les
 	 *              indicateurs
 	 * @return retourne la liste des noms de communes concernées par les différents
 	 *         indicateurs de l'utilisateur
@@ -128,7 +128,7 @@ public class IndicateurService {
 	}
 
 	/**
-	 * @param nouvelIndicateur L'indicateur a modifier en base
+	 * @param @nouvelIndicateur L'indicateur a modifier en base
 	 * @return renvoie l'indicateur modifié
 	 * @throws UtilisateurNonConnecteException
 	 * @throws CommuneDejaSuivieException
@@ -177,7 +177,6 @@ public class IndicateurService {
 		return recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getListeIndicateurs().stream()
 				.filter(i -> i.getCommune().getNom().equals(commune.getCommune())).collect(Collectors.toList())
 				.isEmpty();
-
 	}
 
 }

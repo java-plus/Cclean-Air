@@ -2,7 +2,10 @@
 package dev.repositories;
 
 
+import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.ProfilModifcationGet;
 import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.UtilisateurDtoGet;
 import dev.entities.Utilisateur;
 import dev.services.UtilisateurService;
 import org.springframework.data.jpa.repository.JpaRepository;

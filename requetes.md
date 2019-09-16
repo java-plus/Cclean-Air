@@ -167,7 +167,7 @@ Code `200`
     "code": "O3",
     "famille": "",
     "principal": true
-  },
+  }]
 ```
 
 ### Requête pour récupérer les données de pollution d'un polluant pour les communes de Loire-Atlantique
@@ -218,6 +218,7 @@ Extrait du début du JSON :
         }
       ]
     }
+}}
 ```
 
 
@@ -258,6 +259,21 @@ Extrait du début du JSON :
     ],
     "population": 3763
   }
+]
+```
+###Récupérer l'historique d'une commune 
 
+[POST] communes/historique/{codeInsee}
+
+```JSON
+{
+	"dateDebut" : "2018-09-09", 
+	"dateFin" : "2019-09-13", 
+	"heureDebut" : "00:00:00", 
+	"heureFin" : "00:00:00", 
+	"polluant" : "Monoxyde d'azote"
+}
 ```
 
+Réponse en cas de succès : 
+Code 200
