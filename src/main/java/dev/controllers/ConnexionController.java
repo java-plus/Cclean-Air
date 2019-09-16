@@ -68,31 +68,57 @@ public class ConnexionController {
 	@PostMapping(value = "/connexion")
 	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
 
-//		return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-//				.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
-//				.map(utilisateur -> {
-//					Map<String, Object> infosSupplementaireToken = new HashMap<>();
-//					infosSupplementaireToken.put("statuts", utilisateur.getStatut());
-//					infosSupplementaireToken.put("email", utilisateur.getEmail());
-//					String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
-//							.addClaims(infosSupplementaireToken)
-//							.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
-//							.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
-//					ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
-//							.maxAge(EXPIRES_IN * 1000).path("/").build();
-//					LOGGER.info("Le cookie est créé");
-//					return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
-//				}).orElseGet(() -> {
-//					Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-//							.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
-//					if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
-//						Integer compteur = utilisateur.getCompteurTentativesConnexion();
-//						utilisateur.setCompteurTentativesConnexion(++compteur);
-//
-//						// return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//					}
-//
-//					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//				});
+		return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
+				.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
+				.map(utilisateur -> {
+
+					Map<String, Object> infosSupplementaireToken = new HashMap<>();
+
+					infosSupplementaireToken.put("statuts", utilisateur.getStatut());
+					infosSupplementaireToken.put("email", utilisateur.getEmail());
+
+					String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
+							.addClaims(infosSupplementaireToken)
+							.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
+							.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
+
+					ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
+							.maxAge(EXPIRES_IN * 1000).path("/").build();
+
+					LOGGER.info("Le cookie est créé");
+
+					return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
+
+				})
+
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+
 	}
+
+//	return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
+//			.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
+//			.map(utilisateur -> {
+//				Map<String, Object> infosSupplementaireToken = new HashMap<>();
+//				infosSupplementaireToken.put("statuts", utilisateur.getStatut());
+//				infosSupplementaireToken.put("email", utilisateur.getEmail());
+//				String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
+//						.addClaims(infosSupplementaireToken)
+//						.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
+//						.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
+//				ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
+//						.maxAge(EXPIRES_IN * 1000).path("/").build();
+//				LOGGER.info("Le cookie est créé");
+//				return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
+//			}).orElseGet(() -> {
+//				Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
+//						.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
+//				if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
+//					Integer compteur = utilisateur.getCompteurTentativesConnexion();
+//					utilisateur.setCompteurTentativesConnexion(++compteur);
+//
+//					// return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//				}
+//
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//			});
 }
