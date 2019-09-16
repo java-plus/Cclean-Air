@@ -1,9 +1,11 @@
+
 package dev.entities;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,30 +39,39 @@ public class QualiteAir implements Serializable {
 	@Column(name = "qua_date")
 	private ZonedDateTime date;
 
+	@Column(name = "qua_station_ville")
+	private String stationVille;
+
 	/**
 	 * Liste des donnes dans lesquelles seront stockées les informations de qualité
 	 * de l'air
 	 */
-	@OneToMany(mappedBy = "qualiteAir")
+	@OneToMany(mappedBy = "qualiteAir", cascade = CascadeType.ALL)
 	@Column(name = "qua_liste_donnees")
 	private List<DonneesLocales> listeDonnees;
 
 	/**
-	 * Liste des polluants associées à la donnée de qualité d'air pécifique
+	 * Liste des polluants associées à la donnée de qualité d'air spécifique
 	 */
-	@OneToMany(mappedBy = "qualiteAir")
+	@OneToMany(mappedBy = "qualiteAir", cascade = CascadeType.ALL)
 	@Column(name = "qua_liste_polluants")
 	private List<Polluant> listePolluants;
 
-	public QualiteAir(ZonedDateTime date, List<DonneesLocales> listeDonnees, List<Polluant> listePolluants) {
+	public QualiteAir() {
 		super();
+	}
+
+	public QualiteAir(ZonedDateTime date, String stationVille, List<DonneesLocales> listeDonnees,
+			List<Polluant> listePolluants) {
 		this.date = date;
+		this.stationVille = stationVille;
 		this.listeDonnees = listeDonnees;
 		this.listePolluants = listePolluants;
 	}
 
-	public QualiteAir() {
-		super();
+	public QualiteAir(ZonedDateTime date, String nomVille) {
+		this.date = date;
+		this.stationVille = nomVille;
 	}
 
 	@Override
@@ -166,6 +177,14 @@ public class QualiteAir implements Serializable {
 	 */
 	public void setListePolluants(List<Polluant> listePolluants) {
 		this.listePolluants = listePolluants;
+	}
+
+	public String getStationVille() {
+		return stationVille;
+	}
+
+	public void setStationVille(String stationVille) {
+		this.stationVille = stationVille;
 	}
 
 }

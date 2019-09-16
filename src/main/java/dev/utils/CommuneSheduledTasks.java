@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe gérant le lancement automatique des méthodes de la classe CommuneService.
+ */
 @Component
 public class CommuneSheduledTasks {
 
@@ -19,20 +22,12 @@ public class CommuneSheduledTasks {
         this.communeService = communeService;
     }
 
+    /**
+     * Méthode lançant périodiquement la méthode de récupération de toutes les communes de l'API.
+     */
     @Scheduled(initialDelay=1000, fixedRate=1296000000)
     public void recupererDonneesApiCommunesEtSauvegarder() {
         LOGGER.info("lancement de recupererDonneesApiCommunesEtSauvegarder()");
-
-
-        // List<CommuneDto> communes = communeService.recupererCommunesDeApi();
         communeService.recupererCommunesDeApi();
-
-/*        for (CommuneDto c : communes) {
-            ConditionMeteo conditionMeteo = conditionMeteoService.recupererConditionMeteoCommune(c);
-            conditionMeteoService.sauvegarderConditionMeteo(conditionMeteo);
-        }*/
-
-
-
     }
 }
