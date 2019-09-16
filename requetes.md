@@ -261,3 +261,75 @@ Extrait du début du JSON :
 
 ```
 
+## Module de création, mise à jour, suppression et visualisation de tous les indicateurs
+
+### Requête pour créer un indicateur
+
+[POST] /indicateurs
+
+```JSON
+{
+	"commune" : "Nantes",
+	"alerte" : true
+}
+```
+Réponse en cas de réussite :
+
+Code `201`
+
+```JSON
+{
+    "mailUtilisateur": "cecile@test.fr",
+    "nomCommune": "Nantes",
+    "alerte": true
+}
+```
+
+Réponse en cas d'échec :
+
+Code `400`
+
+### Requête pour modifier un indicateur
+
+[PATCH] /indicateurs
+
+```JSON
+{
+	"communes" : ["Nantes", "Châteaubriant"]
+}
+```
+Réponse en cas de réussite :
+
+Code `200`
+
+```JSON
+{
+    "mailUtilisateur": "cecile@test.fr",
+    "nomCommune": "Châteaubriant",
+    "alerte": true
+}
+```
+
+Réponse en cas d'échec :
+
+Code `400`
+
+
+### Requête pour supprimer un indicateur
+
+[DELETE] /indicateurs
+
+
+```JSON
+{
+	"commune" : "Nantes"
+}
+```
+Réponse en cas de réussite :
+
+Code `204`
+
+Réponse en cas d'échec :
+
+Code `400`
+
