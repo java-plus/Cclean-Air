@@ -61,10 +61,21 @@ public class CommuneService {
         this.polluantRepository = polluantRepository;
     }
 
+    /**
+     * Méthode vérifiant si la commune existe déjà dans la base de données.
+     * @param nomCommune : [String] nom de la commune
+     * @return [Boolean] : true si la commune existe, false sinon
+     */
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
     }
 
+    /**
+     * Méthode récupérant un objet commune de la base de données portant le nom indiqué.
+     * @param commune : [String] le nom de la commune à récupérer
+     * @return [Commune] l'objet commune récupéré
+     * @throws CommuneInvalideException : exeception lancée si aucune commune n'a été trouvée avec ce nom.
+     */
     public Commune recupererCommune(String commune) throws CommuneInvalideException {
         return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
                 ": Commune inexistante dans la base de données."));
@@ -141,7 +152,8 @@ public class CommuneService {
         if(communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
             return communeRepository.findAll();
         } else {
-            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échouée" +
+            LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
+            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échoué" +
                     ".");
         }
     }
@@ -166,16 +178,27 @@ public class CommuneService {
             List<CommuneDtoGet> communes = response.getBody();
 
             for (CommuneDtoGet c : communes) {
-                Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
-                        c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
-                communeRepository.save(commune);
-                for (String cp : c.getCodesPostaux()) {
-                    CodePostal codePostal = new CodePostal(cp, commune);
-                    codePostalService.sauvegarderCodePostal(codePostal);
+
+                if(isCommuneExistante(c.getNom())) {
+                    Commune communeExistante = recupererCommune(c.getNom());
+                    if(communeExistante.getNbHabitants() != c.getPopulation()) {
+                        communeExistante.setNbHabitants(c.getPopulation());
+                    }
+                    communeRepository.save(communeExistante);
+                } else {
+                    LOGGER.warn("La commune " + c.getNom() + " dont le code est " + c.getCode() + " n'a pas été " +
+                            "trouvée dans la base de données.");
+                    Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
+                            c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
+                    communeRepository.save(commune);
+                    for (String cp : c.getCodesPostaux()) {
+                        CodePostal codePostal = new CodePostal(cp, commune);
+                        codePostalService.sauvegarderCodePostal(codePostal);
+                    }
                 }
             }
         } catch (RuntimeException e) {
-            LOGGER.info("RuntimeException, CommuneInvalideException \n" + e);
+            LOGGER.error("RuntimeException, CommuneInvalideException \n" + e);
             throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
                     "\n" + e);
         }

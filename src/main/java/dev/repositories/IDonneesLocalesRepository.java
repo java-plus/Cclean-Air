@@ -3,12 +3,13 @@ package dev.repositories;
 import dev.entities.Commune;
 import dev.entities.DonneesLocales;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,4 +23,12 @@ public interface IDonneesLocalesRepository extends JpaRepository<DonneesLocales,
     ZonedDateTime findByCommune(@Param("commune") Optional<Commune> commune);
 
     DonneesLocales findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
+
+    Optional<DonneesLocales> findTopByOrderByDateDesc();
+
+    @Transactional
+    @Modifying
+    @Query("delete from DonneesLocales d where d.date <= ?1")
+    void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
+
 }
