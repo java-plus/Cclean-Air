@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 
 /**
- * Classe regroupant les services liés aux données météorologiques.
+ * Classe regroupant les méthode de service liées aux données météorologiques.
  */
 @Service
 public class ConditionMeteoService {
@@ -24,6 +24,9 @@ public class ConditionMeteoService {
     @Value("${url.meteo_api}")
     private String URL_API_METEO;
 
+    @Value("${key.meteo_api}")
+    private String KEY_API_METEO;
+
     private IConditionMeteoRepository conditionMeteoRepository;
 
     @Autowired
@@ -31,7 +34,13 @@ public class ConditionMeteoService {
         this.conditionMeteoRepository = conditionMeteoRepository;
     }
 
-    public ConditionMeteo recupererConditionMeteoCommune(CommuneDto commune) throws ConditionMeteoException {
+    /**
+     * Méthode récupérant les données météorologiques d'une commune à partir de l'API météo.
+     * @param commune : [CommuneDto] la commune pour laquelle récupérer les données météorologiques.
+     * @return [ConditionMeteo] un objet contenant les données météorologiques.
+     * @throws ConditionMeteoException : exception lancée en cas de problème lors de la récupération.
+     */
+    public ConditionMeteo recupererConditionMeteoCommuneDeApi(CommuneDto commune) throws ConditionMeteoException {
 
         LOGGER.info("recupererConditionMeteoCommune() lancé");
 
@@ -40,14 +49,15 @@ public class ConditionMeteoService {
         sbUrlApiWeather.append(commune.getLatitude());
         sbUrlApiWeather.append("&lon=");
         sbUrlApiWeather.append(commune.getLongitude());
-        sbUrlApiWeather.append("&lang=fr&units=metric&APPID=633e2a135fc012a55447e2b1f366972d&units=metric");
-
+        sbUrlApiWeather.append("&lang=fr&units=metric&APPID=");
+        sbUrlApiWeather.append(KEY_API_METEO);
+        sbUrlApiWeather.append("&units=metric");
         LOGGER.info("url de la requête = " + sbUrlApiWeather);
 
         try {
             RestTemplate restTemplate = new RestTemplate();
             String result = restTemplate.getForObject(sbUrlApiWeather.toString(), String.class);
-            LOGGER.info("recuperation donnees = " + result.toString());
+            LOGGER.info("recuperation donnees = " + result);
             Double ensoleillement = 100 - Double.parseDouble(result.substring(result.indexOf("clouds\":{\"all\":")+15,
                     result.indexOf("},\"dt\":")));
             Double temperature = Double.parseDouble(result.substring(result.indexOf("temp\":")+6, result.indexOf(
@@ -57,13 +67,19 @@ public class ConditionMeteoService {
                     ",\"temp_min")));
             return new ConditionMeteo(ensoleillement, temperature, humidite,
                     ZonedDateTime.now(), null);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new ConditionMeteoException("ERREUR : la récupération des données de l'API météo a échouché. \n" + e);
         }
     }
 
+    /**
+     * Méthode sauvegardant une condition méteo dans la base de donnée.
+     * @param conditionMeteo [ConditionMeteo] la condition météo à sauvegarder
+     * @return [ConditionMeteo] la condition météo qui a été sauvegarder.
+     */
     public ConditionMeteo sauvegarderConditionMeteo(ConditionMeteo conditionMeteo) {
+        LOGGER.info("sauvegarderConditionMeteo() lancé");
+        LOGGER.info("conditionMeteo = " + conditionMeteo);
         return conditionMeteoRepository.save(conditionMeteo);
     }
-
 }

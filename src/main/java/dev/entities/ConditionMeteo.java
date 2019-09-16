@@ -44,7 +44,7 @@ public class ConditionMeteo implements Serializable {
 	 */
 	@Column(name = "con_date")
 	private ZonedDateTime date;
-	@OneToMany(mappedBy = "conditionMeteo")
+	@OneToMany(mappedBy = "conditionMeteo", cascade = CascadeType.ALL)
 	@Column(name = "con_donnees_locales")
 	private List<DonneesLocales> donneesLocales;
 
@@ -208,4 +208,3 @@ public class ConditionMeteo implements Serializable {
 	}
 
 }
-
