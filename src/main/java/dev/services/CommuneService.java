@@ -1,19 +1,13 @@
 package dev.services;
 
-import dev.controllers.dto.*;
-import dev.entities.*;
-import dev.exceptions.CommuneInvalideException;
-import dev.repositories.*;
-import dev.repositories.IConditionMeteoRepository;
-import dev.entities.CodePostal;
-import dev.entities.Commune;
-import dev.repositories.ICommuneRepository;
-import dev.controllers.dto.CommuneDtoGet;
-import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
-import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
-import dev.utils.CalculUtils;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +17,31 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.time.ZonedDateTime;
-import java.util.Optional;
+
+import dev.controllers.dto.AffichageResultatCommuneDto;
+import dev.controllers.dto.CommuneDtoGet;
+import dev.controllers.dto.CommuneRechercheDto;
+import dev.controllers.dto.DonneesLocalesHistorique;
+import dev.controllers.dto.DonneesLocalesRecherchees;
+import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
+import dev.entities.CodePostal;
+import dev.entities.Commune;
+import dev.entities.ConditionMeteo;
+import dev.entities.DonneesLocales;
+import dev.entities.Polluant;
+import dev.entities.QualiteAir;
+import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.IndicateurFuturException;
+import dev.repositories.ICommuneRepository;
+import dev.repositories.IConditionMeteoRepository;
+import dev.repositories.IDonneesLocalesRepository;
+import dev.repositories.IPolluantRepository;
+import dev.repositories.IQualiteAirRepository;
+import dev.utils.CalculUtils;
 
 /**
  * Classe regroupant les services d'une commune géographique.
@@ -37,8 +50,6 @@ import java.util.Optional;
 public class CommuneService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
-
-
 
     @Value("${url.communes_api}")
     private String URL_API_COMMUNES;
@@ -252,4 +263,69 @@ public class CommuneService {
 
         return listeDonneesLocalesHistorique;
     }
+
+	/**
+	 * @param commune Les paramètres de recherche renseignés par l'utilisateur pour
+	 *                afficher les données d'un commune particulière à un instant T,
+	 *                éventuellement sur un polluant spécifique
+	 * @return renvoie le résultat de la recherche sous la forme d'une classe DTO
+	 *         adaptée
+	 * @throws IndicateurFuturException Déclenchée si l'utilisateur a indiqué une
+	 *                                  date future
+	 * @throws AucuneDonneeException    Déclenchée si aucune donnée n'est disponible
+	 */
+	public AffichageResultatCommuneDto rechercheCommune(CommuneRechercheDto commune)
+			throws IndicateurFuturException, AucuneDonneeException {
+		// récupération de la commune
+		var oResCommune = communeRepository.findByNomIgnoreCase(commune.getNomCommune());
+		if (!oResCommune.isPresent()) {
+			throw new CommuneInvalideException("Cette commune n'existe pas.");
+		}
+		var resCommune = oResCommune.get();
+
+		// Récupération de la date
+		var resDate = ZonedDateTime.of(commune.getDate(), commune.getHeure(), ZoneId.systemDefault());
+		List<DonneesLocalesDto> resDonnees = new ArrayList<>();
+
+		// récupération des polluants
+		List<Polluant> polluants = resCommune.getDonneesLocales().get(0).getQualiteAir().getListePolluants();
+		// filtrage optionnel des polluants
+		if (commune.getPolluant() != null) {
+			polluants = polluants.stream().filter(p -> p.getNom().equals(commune.getPolluant()))
+					.collect(Collectors.toList());
+		}
+
+		// conversion des informations polluants en données affichables
+		List<PolluantDtoVisualisation> listePolluants = polluants.stream()
+				.map(p -> new PolluantDtoVisualisation(p.getNom(), p.getValeur(), p.getUnite()))
+				.collect(Collectors.toList());
+
+		// vérification de la validité de la date saisie
+		if (resDate.isAfter(ZonedDateTime.now())) {
+			throw new IndicateurFuturException("Cette date est dans le futur");
+		}
+		// filtrage des données à la date saisie
+
+		else {
+			resDonnees = resCommune.getDonneesLocales().stream().filter(d -> d.getDate().equals(resDate))
+					.map(d -> new DonneesLocalesDto(
+							new CommuneDtoVisualisation(resCommune.getNom(), resCommune.getNbHabitants()),
+							listePolluants,
+							new ConditionMeteoDtoVisualisation(d.getConditionMeteo().getEnsoleillement(),
+									d.getConditionMeteo().getTemperature(), d.getConditionMeteo().getHumidite()),
+							resDate))
+					.collect(Collectors.toList());
+		}
+
+		// vérification de la présence de données
+		if (resDonnees.isEmpty()) {
+			throw new AucuneDonneeException("Aucune donnée disponible avec ces paramètres.");
+		}
+
+		// envoi de la réponse sous la forme de l'objet à afficher
+		return new AffichageResultatCommuneDto(resCommune.getNom(), resDate, null, resDonnees.get(0),
+				resCommune.getNbHabitants());
+
+	}
+
 }
