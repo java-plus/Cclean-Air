@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.IndicateurFuturException;
 import dev.services.CommuneService;
@@ -49,10 +50,11 @@ public class CommuneController {
 	 *         utilisateur
 	 * @throws IndicateurFuturException Déclenché si l'utilisateur a indiqué une
 	 *                                  date dans le futur
+	 * @throws AucuneDonneeException
 	 */
 	@PostMapping(value = "/recherche")
 	public ResponseEntity<AffichageResultatCommuneDto> afficherResultatRecherche(
-			@RequestBody CommuneRechercheDto commune) throws IndicateurFuturException {
+			@RequestBody CommuneRechercheDto commune) throws IndicateurFuturException, AucuneDonneeException {
 		return new ResponseEntity<>(communeService.rechercheCommune(commune), HttpStatus.OK);
 	}
 }

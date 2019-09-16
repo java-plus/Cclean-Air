@@ -2,7 +2,7 @@ package dev.controllers.dto;
 
 import java.time.ZonedDateTime;
 
-import dev.entities.DonneesLocales;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 
 /**
  * @author Guillaume Utilisé pour 'laffichage des résultats d'une commune depuis
@@ -14,10 +14,10 @@ public class AffichageResultatCommuneDto {
 	private String nomCommune;
 	private ZonedDateTime date;
 	private Boolean alerte;
-	private DonneesLocales donnees;
+	private DonneesLocalesDto donnees;
 	private Long nbHabitants;
 
-	public AffichageResultatCommuneDto(String nomCommune, ZonedDateTime date, Boolean alerte, DonneesLocales donnees,
+	public AffichageResultatCommuneDto(String nomCommune, ZonedDateTime date, Boolean alerte, DonneesLocalesDto donnees,
 			Long nbHabitants) {
 		super();
 		this.nomCommune = nomCommune;
@@ -131,14 +131,14 @@ public class AffichageResultatCommuneDto {
 	/**
 	 * @return the donnees
 	 */
-	public DonneesLocales getDonnees() {
+	public DonneesLocalesDto getDonnees() {
 		return donnees;
 	}
 
 	/**
 	 * @param donnees the donnees to set
 	 */
-	public void setDonnees(DonneesLocales donnees) {
+	public void setDonnees(DonneesLocalesDto donnees) {
 		this.donnees = donnees;
 	}
 

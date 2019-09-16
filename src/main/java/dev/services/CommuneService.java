@@ -28,7 +28,9 @@ import dev.entities.CodePostal;
 import dev.entities.Commune;
 import dev.entities.ConditionMeteo;
 import dev.entities.DonneesLocales;
+import dev.entities.Polluant;
 import dev.entities.QualiteAir;
+import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.IndicateurFuturException;
 import dev.repositories.ICommuneRepository;
@@ -208,17 +210,35 @@ public class CommuneService {
 	 *         adaptée
 	 * @throws IndicateurFuturException Déclenchée si l'utilisateur a indiqué une
 	 *                                  date future
+	 * @throws AucuneDonneeException    Déclenchée si aucune donnée n'est disponible
 	 */
-	public AffichageResultatCommuneDto rechercheCommune(CommuneRechercheDto commune) throws IndicateurFuturException {
+	public AffichageResultatCommuneDto rechercheCommune(CommuneRechercheDto commune)
+			throws IndicateurFuturException, AucuneDonneeException {
 		// récupération de la commune
 		var oResCommune = communeRepository.findByNomIgnoreCase(commune.getNomCommune());
 		if (!oResCommune.isPresent()) {
 			throw new CommuneInvalideException("Cette commune n'existe pas.");
 		}
 		var resCommune = oResCommune.get();
-		// vérification de la validité de la date saisie
+
+		// Récupération de la date
 		var resDate = ZonedDateTime.of(commune.getDate(), commune.getHeure(), ZoneId.systemDefault());
-		List<DonneesLocales> resDonnees = new ArrayList<>();
+		List<DonneesLocalesDto> resDonnees = new ArrayList<>();
+
+		// récupération des polluants
+		List<Polluant> polluants = resCommune.getDonneesLocales().get(0).getQualiteAir().getListePolluants();
+		// filtrage optionnel des polluants
+		if (commune.getPolluant() != null) {
+			polluants = polluants.stream().filter(p -> p.getNom().equals(commune.getPolluant()))
+					.collect(Collectors.toList());
+		}
+
+		// conversion des informations polluants en données affichables
+		List<PolluantDtoVisualisation> listePolluants = polluants.stream()
+				.map(p -> new PolluantDtoVisualisation(p.getNom(), p.getValeur(), p.getUnite()))
+				.collect(Collectors.toList());
+
+		// vérification de la validité de la date saisie
 		if (resDate.isAfter(ZonedDateTime.now())) {
 			throw new IndicateurFuturException("Cette date est dans le futur");
 		}
@@ -226,13 +246,18 @@ public class CommuneService {
 
 		else {
 			resDonnees = resCommune.getDonneesLocales().stream().filter(d -> d.getDate().equals(resDate))
+					.map(d -> new DonneesLocalesDto(
+							new CommuneDtoVisualisation(resCommune.getNom(), resCommune.getNbHabitants()),
+							listePolluants,
+							new ConditionMeteoDtoVisualisation(d.getConditionMeteo().getEnsoleillement(),
+									d.getConditionMeteo().getTemperature(), d.getConditionMeteo().getHumidite()),
+							resDate))
 					.collect(Collectors.toList());
 		}
 
-		// filtrage (optionnel) des polluants
-		if (commune.getPolluant() != null) {
-			resDonnees.get(0).getQualiteAir().setListePolluants(resDonnees.get(0).getQualiteAir().getListePolluants()
-					.stream().filter(p -> p.getNom().equals(commune.getPolluant())).collect(Collectors.toList()));
+		// vérification de la présence de données
+		if (resDonnees.isEmpty()) {
+			throw new AucuneDonneeException("Aucune donnée disponible avec ces paramètres.");
 		}
 
 		// envoi de la réponse sous la forme de l'objet à afficher
