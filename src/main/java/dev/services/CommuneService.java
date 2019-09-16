@@ -1,9 +1,8 @@
 package dev.services;
 
 
-<<<<<<< HEAD
+
 import dev.controllers.dto.*;
-import dev.controllers.dto.visualiserDonnees.*;
 import dev.entities.*;
 import dev.exceptions.CommuneInvalideException;
 import dev.repositories.*;
@@ -11,17 +10,12 @@ import dev.repositories.IConditionMeteoRepository;
 import dev.entities.CodePostal;
 import dev.entities.Commune;
 import dev.repositories.ICommuneRepository;
-=======
 import dev.controllers.dto.CommuneDtoGet;
 import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
 import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
-import dev.entities.*;
-import dev.exceptions.CommuneInvalideException;
-import dev.repositories.*;
 import dev.utils.CalculUtils;
->>>>>>> master
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +25,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-<<<<<<< HEAD
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-
-=======
->>>>>>> master
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
