@@ -110,15 +110,9 @@ public class UtilisateurController {
     }
 
     @PatchMapping("profil/modification")
-    public void afficherProfilModifie(@RequestBody ProfilModificationPost profilModificationPost) throws UtilisateurNonConnecteException, MotDePasseInvalideException {
+    public ProfilModifcationGet afficherProfilModifie(@RequestBody ProfilModificationPost profilModificationPost) throws UtilisateurNonConnecteException, MotDePasseInvalideException {
 
-        ProfilModifcationGet profilModifcationGet = null;
-
-        if(profilModificationPost.getNom() != null){
-           utilisateurService.modifierProfil(profilModificationPost);
-        }
-
-
+        return utilisateurService.modifierProfil(profilModificationPost);
     }
 }
 

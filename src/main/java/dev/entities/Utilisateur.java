@@ -62,7 +62,7 @@ public class Utilisateur implements Serializable {
 	 */
 	@Column(name = "uti_email", unique = true)
 	@NotBlank
-	@Email
+	@Email(message ="Le format de l'email est incorrect")
 	private String email;
 	/**
 	 * Mot de pase choisi par l'utilisateur lors de l'inscription. Utilisé pour se
@@ -70,7 +70,7 @@ public class Utilisateur implements Serializable {
 	 * chiffre, une majuscule, une minuscule et un caractère spécial au minimum.
 	 */
 	@Column(name = "uti_mot_de_passe")
-	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
+	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
 	@NotBlank
 	private String motDePasse;
 	/**

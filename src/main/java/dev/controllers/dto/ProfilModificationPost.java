@@ -2,6 +2,7 @@ package dev.controllers.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 /**
@@ -12,22 +13,19 @@ public class ProfilModificationPost {
     /**
      * nom de l'utilisateur
      */
-    @NotBlank
     private String nom;
     /**
      * prénom de l'utilisateur
      */
-    @NotBlank
     private String prenom;
     /**
      * mail de l'utilisateur
      */
-    @NotBlank @Email
+    @Email(message ="Le format de l'email est incorrect")
     private String email;
     /**
      * commune de l'utilisateur
      */
-    @NotBlank
     private String commune;
     /**
      * Acceptation ou non des alertes
@@ -42,17 +40,17 @@ public class ProfilModificationPost {
     /**
      * mot de passe actuel de l'utilisateur
      */
-    @NotBlank
     private String motDePasseActuel;
     /**
      * nouveau mot de passe de l'utilisateur
      */
-    @NotBlank
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
     private String motDePasseNouveau;
     /**
      * controle du nouveau mot de passe de l'utilisateur
      */
-    @NotBlank
+
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
     private String getMotDePasseNouveauValidation;
 
     public ProfilModificationPost(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email, @NotBlank String commune, @NotBlank Boolean alerte, @NotBlank List<CommuneIndicateurDto> listeIndicateurs, @NotBlank String motDePasseActuel, @NotBlank String motDePasseNouveau, @NotBlank String getMotDePasseNouveauValidation) {
