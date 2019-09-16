@@ -36,18 +36,16 @@ public class CommuneService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
 
-    private IDonneesLocalesRepository donneesLocalesRepository;
+
 
     @Value("${url.communes_api}")
     private String URL_API_COMMUNES;
 
+    private IDonneesLocalesRepository donneesLocalesRepository;
     private ICommuneRepository communeRepository;
     private CodePostalService codePostalService;
-
     private IQualiteAirRepository qualiteAirRepository;
-
     private IConditionMeteoRepository conditionMeteoRepository;
-
     private IPolluantRepository polluantRepository;
 
     @Autowired
@@ -168,6 +166,12 @@ public class CommuneService {
         }
     }
 
+    /**
+     * Méthode qui permet de créer un historique de données en fonction des infos saisi par l'utilisateur
+     * @param donneesLocalesRecherchees
+     * @param codeInsee
+     * @return
+     */
     public List<DonneesLocalesHistorique> creerHistorique(DonneesLocalesRecherchees donneesLocalesRecherchees, String codeInsee) {
 
         //création de la date de début de recherche

@@ -34,6 +34,12 @@ public class CommuneController {
         return communeService.creerDonneesLocalesCommune(codeInsee);
     }
 
+    /**
+     * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
+     * @param codeInsee
+     * @param donneesLocalesRecherchees
+     * @return
+     */
     @PostMapping("/historiques/{codeInsee}")
     public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee, @RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees){
 

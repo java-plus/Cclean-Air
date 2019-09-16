@@ -3,22 +3,34 @@ package dev.controllers.dto;
 import dev.entities.Polluant;
 import org.apache.tomcat.jni.Poll;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * @author Cécile
+ *
+ * Objet DTO qui reprend les champs pour la recherche d'un historique
+ *
+ */
+
 public class DonneesLocalesRecherchees {
 
+    @NotBlank
     private LocalDate dateDebut;
+    @NotBlank
     private LocalTime heureDebut;
+    @NotBlank
     private LocalDate dateFin;
+    @NotBlank
     private LocalTime heureFin;
-
+    @NotBlank
     private String polluant;
 
     public DonneesLocalesRecherchees() {
     }
 
-    public DonneesLocalesRecherchees(LocalDate dateDebut, LocalTime heureDebut, LocalDate dateFin, LocalTime heureFin, String polluant) {
+    public DonneesLocalesRecherchees(@NotBlank LocalDate dateDebut, @NotBlank LocalTime heureDebut, @NotBlank LocalDate dateFin, @NotBlank LocalTime heureFin, @NotBlank String polluant) {
         this.dateDebut = dateDebut;
         this.heureDebut = heureDebut;
         this.dateFin = dateFin;
