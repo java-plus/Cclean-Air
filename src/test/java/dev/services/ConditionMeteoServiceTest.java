@@ -18,7 +18,7 @@ public class ConditionMeteoServiceTest {
 
     @Test
     public void test_recupererConditionMeteoCommune_pas_exception() {
-        conditionMeteoService.recupererConditionMeteoCommune(new CommuneDto(communeService.recupererCommune(
+        conditionMeteoService.recupererConditionMeteoCommuneDeApi(new CommuneDto(communeService.recupererCommune(
                 "Nantes")));
     }
 

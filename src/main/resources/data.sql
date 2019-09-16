@@ -10,7 +10,10 @@ insert into utilisateur (uti_nom, uti_prenom, uti_email, uti_mot_de_passe, uti_s
 insert into utilisateur (uti_nom, uti_prenom, uti_email, uti_mot_de_passe, uti_statut_notification, uti_tentative_connexion, uti_date_derniere_connexion) values('peyras2', 'cecile2', 'cecile2@test.fr', '$2a$10$RztZElMbPpfpQTH0fUshh.xi4wKEZYSvej6WvPHM246p0k28ZD7GO', 0,  0,'2019-09-10 00:00:00');
 insert into UTILISATEUR_STATUT values (1 , 'ADMINISTRATEUR' );
 
+/* DONNEES SUIVANTES EN COMMENTAIRE POUR FAVORISER L'UTILISATION DES DONNEES REELLEMENT RECUPEREES */
+
+/*
 insert into condition_meteo values (1, '2019-09-12 14:00:00', 10, 20, 20);
 insert into polluant (pol_id, pol_nom, pol_unite, pol_valeur) values (1, 'azote', 'µg', 12);
-insert into  qualite_air values (1, '2019-09-12 14:00:00');
-insert into donnees_locales (don_id, don_date,don_condition_meteo, don_qualite_air ) values (1,'2019-09-12 14:00:00', 1, 1 );
+insert into qualite_air values (1, '2019-09-12 14:00:00', 'Nantes');
+insert into donnees_locales (don_id, don_date,don_condition_meteo, don_qualite_air ) values (1,'2019-09-12 14:00:00', 1, 1 );*/
