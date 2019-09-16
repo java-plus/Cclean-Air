@@ -1,15 +1,7 @@
 package dev.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * @author Guillaume Classe regroupant les informations sur les polluants
@@ -27,7 +19,7 @@ public class Polluant implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "pol_id")
-	private Integer id;
+	private String id;
 
 	/**
 	 * Unité de mesure avec laquelle est mesurée le polluant
@@ -42,6 +34,12 @@ public class Polluant implements Serializable {
 	private String nom;
 
 	/**
+	 * Nom de code du polluant
+	 */
+	@Column(name = "pol_code")
+	private String code;
+
+	/**
 	 * Mesure chiffrée du polluant
 	 */
 	@Column(name = "pol_valeur")
@@ -51,14 +49,25 @@ public class Polluant implements Serializable {
 	 * Donnée à laquelle sera associée le polluant
 	 */
 	@ManyToOne
-	@JoinColumn(name = "pol_qualite_air")
+	@JoinColumn(name = "pol_qualite_air_id")
 	private QualiteAir qualiteAir;
 
-	public Polluant(Integer id, String unite, String nom, Double valeur, QualiteAir qualiteAir) {
-		super();
-		this.id = id;
+	public Polluant(String code, String nom) {
+		this.code= code;
+		this.nom = nom;
+	}
+
+	public Polluant(String unite, String nom, String code, Double valeur) {
 		this.unite = unite;
 		this.nom = nom;
+		this.code = code;
+		this.valeur = valeur;
+	}
+
+	public Polluant(String unite, String nom, String code, Double valeur, QualiteAir qualiteAir) {
+		this.unite = unite;
+		this.nom = nom;
+		this.code = code;
 		this.valeur = valeur;
 		this.qualiteAir = qualiteAir;
 	}
@@ -85,54 +94,17 @@ public class Polluant implements Serializable {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Polluant other = (Polluant) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		if (qualiteAir == null) {
-			if (other.qualiteAir != null)
-				return false;
-		} else if (!qualiteAir.equals(other.qualiteAir))
-			return false;
-		if (unite == null) {
-			if (other.unite != null)
-				return false;
-		} else if (!unite.equals(other.unite))
-			return false;
-		if (valeur == null) {
-			if (other.valeur != null)
-				return false;
-		} else if (!valeur.equals(other.valeur))
-			return false;
-		return true;
-	}
-
 	/**
 	 * @return the id
 	 */
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -192,4 +164,11 @@ public class Polluant implements Serializable {
 		this.qualiteAir = qualiteAir;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 }

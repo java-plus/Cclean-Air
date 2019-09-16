@@ -2,15 +2,15 @@ package dev.repositories;
 
 import dev.entities.QualiteAir;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * @author Cécile
- * Classe Repository faisant le lien avec la table QualiteAir
+ * Classe repository faisant le lien avec la base de données et notamment la table QualiteAir.
  */
-@Repository
 public interface IQualiteAirRepository extends JpaRepository<QualiteAir, Integer> {
-
-
+    Optional<QualiteAir> findFirstByOrderByIdDesc();
+    List<QualiteAir> findByDate(ZonedDateTime date);
 }
-
