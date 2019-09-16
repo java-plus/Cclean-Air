@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.IndicateurFuturException;
 import dev.exceptions.NombreIndicateursException;
 import dev.exceptions.UtilisateurNonConnecteException;
 
@@ -55,6 +56,16 @@ public class RestResponseEntityExceptionHandler {
 	 */
 	@ExceptionHandler(value = { UtilisateurNonConnecteException.class })
 	public ResponseEntity<Object> handleConflict(UtilisateurNonConnecteException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * @param e
+	 * @return Exception déclenché lorsqu'aucun utilisateur tente de consulter les
+	 *         données d'une commune à une daté situé dans le futur
+	 */
+	@ExceptionHandler(value = { IndicateurFuturException.class })
+	public ResponseEntity<Object> handleConflict(IndicateurFuturException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 

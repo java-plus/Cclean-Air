@@ -1,9 +1,18 @@
+
 package dev.entities;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * @author Guillaume Classe regroupant les données utilisées pour la mesure de
@@ -42,7 +51,7 @@ public class QualiteAir implements Serializable {
 	private List<DonneesLocales> listeDonnees;
 
 	/**
-	 * Liste des polluants associées à la donnée de qualité d'air pécifique
+	 * Liste des polluants associées à la donnée de qualité d'air spécifique
 	 */
 	@OneToMany(mappedBy = "qualiteAir", cascade = CascadeType.ALL)
 	@Column(name = "qua_liste_polluants")
@@ -53,7 +62,7 @@ public class QualiteAir implements Serializable {
 	}
 
 	public QualiteAir(ZonedDateTime date, String stationVille, List<DonneesLocales> listeDonnees,
-					  List<Polluant> listePolluants) {
+			List<Polluant> listePolluants) {
 		this.date = date;
 		this.stationVille = stationVille;
 		this.listeDonnees = listeDonnees;
