@@ -37,12 +37,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -71,11 +65,6 @@
 			<artifactId>javax.el</artifactId>
 			<version>2.2.6</version>
 		</dependency>
-		<!-- Base de données embarquée -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
@@ -87,6 +76,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>cclean-air</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -94,5 +84,66 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<jdbc.url>jdbc:postgresql://${env.POSTGRESQL_ADDON_HOST}:${env.POSTGRESQL_ADDON_PORT}/${env.POSTGRESQL_ADDON_DB}</jdbc.url>
+				<jdbc.user>${env.POSTGRESQL_ADDON_USER}</jdbc.user>
+				<jdbc.pass>${env.POSTGRESQL_ADDON_PASSWORD}</jdbc.pass>
+				<generate.ddl>${env.GENERATE_DDL}</generate.ddl>
+				<data.init>${env.DATA_INIT}</data.init>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<jdbc.url>jdbc:mysql://localhost:3306/airdata?serverTimezone=UTC</jdbc.url>
+				<jdbc.user>root</jdbc.user>
+				<jdbc.pass></jdbc.pass>
+				<generate.ddl>true</generate.ddl>
+				<data.init>false</data.init>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+
+		</profile>
+		<profile>
+			<id>h2</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<jdbc.driver>org.h2.Driver</jdbc.driver>
+				<jdbc.url>jdbc:h2:mem:db</jdbc.url>
+				<jdbc.user>sa</jdbc.user>
+				<jdbc.pass></jdbc.pass>
+				<generate.ddl>true</generate.ddl>
+				<data.init>true</data.init>
+			</properties>
+			<dependencies>
+				<!-- Base de données embarquée -->
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+	</profiles>
 
 </project>
