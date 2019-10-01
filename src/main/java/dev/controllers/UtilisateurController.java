@@ -4,6 +4,7 @@ import dev.controllers.dto.*;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.DonneesLocalesException;
 import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
@@ -70,6 +71,7 @@ public class UtilisateurController {
 	public ResponseEntity<String> handleException(UtilisateurInvalideException e) {
 		return ResponseEntity.status(404).body(e.getMessage());
 	}
+	
 
 	/**
 	 * Méthode qui affiche la liste des utilisateur
