@@ -92,5 +92,5 @@ public class CommuneController {
 		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
 	}
-
 }
+
