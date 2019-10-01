@@ -2,6 +2,7 @@ package dev.controllers;
 
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.DonneesLocalesException;
 import dev.services.CommuneService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,5 +93,10 @@ public class CommuneController {
 		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
 	}
-}
+	
+	@ExceptionHandler(DonneesLocalesException.class)
+	public ResponseEntity<String> handleException(DonneesLocalesException e) {
+		return ResponseEntity.status(404).body(e.getMessage());
+	}
 
+}

@@ -1,3 +1,4 @@
+
 package dev.services;
 
 import dev.controllers.dto.*;
@@ -8,6 +9,7 @@ import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
 import dev.entities.*;
 import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.DonneesLocalesException;
 import dev.exceptions.IndicateurFuturException;
 import dev.repositories.*;
 import dev.utils.CalculUtils;
@@ -66,6 +68,7 @@ public class CommuneService {
 	 * @param nomCommune : [String] nom de la commune
 	 * @return [Boolean] : true si la commune existe, false sinon
 	 */
+
 	public Boolean isCommuneExistante(String nomCommune) {
 		return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
 	}
@@ -104,16 +107,26 @@ public class CommuneService {
 				commune.get().getNbHabitants());
 
 		// Récupération de la dernière date d'enregistrements pour la commune
-		ZonedDateTime date = donneesLocalesRepository.findByCommune(commune);
+		Optional<ZonedDateTime> date = donneesLocalesRepository.findByCommune(commune);
+		
+		if(!date.isPresent()) {
+			throw new DonneesLocalesException("Pas de données pour cette commune"); 
+		}
+		
+		
 		// Récupération des données locales
-		DonneesLocales donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
+		Optional<DonneesLocales> donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date.get());
+		
+		if(!donneesLocales.isPresent()) {
+			throw new DonneesLocalesException("Pas de données pour cette commune");
+		}
 
 		// Récupéartion des id qualiteAir et conditionMeteo
 		Integer qualiteAirId = null;
 		Integer conditionMeteoId = null;
 		if (donneesLocales != null) {
-			qualiteAirId = donneesLocales.getQualiteAir().getId();
-			conditionMeteoId = donneesLocales.getConditionMeteo().getId();
+			qualiteAirId = donneesLocales.get().getQualiteAir().getId();
+			conditionMeteoId = donneesLocales.get().getConditionMeteo().getId();
 		}
 
 		// Récupération qualitéAir
@@ -132,7 +145,7 @@ public class CommuneService {
 		}
 		// Création de l'objet DonneesLocalesDto
 		DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
-		donneesLocalesDto.setDate(date);
+		donneesLocalesDto.setDate(date.get());
 		donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
 		if (!qualiteAir.isPresent()) {
 			donneesLocalesDto.setListePolluantDtoVisualisation(null);
