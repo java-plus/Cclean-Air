@@ -30,7 +30,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 /**
- * @author Cécile controller qui permet de gérer la connexion sur l'application
+ * @author Cécile&Bilel controller qui permet de gérer la connexion sur l'application
  */
 @RestController
 public class ConnexionController {

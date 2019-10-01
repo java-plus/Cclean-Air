@@ -31,14 +31,11 @@ import io.jsonwebtoken.Jwts;
  */
 @Configuration
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-	/** LOGGER : Logger */
 	private final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
-	/** TOKEN_COOKIE : String */
 	@Value("${jwt.cookie}")
 	private String TOKEN_COOKIE;
 
-	/** SECRET : String */
 	@Value("${jwt.secret}")
 	private String SECRET;
 

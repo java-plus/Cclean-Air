@@ -1,8 +1,16 @@
-# Liste des requêtes back de Cclean-air
+﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
-## Module de création, de gestion de compte et d'authentification
+=> Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
-### Requête pour s'inscrire
+=> URL du back en localhost : `http://localhost:8090/`
+
+=> consultation de la base de données h2 (embarquée) : `http://localhost:8090/h2-console/`
+
+## Liste des requêtes back de Cclean-Air
+
+### Module de création, de gestion de compte et d'authentification
+
+#### Requête pour s'inscrire
 
 [POST] /comptes
 
@@ -42,21 +50,56 @@ Réponse en cas d'échec :
 
 Code `404`
 
-### Requête pour se connecter
-```JSON
-[Post] /connexion
+#### Requête pour s'authentifier
 
+[POST] /connexion
+
+```JSON
 {
-	"email" : "cecile@test.fr", 
-	"motDePasse" : "Abcd.123"
+    "email" : "cecile@test.fr", 
+    "motDePasse" : "Abcd.123"
 }
 ```
 
-## Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
+
+Réponse en cas d'échec :
+
+Code `401`
+
+#### Requête pour modifier son compte
+
+[PATCH] /profil/modification
 
 
-### Cas d’utilisation “Visualiser données pollution” 
-[GET] / communes/{codeInsee}
+```JSON
+  {
+	"nom" : "Toto", 
+	"prenom" : "", 
+	"email" : "", 
+	"commune" : "", 
+	"alerte" : "", 
+	"listeIndicateurs" : [
+		{
+			"commune" : "Nantes", 
+			"alerte" : "true"
+		}, 
+		{
+			"commune" : "Sautron", 
+			"alerte" : "false"
+		}], 
+	"motDePasseActuel" : "", 
+	"motDePasseNouveau" : "", 
+	"getMotDePasseNouveauValidation" : ""
+}
+
+```
+
+
+
+### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
+
+#### Cas d’utilisation “Visualiser données pollution” 
+[GET] /communes/{codeInsee}
 
 Réponse en cas de réussite : 
 
@@ -88,9 +131,79 @@ Réponse en cas d'erreur :
 
 Code `404`
 
+### Module de création, mise à jour, suppression et visualisation de tous les indicateurs
+
+#### Requête pour créer un indicateur
+
+[POST] /indicateurs
+
+```JSON
+{
+	"commune" : "Nantes",
+	"alerte" : true
+}
+```
+Réponse en cas de réussite :
+
+Code `201`
+
+```JSON
+{
+    "mailUtilisateur": "cecile@test.fr",
+    "nomCommune": "Nantes",
+    "alerte": true
+}
+```
+
+Réponse en cas d'échec :
+
+Code `400`
+
+#### Requête pour modifier un indicateur
+
+[PATCH] /indicateurs
+
+```JSON
+{
+	"communes" : ["Nantes", "Châteaubriant"]
+}
+```
+Réponse en cas de réussite :
+
+Code `200`
+
+```JSON
+{
+    "mailUtilisateur": "cecile@test.fr",
+    "nomCommune": "Châteaubriant",
+    "alerte": true
+}
+```
+
+Réponse en cas d'échec :
+
+Code `400`
 
 
-## API externes
+#### Requête pour supprimer un indicateur
+
+[DELETE] /indicateurs
+
+
+```JSON
+{
+	"commune" : "Nantes"
+}
+```
+Réponse en cas de réussite :
+
+Code `204`
+
+Réponse en cas d'échec :
+
+Code `400`
+
+## API externes (les requêtes sont effectuées par l'API)
 
 ### OpenWeatherMap
 
@@ -176,10 +289,10 @@ Code `200`
     "code": "O3",
     "famille": "",
     "principal": true
-  }]
+  },
 ```
 
-### Requête pour récupérer les données de pollution d'un polluant pour les communes de Loire-Atlantique
+#### Requête pour récupérer les données de pollution d'un polluant pour les communes de Loire-Atlantique
 
 [GET] http://www.airpl.org/api/mesures?debut=2019-09-12T10:00:00&fin=2019-09-12T10:00:00&zones=all&polluant=24
 
@@ -227,11 +340,9 @@ Extrait du début du JSON :
         }
       ]
     }
-}}
 ```
 
-
-### Requête pour récupérer les communes de Loire-Atlantique
+#### Requête pour récupérer les communes de Loire-Atlantique
 
 -> Cette requête sera exécutée tous les 15 jours.
 
@@ -268,96 +379,5 @@ Extrait du début du JSON :
     ],
     "population": 3763
   }
-]
+
 ```
-###Récupérer l'historique d'une commune 
-
-[POST] communes/historique/{codeInsee}
-
-```JSON
-{
-	"dateDebut" : "2018-09-09", 
-	"dateFin" : "2019-09-13", 
-	"heureDebut" : "00:00:00", 
-	"heureFin" : "00:00:00", 
-	"polluant" : "Monoxyde d'azote"
-}
-```
-
-<<<<<<< HEAD
-Réponse en cas de succès : 
-Code 200
-=======
-## Module de création, mise à jour, suppression et visualisation de tous les indicateurs
-
-### Requête pour créer un indicateur
-
-[POST] /indicateurs
-
-```JSON
-{
-	"commune" : "Nantes",
-	"alerte" : true
-}
-```
-Réponse en cas de réussite :
-
-Code `201`
-
-```JSON
-{
-    "mailUtilisateur": "cecile@test.fr",
-    "nomCommune": "Nantes",
-    "alerte": true
-}
-```
-
-Réponse en cas d'échec :
-
-Code `400`
-
-### Requête pour modifier un indicateur
-
-[PATCH] /indicateurs
-
-```JSON
-{
-	"communes" : ["Nantes", "Châteaubriant"]
-}
-```
-Réponse en cas de réussite :
-
-Code `200`
-
-```JSON
-{
-    "mailUtilisateur": "cecile@test.fr",
-    "nomCommune": "Châteaubriant",
-    "alerte": true
-}
-```
-
-Réponse en cas d'échec :
-
-Code `400`
-
-
-### Requête pour supprimer un indicateur
-
-[DELETE] /indicateurs
-
-
-```JSON
-{
-	"commune" : "Nantes"
-}
-```
-Réponse en cas de réussite :
-
-Code `204`
-
-Réponse en cas d'échec :
-
-Code `400`
-
->>>>>>> master

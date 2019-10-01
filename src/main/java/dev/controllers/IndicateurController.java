@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.IndicateurDto;
 import dev.controllers.dto.ModificationCommuneIndicateurDto;
+import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.NombreIndicateursException;
 import dev.exceptions.UtilisateurNonConnecteException;
@@ -89,7 +90,8 @@ public class IndicateurController {
 	 * @throws UtilisateurNonConnecteException
 	 */
 	@DeleteMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur) {
+	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur)
+			throws UtilisateurNonConnecteException {
 		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
 	}
 
@@ -99,10 +101,12 @@ public class IndicateurController {
 	 * @return renvoie le nom de la commune du nouvelle indicateur
 	 * @throws CommuneDejaSuivieException
 	 * @throws UtilisateurNonConnecteException
+	 * @throws AucuneDonneeException
 	 */
 	@PatchMapping(value = "/indicateurs")
 	public ResponseEntity<IndicateurDto> modifierIndicateur(@RequestBody ModificationCommuneIndicateurDto indicateurs,
-			CommuneIndicateurDto ancienIndicateur) throws UtilisateurNonConnecteException, CommuneDejaSuivieException {
+			CommuneIndicateurDto ancienIndicateur)
+			throws UtilisateurNonConnecteException, CommuneDejaSuivieException, AucuneDonneeException {
 
 		return new ResponseEntity<>(service.modifierIndicateur(indicateurs), HttpStatus.OK);
 

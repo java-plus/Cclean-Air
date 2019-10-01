@@ -5,11 +5,15 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.*;
+import dev.entities.Commune;
 import dev.entities.Statut;
+import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
+import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +21,23 @@ import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import dev.controllers.dto.CommuneIndicateurDto;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
 
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Email;
+
+/**
+ * @author Cécile Peyras
+ *
+ */
 @Service
 public class UtilisateurService {
 
@@ -35,15 +47,17 @@ public class UtilisateurService {
 	private IUtilisateurRepository utilisateurRepository;
 	private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
 	private CommuneService communeService;
+	private ICommuneRepository communeRepository;
 
 	@Autowired
 	public UtilisateurService(PasswordEncoder passwordEncoder, IUtilisateurRepository utilisateurRepository,
-			RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService) {
-		super();
+			RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService,
+			ICommuneRepository communeRepository) {
 		this.passwordEncoder = passwordEncoder;
 		this.utilisateurRepository = utilisateurRepository;
 		this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
 		this.communeService = communeService;
+		this.communeRepository = communeRepository;
 	}
 
 	/**
@@ -115,6 +129,8 @@ public class UtilisateurService {
 	/**
 	 * Méthode qui permet de supprimer son compte Elle vérifie que la personne
 	 * connectée n'est pas un admin qui supprime son propre compte
+	 * 
+	 * @param email
 	 */
 	public void supprimerComptePerso() {
 		// récupération de l'utilisateur connecté via l'eamil
@@ -154,4 +170,109 @@ public class UtilisateurService {
 
 	}
 
+	/**
+	 * méthode qui permet de modifier le profil de l'utilisateur
+	 * 
+	 * @param profilModificationPost
+	 * @return
+	 * @throws UtilisateurNonConnecteException
+	 * @throws MotDePasseInvalideException
+	 */
+	public ProfilModifcationGet modifierProfil(ProfilModificationPost profilModificationPost)
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException {
+
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+
+		// Récupération de l'utilisateur
+		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+		LOGGER.info("Utilisateur : {0}", utilisateur);
+
+		// modification du nom
+		if (profilModificationPost.getNom() != null && !profilModificationPost.getNom().equals("")) {
+			utilisateur.setNom(profilModificationPost.getNom());
+		}
+
+		// modification du prénom
+		if (profilModificationPost.getPrenom() != null && !profilModificationPost.getPrenom().equals("")) {
+			utilisateur.setPrenom(profilModificationPost.getPrenom());
+		}
+
+		// modification de l'email
+		if (profilModificationPost.getEmail() != null && !profilModificationPost.getEmail().equals("")) {
+			// validation de l'email
+			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
+					.validate(profilModificationPost);
+
+			if (constraintViolations != null) {
+
+				throw new MotDePasseInvalideException("L'email est mal renseigné");
+			}
+			utilisateur.setEmail(profilModificationPost.getEmail());
+		}
+
+		// modification de la commune
+		if (profilModificationPost.getCommune() != null && !profilModificationPost.getCommune().equals("")) {
+			String nomCommune = profilModificationPost.getCommune();
+			Optional<Commune> commune = communeRepository.findByNomIgnoreCase(nomCommune);
+			if (commune.isPresent()) {
+				utilisateur.setCommune(commune.get());
+			}
+
+		}
+
+		// modification de la liste d'indicateurs
+		List<Indicateur> listeIndicateur = new ArrayList<>();
+		List<CommuneIndicateurDto> listPost = profilModificationPost.getListeIndicateurs();
+		List<CommuneIndicateurDto> listGet = new ArrayList<>();
+		if (listPost != null) {
+			for (CommuneIndicateurDto indicateursPost : listPost) {
+
+				if (indicateursPost.getAlerte()) {
+					Indicateur indicateur = new Indicateur();
+					indicateur.setCommune(utilisateur.getCommune());
+					indicateur.setAlerte(true);
+					indicateur.setUtilisateur(utilisateur);
+					listeIndicateur.add(indicateur);
+					CommuneIndicateurDto communeIndicateurDto = new CommuneIndicateurDto();
+					communeIndicateurDto.setAlerte(true);
+					communeIndicateurDto.setCommune(utilisateur.getCommune().getNom());
+					listGet.add(communeIndicateurDto);
+
+				}
+			}
+			if (listeIndicateur != null) {
+
+				utilisateur.setListeIndicateurs(listeIndicateur);
+			}
+		}
+
+		// modification du mot de passe
+		if (profilModificationPost.getMotDePasseActuel() != null
+				&& !profilModificationPost.getMotDePasseActuel().equals("")) {
+			// validation de la sécurité du mot de passe
+			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
+					.validate(profilModificationPost);
+			if (constraintViolations != null) {
+				throw new MotDePasseInvalideException("Le mot de passe ne respecte pas les règles de sécurité");
+			}
+			// vérification de la correspondance des mots de passe pour modification
+			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
+				if (profilModificationPost.getMotDePasseNouveau()
+						.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
+					utilisateur.setMotDePasse(profilModificationPost.getGetMotDePasseNouveauValidation());
+				} else {
+					throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
+				}
+			} else {
+				throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
+			}
+
+		}
+		utilisateurRepository.save(utilisateur);
+
+		return new ProfilModifcationGet(utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getEmail(),
+				utilisateur.getStatutNotification(), utilisateur.getCommune().getNom(), listGet);
+
+	}
 }

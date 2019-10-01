@@ -8,38 +8,24 @@ import javax.validation.constraints.NotBlank;
  */
 public class InfosConnexion {
 
-	/** email : String */
 	@NotBlank
 	private String email;
 
-	/** motDePasse : String */
 	@NotBlank
 	private String motDePasse;
 
-	/**
-	 * @return
-	 */
 	public String getEmail() {
 		return email;
 	}
 
-	/**
-	 * @param email
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	/**
-	 * @return motDePasse
-	 */
 	public String getMotDePasse() {
 		return motDePasse;
 	}
 
-	/**
-	 * @param motDePasse
-	 */
 	public void setMotDePasse(String motDePasse) {
 		this.motDePasse = motDePasse;
 	}

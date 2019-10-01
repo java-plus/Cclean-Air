@@ -20,17 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	/** TOKEN_COOKIE : String */
 	@Value("${jwt.cookie}")
 	private String TOKEN_COOKIE;
 
-	/** jwtAuthorizationFilter : JWTAuthorizationFilter */
 	@Autowired
 	JWTAuthorizationFilter jwtAuthorizationFilter;
 
-	/**
-	 * @return le mot de passe encodé
-	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

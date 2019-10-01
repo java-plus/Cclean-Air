@@ -1,48 +1,26 @@
 package dev.controllers;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import dev.controllers.dto.UtilisateurDtoAdmin;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import dev.controllers.dto.EmailDto;
-import dev.controllers.dto.InfosConnexion;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.UtilisateurDtoGet;
-import dev.controllers.dto.UtilisateurDtoPost;
+import dev.controllers.dto.*;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.services.CommuneService;
 import dev.services.UtilisateurService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -119,13 +97,6 @@ public class UtilisateurController {
 		}
 	}
 
-	/**
-	 * Méthode qui supprime le compte de l'utilisateur connecté
-	 * @param email
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
 	@DeleteMapping("/profil/suppression")
 	public ResponseEntity<String> suppressionComptePerso(@RequestBody EmailDto email, HttpServletRequest req,
 			HttpServletResponse resp) {
@@ -151,5 +122,19 @@ public class UtilisateurController {
 
 		return new ResponseEntity<>(utilisateurService.visualiserProfil(), HttpStatus.OK);
 
+	}
+
+	/**
+	 * Méthode qui pemert de modifier à l'utilisateur de modifier son profil
+	 * @param profilModificationPost
+	 * @return
+	 * @throws UtilisateurNonConnecteException
+	 * @throws MotDePasseInvalideException
+	 */
+	@PatchMapping("profil/modification")
+	public ProfilModifcationGet afficherProfilModifie(@RequestBody ProfilModificationPost profilModificationPost)
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException {
+
+		return utilisateurService.modifierProfil(profilModificationPost);
 	}
 }

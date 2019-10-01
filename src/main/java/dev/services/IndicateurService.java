@@ -13,6 +13,7 @@ import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.entities.Commune;
 import dev.entities.Indicateur;
 import dev.entities.Utilisateur;
+import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.NombreIndicateursException;
@@ -52,8 +53,8 @@ public class IndicateurService {
 	}
 
 	/**
-	 * @param Email de l'utilisateur qui va être utilisé pour récupérer les
-	 *              indicateurs
+	 * @param @Email de l'utilisateur qui va être utilisé pour récupérer les
+	 *               indicateurs
 	 * @return retourne la liste des noms de communes concernées par les différents
 	 *         indicateurs de l'utilisateur
 	 */
@@ -105,36 +106,43 @@ public class IndicateurService {
 	/**
 	 * @param indicateur : Nom de la commune représentant l'indicateur à supprimer
 	 * @return renvoie le mail tilisateur et le nom de la commune à supprimer
+	 * @throws UtilisateurNonConnecteException
 	 */
-	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) {
-		try {
-			List<Indicateur> indicateurs = repository
-					.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
-			List<Indicateur> indicateursFiltres = indicateurs.stream()
-					.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
-			Indicateur suppression = null;
-			if (!indicateursFiltres.isEmpty()) {
-				suppression = indicateursFiltres.get(0);
-				repository.delete(suppression);
-				return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
-						suppression.getCommune().getNom(), suppression.getAlerte());
-			}
-			return null;
+	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) throws UtilisateurNonConnecteException {
 
-		} catch (UtilisateurNonConnecteException e) {
-			e.getMessage();
-			return null;
+		List<Indicateur> indicateurs = repository
+				.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
+		List<Indicateur> indicateursFiltres = indicateurs.stream()
+				.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
+		Indicateur suppression = null;
+		if (!indicateursFiltres.isEmpty()) {
+			suppression = indicateursFiltres.get(0);
+			repository.delete(suppression);
+			return new IndicateurDto(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail(),
+					suppression.getCommune().getNom(), suppression.getAlerte());
 		}
+		return null;
+
 	}
 
 	/**
-	 * @param nouvelIndicateur L'indicateur a modifier en base
+	 * @param @nouvelIndicateur L'indicateur a modifier en base
 	 * @return renvoie l'indicateur modifié
 	 * @throws UtilisateurNonConnecteException
 	 * @throws CommuneDejaSuivieException
+	 * @throws AucuneDonneeException
 	 */
 	public IndicateurDto modifierIndicateur(ModificationCommuneIndicateurDto indicateurs)
-			throws UtilisateurNonConnecteException, CommuneDejaSuivieException {
+			throws UtilisateurNonConnecteException, CommuneDejaSuivieException, AucuneDonneeException {
+
+		if (indicateurs == null || indicateurs.getCommunes().length == 0) {
+			throw new AucuneDonneeException("Aucune donnée n'a été renseigné");
+		}
+
+		Optional<Commune> verificationCommune = communeRepository.findByNomIgnoreCase(indicateurs.getCommunes()[0]);
+		if (!verificationCommune.isPresent()) {
+			throw new CommuneInvalideException("Commune invalide");
+		}
 
 		// Recherche l'indicateur utilisateur à modifier
 		Indicateur indicateurAModifier = repository
@@ -177,7 +185,6 @@ public class IndicateurService {
 		return recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getListeIndicateurs().stream()
 				.filter(i -> i.getCommune().getNom().equals(commune.getCommune())).collect(Collectors.toList())
 				.isEmpty();
-
 	}
 
 }

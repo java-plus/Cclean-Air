@@ -53,7 +53,7 @@ public class Polluant implements Serializable {
 	private QualiteAir qualiteAir;
 
 	public Polluant(String code, String nom) {
-		this.code= code;
+		this.code = code;
 		this.nom = nom;
 	}
 

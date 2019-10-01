@@ -1,5 +1,10 @@
 package dev.controllers;
 
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.exceptions.CommuneInvalideException;
+import dev.services.CommuneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +22,28 @@ import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.AucuneDonneeException;
-import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.IndicateurFuturException;
-import dev.services.CommuneService;
 
 @RestController
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
-	/** communeService : CommuneService */
-	@Autowired
-	CommuneService communeService;
+	private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
+
+	private CommuneService communeService;
 
 	/**
-	 * @param exception
-	 * @return le code 404 + le message
+	 * Constructeur
+	 * 
+	 * @param communeService
 	 */
+	@Autowired
+	public CommuneController(CommuneService communeService) {
+		super();
+		this.communeService = communeService;
+	}
+
 	@ExceptionHandler(CommuneInvalideException.class)
 	public ResponseEntity<String> handleException(CommuneInvalideException e) {
 		return ResponseEntity.status(404).body(e.getMessage());
@@ -42,9 +51,9 @@ public class CommuneController {
 
 	/**
 	 * Méthode qui affiche les données locales pour l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
-	 * @return 
+	 * @return
 	 */
 	@GetMapping(value = "/{codeInsee}")
 	public DonneesLocalesDto afficherDonneesLocales(@PathVariable String codeInsee) {
@@ -69,7 +78,7 @@ public class CommuneController {
 
 	/**
 	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
 	 * @param donneesLocalesRecherchees
 	 * @return
@@ -78,8 +87,10 @@ public class CommuneController {
 	public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee,
 			@RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees) {
 
+		LOGGER.info("Je passe dans le controller et je récupère le json : " + donneesLocalesRecherchees);
+
 		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
 	}
-
 }
+
