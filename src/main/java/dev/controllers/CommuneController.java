@@ -17,26 +17,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.AucuneDonneeException;
-import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.IndicateurFuturException;
-import dev.services.CommuneService;
 
 @RestController
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
-    private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
+	private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
 
-    @Autowired
-    private CommuneService communeService;
+	private CommuneService communeService;
+
+	/**
+	 * Constructeur
+	 * 
+	 * @param communeService
+	 */
+	@Autowired
+	public CommuneController(CommuneService communeService) {
+		super();
+		this.communeService = communeService;
+	}
 
 	@ExceptionHandler(CommuneInvalideException.class)
 	public ResponseEntity<String> handleException(CommuneInvalideException e) {
@@ -80,6 +86,8 @@ public class CommuneController {
 	@PostMapping("/historiques/{codeInsee}")
 	public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee,
 			@RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees) {
+
+		LOGGER.info("Je passe dans le controller et je récupère le json : " + donneesLocalesRecherchees);
 
 		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 

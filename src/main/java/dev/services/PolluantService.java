@@ -21,58 +21,59 @@ import java.util.List;
 @Service
 public class PolluantService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(PolluantService.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(PolluantService.class);
 
-    @Value("${url.pollution_api}")
-    private String URL_API_POLLUTION;
+	@Value("${url.pollution_api}")
+	private String URL_API_POLLUTION;
 
-    private IPolluantRepository polluantRepository;
+	private IPolluantRepository polluantRepository;
 
-    @Autowired
-    public PolluantService(IPolluantRepository polluantRepository) {
-        this.polluantRepository = polluantRepository;
-    }
+	@Autowired
+	public PolluantService(IPolluantRepository polluantRepository) {
+		this.polluantRepository = polluantRepository;
+	}
 
-    public void sauvegarderPolluant(List<Polluant> polluants) {
-        LOGGER.info("sauvegarderPolluant() lancé");
-        for (Polluant p: polluants) {
-            polluantRepository.save(p);
-        }
+	public void sauvegarderPolluant(List<Polluant> polluants) {
+		LOGGER.info("sauvegarderPolluant() lancé");
+		for (Polluant p : polluants) {
+			polluantRepository.save(p);
+		}
 
-    }
+	}
 
-    public List<Polluant> recupererPolluantsDeApi() {
-        LOGGER.info("recupererPolluantsDeApi() lancé");
+	public List<Polluant> recupererPolluantsDeApi() {
+		LOGGER.info("recupererPolluantsDeApi() lancé");
 
-        String urlPolluants = URL_API_POLLUTION + "/polluants";
+		String urlPolluants = URL_API_POLLUTION + "/polluants";
 
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<List<PolluantDtoApi>> response = restTemplate.exchange(
-                    urlPolluants, HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<PolluantDtoApi>>(){});
-            List<PolluantDtoApi> polluantsDto = response.getBody();
-            LOGGER.info("polluants récupérés : " + polluantsDto);
-            List<Polluant> polluants = new ArrayList<>();
-            for (PolluantDtoApi p : polluantsDto) {
-                polluants.add(new Polluant(p.getId(), p.getNom()));
-            }
-            return polluants;
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<List<PolluantDtoApi>> response = restTemplate.exchange(urlPolluants, HttpMethod.GET, null,
+					new ParameterizedTypeReference<List<PolluantDtoApi>>() {
+					});
+			List<PolluantDtoApi> polluantsDto = response.getBody();
+			LOGGER.info("polluants récupérés : " + polluantsDto);
+			List<Polluant> polluants = new ArrayList<>();
+			for (PolluantDtoApi p : polluantsDto) {
+				polluants.add(new Polluant(p.getId(), p.getNom()));
+			}
+			return polluants;
 
-        } catch (RuntimeException e) {
-            throw new PolluantInvalideException("ERREUR : la récupération de l'ensemble des polluants de l'API " +
-                    "pollution a échouché. " +
-                    "\n" + e);
-        }
-    }
+		} catch (RuntimeException e) {
+			throw new PolluantInvalideException("ERREUR : la récupération de l'ensemble des polluants de l'API "
+					+ "pollution a échouché. " + "\n" + e);
+		}
+	}
 
-    /**
-     * Méthode permettant de supprimer de la base de données les données de polluants de la qualité air indiquée.
-     * @param qualiteAir : [QualiteAir] qualité d'air du polluant.
-     */
-   public void purgerPolluant(QualiteAir qualiteAir) {
-        LOGGER.info("purgerConditionMeteo() lancé");
-        polluantRepository.supprimerPolluantsDeLaQualiteAirIndiquee(qualiteAir);
-    }
+	/**
+	 * Méthode permettant de supprimer de la base de données les données de
+	 * polluants de la qualité air indiquée.
+	 * 
+	 * @param qualiteAir : [QualiteAir] qualité d'air du polluant.
+	 */
+	public void purgerPolluant(QualiteAir qualiteAir) {
+		LOGGER.info("purgerConditionMeteo() lancé");
+		polluantRepository.supprimerPolluantsDeLaQualiteAirIndiquee(qualiteAir);
+	}
 
 }

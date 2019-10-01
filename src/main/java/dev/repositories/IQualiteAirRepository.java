@@ -11,16 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Classe repository faisant le lien avec la base de données et notamment la table QualiteAir.
+ * Classe repository faisant le lien avec la base de données et notamment la
+ * table QualiteAir.
  */
 public interface IQualiteAirRepository extends JpaRepository<QualiteAir, Integer> {
-    Optional<QualiteAir> findFirstByOrderByIdDesc();
-    List<QualiteAir> findByDate(ZonedDateTime date);
+	Optional<QualiteAir> findFirstByOrderByIdDesc();
 
-    List<QualiteAir> findByDateBefore(ZonedDateTime date);
+	List<QualiteAir> findByDate(ZonedDateTime date);
 
-    @Transactional
-    @Modifying
-    @Query("delete from QualiteAir q where q.date <= ?1")
-    void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
+	List<QualiteAir> findByDateBefore(ZonedDateTime date);
+
+	@Transactional
+	@Modifying
+	@Query("delete from QualiteAir q where q.date <= ?1")
+	void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
 }

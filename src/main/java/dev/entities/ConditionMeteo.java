@@ -49,7 +49,7 @@ public class ConditionMeteo implements Serializable {
 	private List<DonneesLocales> donneesLocales;
 
 	public ConditionMeteo(Double ensoleillement, Double temperature, Double humidite, ZonedDateTime date,
-						  List<DonneesLocales> donneesLocales) {
+			List<DonneesLocales> donneesLocales) {
 		super();
 		this.ensoleillement = ensoleillement;
 		this.temperature = temperature;

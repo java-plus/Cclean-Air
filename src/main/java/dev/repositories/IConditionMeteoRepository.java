@@ -10,19 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 
 /**
-<<<<<<< HEAD
- * @author Cécile
- * Classe Repository faisant le lien avec la table ConditionMeteo
-=======
- * Classe repository faisant le lien avec la base de données et notamment la table ConditionMeteo.
->>>>>>> master
+ * <<<<<<< HEAD
+ * 
+ * @author Cécile Classe Repository faisant le lien avec la table ConditionMeteo
+ *         ======= Classe repository faisant le lien avec la base de données et
+ *         notamment la table ConditionMeteo. >>>>>>> master
  */
 @Repository
 public interface IConditionMeteoRepository extends JpaRepository<ConditionMeteo, Integer> {
 
-    @Transactional
-    @Modifying
-    @Query("delete from ConditionMeteo d where d.date <= ?1")
-    void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
+	@Transactional
+	@Modifying
+	@Query("delete from ConditionMeteo d where d.date <= ?1")
+	void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
 
 }

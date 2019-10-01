@@ -1,8 +1,10 @@
 
 package dev.repositories;
 
-
+import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.ProfilModifcationGet;
 import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.UtilisateurDtoGet;
 import dev.entities.Utilisateur;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,14 +19,15 @@ import java.util.Optional;
  */
 public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
 
-    /**
-     * méthode qui recherche un Utilisateur à partir de son email
-     * @param email
-     * @return
-     */
-    Optional<Utilisateur> findByEmailIgnoreCase(String email);
+	/**
+	 * méthode qui recherche un Utilisateur à partir de son email
+	 * 
+	 * @param email
+	 * @return
+	 */
+	Optional<Utilisateur> findByEmailIgnoreCase(String email);
 
-    @Query("select new dev.controllers.dto.UtilisateurDtoAdmin(u.nom, u.prenom, u.email) from Utilisateur u")
-    List<UtilisateurDtoAdmin> findAllwithNomPrenomEmail();
+	@Query("select new dev.controllers.dto.UtilisateurDtoAdmin(u.nom, u.prenom, u.email) from Utilisateur u")
+	List<UtilisateurDtoAdmin> findAllwithNomPrenomEmail();
 
 }
