@@ -30,7 +30,8 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 /**
- * @author Cécile&Bilel controller qui permet de gérer la connexion sur l'application
+ * @author Cécile&Bilel controller qui permet de gérer la connexion sur
+ *         l'application
  */
 @RestController
 public class ConnexionController {
@@ -63,19 +64,20 @@ public class ConnexionController {
 	 * LOGGER : Logger
 	 */
 	private final Logger LOGGER = LoggerFactory.getLogger(ConnexionController.class);
-	
+
 	/**
-	 * Méthode qui permet de connecter l'utilisateur en vérifiant s'il est admin
-	 * ou non et d'installer le cookie dans le navigateur correspondant.
-	 * Elle permet aussi d'incrémenter un compteur si la tentative de connexion
-	 * est échouée, bloquant celle-ci après 5 tentatives en moins de 30 minutes.
+	 * Méthode qui permet de connecter l'utilisateur en vérifiant s'il est admin ou
+	 * non et d'installer le cookie dans le navigateur correspondant. Elle permet
+	 * aussi d'incrémenter un compteur si la tentative de connexion est échouée,
+	 * bloquant celle-ci après 5 tentatives en moins de 30 minutes.
+	 * 
 	 * @param infos : infos de connexion (mail et mdp)
 	 * @return un status/réponse différent selon la réussite ou non de connexion.
 	 */
 	@PostMapping(value = "/connexion")
 	@Transactional
 	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
-		
+
 		ZonedDateTime date = ZonedDateTime.now();
 
 		return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
@@ -101,17 +103,20 @@ public class ConnexionController {
 					Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
 							.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
 
-					utilisateur.setDateDerniereConnexion(date);
-
 					if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
-						if(utilisateur.getCompteurTentativesConnexion() > 5 && (date.getMinute() - utilisateur.getDateDerniereConnexion().getMinute() < 30)) {
-							return ResponseEntity.status(HttpStatus.FORBIDDEN).build();							
+						if (date.getMinute() - utilisateur.getDateDerniereConnexion().getMinute() >= 30) {
+							utilisateur.setCompteurTentativesConnexion(0);
+							utilisateur.setDateDerniereConnexion(date);
+						}
+						if (utilisateur.getCompteurTentativesConnexion() > 4
+								&& (date.getMinute() - utilisateur.getDateDerniereConnexion().getMinute() < 30)) {
+							return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 						} else {
 							Integer compteur = utilisateur.getCompteurTentativesConnexion();
 							utilisateur.setCompteurTentativesConnexion(++compteur);
-							
+
 							utilisateur.setDateDerniereConnexion(date);
-						}											
+						}
 					}
 					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 				});
