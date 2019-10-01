@@ -18,9 +18,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.transaction.Transactional;
 
 /**
  * @author Cécile controller qui permet de gérer la connexion sur l'application
@@ -56,69 +63,57 @@ public class ConnexionController {
 	 * LOGGER : Logger
 	 */
 	private final Logger LOGGER = LoggerFactory.getLogger(ConnexionController.class);
-
+	
 	/**
-	 * Méthode qui permet de se connecter l'utilisateur en vérifiant s'il est admin
-	 * ou non et d'installer le cookie dans le navigateur correspondant dans le
-	 * navigateur
-	 *
-	 * @param infos
-	 * @return
+	 * Méthode qui permet de connecter l'utilisateur en vérifiant s'il est admin
+	 * ou non et d'installer le cookie dans le navigateur correspondant.
+	 * Elle permet aussi d'incrémenter un compteur si la tentative de connexion
+	 * est échouée, bloquant celle-ci après 5 tentatives en moins de 30 minutes.
+	 * @param infos : infos de connexion (mail et mdp)
+	 * @return un status/réponse différent selon la réussite ou non de connexion.
 	 */
 	@PostMapping(value = "/connexion")
+	@Transactional
 	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+		
+		ZonedDateTime date = ZonedDateTime.now();
 
 		return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
 				.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
 				.map(utilisateur -> {
-
 					Map<String, Object> infosSupplementaireToken = new HashMap<>();
 
 					infosSupplementaireToken.put("statuts", utilisateur.getStatut());
 					infosSupplementaireToken.put("email", utilisateur.getEmail());
 
+					utilisateur.setCompteurTentativesConnexion(0);
+					utilisateur.setDateDerniereConnexion(date);
+
 					String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
 							.addClaims(infosSupplementaireToken)
 							.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
 							.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
-
 					ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
 							.maxAge(EXPIRES_IN * 1000).path("/").build();
-
 					LOGGER.info("Le cookie est créé");
-
 					return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
+				}).orElseGet(() -> {
+					Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
+							.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
 
-				})
+					utilisateur.setDateDerniereConnexion(date);
 
-				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-
+					if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
+						if(utilisateur.getCompteurTentativesConnexion() > 5 && (date.getMinute() - utilisateur.getDateDerniereConnexion().getMinute() < 30)) {
+							return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+						} else {
+							Integer compteur = utilisateur.getCompteurTentativesConnexion();
+							utilisateur.setCompteurTentativesConnexion(++compteur);
+							
+							utilisateur.setDateDerniereConnexion(date);
+						}											
+					}
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+				});
 	}
-
-//	return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-//			.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
-//			.map(utilisateur -> {
-//				Map<String, Object> infosSupplementaireToken = new HashMap<>();
-//				infosSupplementaireToken.put("statuts", utilisateur.getStatut());
-//				infosSupplementaireToken.put("email", utilisateur.getEmail());
-//				String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
-//						.addClaims(infosSupplementaireToken)
-//						.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
-//						.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
-//				ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
-//						.maxAge(EXPIRES_IN * 1000).path("/").build();
-//				LOGGER.info("Le cookie est créé");
-//				return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
-//			}).orElseGet(() -> {
-//				Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-//						.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
-//				if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
-//					Integer compteur = utilisateur.getCompteurTentativesConnexion();
-//					utilisateur.setCompteurTentativesConnexion(++compteur);
-//
-//					// return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//				}
-//
-//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//			});
 }
