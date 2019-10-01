@@ -97,6 +97,7 @@
 				<jdbc.pass>${env.POSTGRESQL_ADDON_PASSWORD}</jdbc.pass>
 				<generate.ddl>${env.GENERATE_DDL}</generate.ddl>
 				<data.init>${env.DATA_INIT}</data.init>
+				<server.port>8080</server.port>
 				<show.sql>false</show.sql>
 			</properties>
 			<dependencies>
@@ -116,6 +117,7 @@
 				<generate.ddl>true</generate.ddl>
 				<data.init>false</data.init>
 				<show.sql>false</show.sql>
+				<server.port>8090</server.port>
 			</properties>
 			<dependencies>
 				<dependency>
@@ -139,6 +141,7 @@
 				<generate.ddl>true</generate.ddl>
 				<data.init>true</data.init>
 				<show.sql>true</show.sql>
+				<server.port>8090</server.port>
 			</properties>
 			<dependencies>
 				<!-- Base de données embarquée -->
