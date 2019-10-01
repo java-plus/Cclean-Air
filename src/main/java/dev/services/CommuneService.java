@@ -1,13 +1,16 @@
 package dev.services;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import dev.controllers.dto.*;
+import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
+import dev.entities.*;
+import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.IndicateurFuturException;
+import dev.repositories.*;
+import dev.utils.CalculUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,30 +21,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dev.controllers.dto.AffichageResultatCommuneDto;
-import dev.controllers.dto.CommuneDtoGet;
-import dev.controllers.dto.CommuneRechercheDto;
-import dev.controllers.dto.DonneesLocalesHistorique;
-import dev.controllers.dto.DonneesLocalesRecherchees;
-import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
-import dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation;
-import dev.entities.CodePostal;
-import dev.entities.Commune;
-import dev.entities.ConditionMeteo;
-import dev.entities.DonneesLocales;
-import dev.entities.Polluant;
-import dev.entities.QualiteAir;
-import dev.exceptions.AucuneDonneeException;
-import dev.exceptions.CommuneInvalideException;
-import dev.exceptions.IndicateurFuturException;
-import dev.repositories.ICommuneRepository;
-import dev.repositories.IConditionMeteoRepository;
-import dev.repositories.IDonneesLocalesRepository;
-import dev.repositories.IPolluantRepository;
-import dev.repositories.IQualiteAirRepository;
-import dev.utils.CalculUtils;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Classe regroupant les services d'une commune géographique.
@@ -49,10 +35,12 @@ import dev.utils.CalculUtils;
 @Service
 public class CommuneService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
+
+	private final Logger LOGGER = LoggerFactory.getLogger(CommuneService.class);
 
     @Value("${url.communes_api}")
     private String URL_API_COMMUNES;
+
 
     private IDonneesLocalesRepository donneesLocalesRepository;
     private ICommuneRepository communeRepository;
@@ -62,89 +50,105 @@ public class CommuneService {
     private IConditionMeteoRepository conditionMeteoRepository;
     private IPolluantRepository polluantRepository;
 
+
     @Autowired
     public CommuneService(IDonneesLocalesRepository donneesLocalesRepository, ICommuneRepository communeRepository,
-                          CodePostalService codePostalService, CalculUtils calculUtils,
-                          IQualiteAirRepository qualiteAirRepository,
+                          CodePostalService codePostalService, IQualiteAirRepository qualiteAirRepository,
                           IConditionMeteoRepository conditionMeteoRepository, IPolluantRepository polluantRepository) {
         this.donneesLocalesRepository = donneesLocalesRepository;
         this.communeRepository = communeRepository;
         this.codePostalService = codePostalService;
-        this.calculUtils = calculUtils;
         this.qualiteAirRepository = qualiteAirRepository;
         this.conditionMeteoRepository = conditionMeteoRepository;
         this.polluantRepository = polluantRepository;
     }
 
+    /**
+     * Méthode vérifiant si la commune existe déjà dans la base de données.
+     * @param nomCommune : [String] nom de la commune
+     * @return [Boolean] : true si la commune existe, false sinon
+     */
+
     public Boolean isCommuneExistante(String nomCommune) {
         return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
     }
 
+
+    /**
+     * Méthode récupérant un objet commune de la base de données portant le nom indiqué.
+     * @param commune : [String] le nom de la commune à récupérer
+     * @return [Commune] l'objet commune récupéré
+     * @throws CommuneInvalideException : exeception lancée si aucune commune n'a été trouvée avec ce nom.
+     */
     public Commune recupererCommune(String commune) throws CommuneInvalideException {
         return communeRepository.findByNomIgnoreCase(commune).orElseThrow(() -> new CommuneInvalideException("ERREUR " +
                 ": Commune inexistante dans la base de données."));
     }
 
-    /**
-     * Méthode qui permet de créer un objet donnéeslocalesDto pour une commune
-     *
-     * @param codeInsee
-     * @return
-     */
-    public DonneesLocalesDto creerDonneesLocalesCommune(String codeInsee) {
+	/**
+	 * Méthode qui permet de créer un objet donnéeslocalesDto pour une commune
+	 *
+	 * @param codeInsee
+	 * @return
+	 */
+	public DonneesLocalesDto creerDonneesLocalesCommune(String codeInsee) {
 
-        //récupération de la commune
-        Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
+		// récupération de la commune
+		Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
 
-        if (!commune.isPresent()) {
-            throw new CommuneInvalideException("La commune n'existe pas");
-        }
+		if (!commune.isPresent()) {
+			throw new CommuneInvalideException("La commune n'existe pas");
+		}
 
-        //Récupération de l'objet communeDtovisualisation
-        CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(commune.get().getNom(), commune.get().getNbHabitants());
+		// Récupération de l'objet communeDtovisualisation
+		CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(commune.get().getNom(),
+				commune.get().getNbHabitants());
 
-        //Récupération de la dernière date d'enregistrements pour la commune
-        ZonedDateTime date = donneesLocalesRepository.findByCommune(commune);
-        //Récupération des données locales
-        DonneesLocales donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
+		// Récupération de la dernière date d'enregistrements pour la commune
+		ZonedDateTime date = donneesLocalesRepository.findByCommune(commune);
+		// Récupération des données locales
+		DonneesLocales donneesLocales = donneesLocalesRepository.findByCommuneAndDate(commune, date);
 
-        //Récupéartion des id qualiteAir et conditionMeteo
-        Integer qualiteAirId = null;
-        Integer conditionMeteoId = null;
-        if (donneesLocales != null) {
-            qualiteAirId = donneesLocales.getQualiteAir().getId();
-            conditionMeteoId = donneesLocales.getConditionMeteo().getId();
-        }
+		// Récupéartion des id qualiteAir et conditionMeteo
+		Integer qualiteAirId = null;
+		Integer conditionMeteoId = null;
+		if (donneesLocales != null) {
+			qualiteAirId = donneesLocales.getQualiteAir().getId();
+			conditionMeteoId = donneesLocales.getConditionMeteo().getId();
+		}
 
-        //Récupération qualitéAir
-        Optional<QualiteAir> qualiteAir = null;
-        if (qualiteAirId != null) {
-            qualiteAir = qualiteAirRepository.findById(qualiteAirId);
-        }
+		// Récupération qualitéAir
+		Optional<QualiteAir> qualiteAir = null;
+		if (qualiteAirId != null) {
+			qualiteAir = qualiteAirRepository.findById(qualiteAirId);
+		}
 
-        //Récupération ConditionMeteo et création du conditionMeteoDtoVisualisation
-        ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = null;
-        if (conditionMeteoId != null) {
-            Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
-            conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(), conditionMeteo.get().getHumidite());
-        }
-        //Création de l'objet DonneesLocalesDto
-        DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
-        donneesLocalesDto.setDate(date);
-        donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
-        if (!qualiteAir.isPresent()) {
-            donneesLocalesDto.setListePolluantDtoVisualisation(null);
-        } else {
-            List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
-            donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
+		// Récupération ConditionMeteo et création du conditionMeteoDtoVisualisation
+		ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation = null;
+		if (conditionMeteoId != null) {
+			Optional<ConditionMeteo> conditionMeteo = conditionMeteoRepository.findById(conditionMeteoId);
+			conditionMeteoDtoVisualisation = new ConditionMeteoDtoVisualisation(
+					conditionMeteo.get().getEnsoleillement(), conditionMeteo.get().getTemperature(),
+					conditionMeteo.get().getHumidite());
+		}
+		// Création de l'objet DonneesLocalesDto
+		DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
+		donneesLocalesDto.setDate(date);
+		donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
+		if (!qualiteAir.isPresent()) {
+			donneesLocalesDto.setListePolluantDtoVisualisation(null);
+		} else {
+			List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
+			donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
 
-        }
-        donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
+		}
+		donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
 
-        LOGGER.info("création des données locales à afficher /classe CommuneService");
+		LOGGER.info("création des données locales à afficher /classe CommuneService");
 
-        return donneesLocalesDto;
-    }
+		return donneesLocalesDto;
+	}
+
 
     /**
      * Méthode permettant de récupérer toutes les communes de la base de données.
@@ -156,7 +160,8 @@ public class CommuneService {
         if(communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
             return communeRepository.findAll();
         } else {
-            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échouée" +
+            LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
+            throw new CommuneInvalideException("ERREUR : la récupération des communes de la base de données a échoué" +
                     ".");
         }
     }
@@ -181,88 +186,105 @@ public class CommuneService {
             List<CommuneDtoGet> communes = response.getBody();
 
             for (CommuneDtoGet c : communes) {
-                Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
-                        c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
-                communeRepository.save(commune);
-                for (String cp : c.getCodesPostaux()) {
-                    CodePostal codePostal = new CodePostal(cp, commune);
-                    codePostalService.sauvegarderCodePostal(codePostal);
+                if(isCommuneExistante(c.getNom())) {
+                    Commune communeExistante = recupererCommune(c.getNom());
+                    if(communeExistante.getNbHabitants() != c.getPopulation()) {
+                        communeExistante.setNbHabitants(c.getPopulation());
+                    }
+                    communeRepository.save(communeExistante);
+                } else {
+                    LOGGER.warn("La commune " + c.getNom() + " dont le code est " + c.getCode() + " n'a pas été " +
+                            "trouvée dans la base de données.");
+                    Commune commune = new Commune(c.getNom(), c.getPopulation(), c.getCode().toString(),
+                            c.getCentre().getCoordinates().get(1), c.getCentre().getCoordinates().get(0));
+                    communeRepository.save(commune);
+                    for (String cp : c.getCodesPostaux()) {
+                        CodePostal codePostal = new CodePostal(cp, commune);
+                        codePostalService.sauvegarderCodePostal(codePostal);
+                    }
                 }
             }
         } catch (RuntimeException e) {
-            LOGGER.info("RuntimeException, CommuneInvalideException \n" + e);
+            LOGGER.error("RuntimeException, CommuneInvalideException \n" + e);
             throw new CommuneInvalideException("ERREUR : la récupération des données de l'API communes a échouché. " +
                     "\n" + e);
         }
-    }
 
-    /**
-     * Méthode qui permet de créer un historique de données en fonction des infos saisi par l'utilisateur
-     * @param donneesLocalesRecherchees
-     * @param codeInsee
-     * @return
-     */
-    public List<DonneesLocalesHistorique> creerHistorique(DonneesLocalesRecherchees donneesLocalesRecherchees, String codeInsee) {
+}
+	/**
+	 * Méthode qui permet de créer un historique de données en fonction des infos
+	 * saisi par l'utilisateur
+	 *
+	 * @param donneesLocalesRecherchees
+	 * @param codeInsee
+	 * @return
+	 */
+	public List<DonneesLocalesHistorique> creerHistorique(DonneesLocalesRecherchees donneesLocalesRecherchees,
+			String codeInsee) {
 
-        //création de la date de début de recherche
-        LocalDateTime dateDebutLdt = donneesLocalesRecherchees.getDateDebut().atTime(donneesLocalesRecherchees.getHeureDebut());
-        ZonedDateTime dateDebut = dateDebutLdt.atZone(ZoneId.systemDefault());
-        //création de la date de fin de recherche
-        LocalDateTime dateFinLdt = donneesLocalesRecherchees.getDateFin().atTime(donneesLocalesRecherchees.getHeureFin());
-        ZonedDateTime dateFin = dateFinLdt.atZone(ZoneId.systemDefault());
+		// création de la date de début de recherche
+		LocalDateTime dateDebutLdt = donneesLocalesRecherchees.getDateDebut()
+				.atTime(donneesLocalesRecherchees.getHeureDebut());
+		ZonedDateTime dateDebut = dateDebutLdt.atZone(ZoneId.systemDefault());
+		// création de la date de fin de recherche
+		LocalDateTime dateFinLdt = donneesLocalesRecherchees.getDateFin()
+				.atTime(donneesLocalesRecherchees.getHeureFin());
+		ZonedDateTime dateFin = dateFinLdt.atZone(ZoneId.systemDefault());
 
-        //récupération de la commune
-        Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
-        if (!commune.isPresent()) {
-            throw new CommuneInvalideException("Le code insee est incorrect");
-        }
+		// récupération de la commune
+		Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
+		if (!commune.isPresent()) {
+			throw new CommuneInvalideException("Le code insee est incorrect");
+		}
 
-        //Récupération de la liste de données locales bornées par les dates
+		// Récupération de la liste de données locales bornées par les dates
+		List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository
+				.findAllByDateDebutAndDateFin(dateDebut, dateFin, commune.get());
 
-        ZonedDateTime dateTest=  donneesLocalesRepository.findByCommune(commune);
-        DonneesLocales donneesTest = donneesLocalesRepository.findByCommuneAndDate(commune, dateTest);
+		// Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par
+		// DonneesLocalesHistorique
+		List<DonneesLocalesHistorique> listeDonneesLocalesHistorique = new ArrayList<>();
 
-        List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository.findAllByDateDebutAndDateFin(dateDebut, dateFin, commune.get());
+		// Création de donneesLocalesRetourHistorique qui comprends :
+		// -PolluantDtoViualisation
+		// -CommuneDtovisualition
+		// -Date
+		DonneesLocalesHistorique donneesLocalesRetourHistorique = new DonneesLocalesHistorique();
 
-        //Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par DonneesLocalesHistorique
-        List<DonneesLocalesHistorique> listeDonneesLocalesHistorique = new ArrayList<>();
+		// Les données locales sont transformée en donnéesLocalesRetourHistorique pour
+		// les ajouter à la liste
+		for (DonneesLocales donneesLocales : listeDonneesLocalesBornees) {
+			// création du polluantDtoVisualisation
+			PolluantDtoVisualisation polluantDtoVisualisation = new PolluantDtoVisualisation();
+			// récupération de la liste de polluant de la donnée locale
+			List<Polluant> listePolluant = donneesLocales.getQualiteAir().getListePolluants();
+			// recherche sur le nom du polluant pour retourner l'objet
+			// polluantDtoVisualisation
+			for (Polluant polluants : listePolluant) {
+				if (polluants.getNom().equals(donneesLocalesRecherchees.getPolluant())) {
+					polluantDtoVisualisation.setNom(polluants.getNom());
+					polluantDtoVisualisation.setUnite(polluants.getUnite());
+					polluantDtoVisualisation.setValeur(polluants.getValeur());
+				}
+			}
+			// Création de la communeDtoVisualisation
+			CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(
+					donneesLocales.getCommune().getNom(), donneesLocales.getCommune().getNbHabitants());
+			// Création de la date
+			ZonedDateTime date = donneesLocales.getDate();
 
-        //Création de donneesLocalesRetourHistorique qui comprends :
-        //-PolluantDtoViualisation
-        //-CommuneDtovisualition
-        //-Date
-        DonneesLocalesHistorique donneesLocalesRetourHistorique = new DonneesLocalesHistorique();
+			// Remplissage de l'objet donneesLocalesRetourHistorique
+			donneesLocalesRetourHistorique.setCommuneDtoVisualisation(communeDtoVisualisation);
+			donneesLocalesRetourHistorique.setDate(date);
+			donneesLocalesRetourHistorique.setPolluantDtoVisualisation(polluantDtoVisualisation);
 
-        //Les données locales sont transformée en donnéesLocalesRetourHistorique pour les ajouter à la liste
-        for (DonneesLocales donneesLocales:listeDonneesLocalesBornees) {
-            //création du polluantDtoVisualisation
-            PolluantDtoVisualisation polluantDtoVisualisation = new PolluantDtoVisualisation();
-            //récupération de la liste de polluant de la donnée locale
-            List<Polluant> listePolluant = donneesLocales.getQualiteAir().getListePolluants();
-            //recherche sur le nom du polluant pour retourner l'objet polluantDtoVisualisation
-            for(Polluant polluants : listePolluant){
-                if(polluants.getNom().equals(donneesLocalesRecherchees.getPolluant())){
-                    polluantDtoVisualisation.setNom(polluants.getNom());
-                    polluantDtoVisualisation.setUnite(polluants.getUnite());
-                    polluantDtoVisualisation.setValeur(polluants.getValeur());
-                }
-            }
-            //Création de la communeDtoVisualisation
-            CommuneDtoVisualisation communeDtoVisualisation = new CommuneDtoVisualisation(donneesLocales.getCommune().getNom(), donneesLocales.getCommune().getNbHabitants());
-            //Création de la date
-            ZonedDateTime date = donneesLocales.getDate();
+			// ajout à la liste qui sera retournée par la classe donneesLocalesHistorique
+			listeDonneesLocalesHistorique.add(donneesLocalesRetourHistorique);
+		}
 
-            //Remplissage de l'objet donneesLocalesRetourHistorique
-            donneesLocalesRetourHistorique.setCommuneDtoVisualisation(communeDtoVisualisation);
-            donneesLocalesRetourHistorique.setDate(date);
-            donneesLocalesRetourHistorique.setPolluantDtoVisualisation(polluantDtoVisualisation);
+		return listeDonneesLocalesHistorique;
+	}
 
-            //ajout à la liste qui sera retournée par la classe donneesLocalesHistorique
-            listeDonneesLocalesHistorique.add(donneesLocalesRetourHistorique);
-        }
-
-        return listeDonneesLocalesHistorique;
-    }
 
 	/**
 	 * @param commune Les paramètres de recherche renseignés par l'utilisateur pour

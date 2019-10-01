@@ -1,5 +1,10 @@
 package dev.controllers;
 
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.exceptions.CommuneInvalideException;
+import dev.services.CommuneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +22,16 @@ import dev.controllers.dto.AffichageResultatCommuneDto;
 import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.AucuneDonneeException;
-import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.IndicateurFuturException;
-import dev.services.CommuneService;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @RestController
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
+    private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
 
     private CommuneService communeService;
 
@@ -53,7 +52,7 @@ public class CommuneController {
 
 	/**
 	 * Méthode qui affiche les données locales pour l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
 	 * @return
 	 */
@@ -80,7 +79,7 @@ public class CommuneController {
 
 	/**
 	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
-	 * 
+	 *
 	 * @param codeInsee
 	 * @param donneesLocalesRecherchees
 	 * @return

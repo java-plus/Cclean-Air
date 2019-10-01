@@ -1,9 +1,15 @@
 package dev.controllers;
 
-import javax.validation.Valid;
 
 import dev.controllers.dto.*;
+import dev.entities.Statut;
+import dev.entities.Utilisateur;
+import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.MotDePasseInvalideException;
+import dev.exceptions.UtilisateurInvalideException;
+import dev.exceptions.UtilisateurNonConnecteException;
+import dev.services.CommuneService;
+import dev.services.UtilisateurService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import dev.entities.Statut;
-import dev.entities.Utilisateur;
-import dev.exceptions.CommuneInvalideException;
-import dev.exceptions.UtilisateurInvalideException;
-import dev.exceptions.UtilisateurNonConnecteException;
-import dev.services.CommuneService;
-import dev.services.UtilisateurService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -100,6 +98,25 @@ public class UtilisateurController {
         } else {
             return ResponseEntity.status(400).body("L'email ne correspond à aucun compte");
         }
+    }
+    
+    @DeleteMapping("/profil/suppression")
+    public ResponseEntity<String> suppressionComptePerso(@RequestBody EmailDto email, HttpServletRequest req, HttpServletResponse resp) {
+    	if (utilisateurService.isEmailExistant(email.getEmail())) {
+    		utilisateurService.supprimerComptePerso();   
+    		
+    		Cookie[] cookies = req.getCookies();
+    		if (cookies != null) {
+    			for (Cookie cookie : cookies) {
+    				cookie.setValue("");
+    				cookie.setMaxAge(0);
+    				resp.addCookie(cookie);
+    			}
+    		}
+    		return ResponseEntity.status(200).body("Votre compte a bien été supprimé !");
+    	} else {
+    		return ResponseEntity.status(400).body("L'email ne correspond a aucun compte");
+    	}
     }
 
     @GetMapping(value = "/profil")

@@ -82,4 +82,14 @@ public class ConditionMeteoService {
         LOGGER.info("conditionMeteo = " + conditionMeteo);
         return conditionMeteoRepository.save(conditionMeteo);
     }
+
+    /**
+     * Méthode permettant de supprimer de la base de données les données météorologiques antérieures à la date-heure
+     * indiquée.
+     * @param dateExpiration : [ZonedDateTime] date-heure au-delà de laquelle les données sont à supprimer
+     */
+    public void purgerConditionMeteo(ZonedDateTime dateExpiration) {
+        LOGGER.info("purgerConditionMeteo()");
+        conditionMeteoRepository.deleteAllExpiredSince(dateExpiration);
+    }
 }

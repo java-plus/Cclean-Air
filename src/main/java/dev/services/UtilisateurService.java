@@ -1,5 +1,6 @@
 package dev.services;
 
+import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -118,6 +120,31 @@ public class UtilisateurService {
             }
         }
 
+    }
+    
+    /**
+     * Méthode qui permet de supprimer son compte
+     * Elle vérifie que la personne connectée n'est pas un admin qui supprime son propre compte
+     * 
+     * @param email
+     */
+    public void supprimerComptePerso() {
+    	//récupération de l'utilisateur connecté via l'eamil
+    	String emailConnecte = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Optional<Utilisateur> utilisateurConnecte = utilisateurRepository.findByEmailIgnoreCase(emailConnecte);
+    	
+    	//Vérification du statut de l'utilisateur et suppression si autorisé à supprimer.
+    	List<Statut> statut = utilisateurConnecte.get().getStatut();
+    	
+    	if (!statut.contains(Statut.ADMINISTRATEUR)) {
+    		if (utilisateurConnecte.get().getEmail().equals(emailConnecte)) {
+    			if (utilisateurConnecte.isPresent()) {
+        			utilisateurRepository.delete(utilisateurConnecte.get());
+        		}
+    		}    		
+    	} else {
+    		throw new UtilisateurInvalideException("Un admin ne peut pas supprimer son propre compte");
+    	}
     }
 
     /**

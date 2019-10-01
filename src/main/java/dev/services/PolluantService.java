@@ -2,6 +2,7 @@ package dev.services;
 
 import dev.controllers.dto.PolluantDtoApi;
 import dev.entities.Polluant;
+import dev.entities.QualiteAir;
 import dev.exceptions.PolluantInvalideException;
 import dev.repositories.IPolluantRepository;
 import org.slf4j.Logger;
@@ -63,6 +64,15 @@ public class PolluantService {
                     "pollution a échouché. " +
                     "\n" + e);
         }
+    }
+
+    /**
+     * Méthode permettant de supprimer de la base de données les données de polluants de la qualité air indiquée.
+     * @param qualiteAir : [QualiteAir] qualité d'air du polluant.
+     */
+   public void purgerPolluant(QualiteAir qualiteAir) {
+        LOGGER.info("purgerConditionMeteo() lancé");
+        polluantRepository.supprimerPolluantsDeLaQualiteAirIndiquee(qualiteAir);
     }
 
 }

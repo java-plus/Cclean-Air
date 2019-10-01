@@ -65,4 +65,27 @@ public class DonneesLocalesService {
 
     }
 
+    /**
+     * Méthode permettant de supprimer de la base de données les données locales antérieures à la date-heure indiquée.
+     * @param zonedDateTime : [ZonedDateTime] date-heure au-delà de laquelle les données sont à supprimer
+     */
+    public void purgerDonneesLocales(ZonedDateTime zonedDateTime) {
+        LOGGER.info("purgerDonneesLocales() lancé");
+        LOGGER.info("date-heure d'expiration = " + zonedDateTime);
+        donneesLocalesRepository.deleteAllExpiredSince(zonedDateTime);
+    }
+
+    /**
+     * Méthode récupérant la date-heure de la dernière ligne de données locales enregistrée dans la base de données.
+     * @return : [ZonedDateTime] date-heure de la dernière ligne de données locales enregistrée dans la base de données.
+     * @throws DonneesLocalesException : exception envoyée dans le cas où aucune ligne n'a été trouvée.
+     */
+    public ZonedDateTime recupererDateHeureDeDerniereDonneesLocales() throws DonneesLocalesException {
+        LOGGER.info("recupererDateHeureDeDerniereDonneesLocales() lancé");
+        DonneesLocales donneesLocales =
+                donneesLocalesRepository.findTopByOrderByDateDesc().orElseThrow(() -> new DonneesLocalesException(
+                        "ERREUR : Impossible de récupérer les dernières données locales enregistrées."));
+        return donneesLocales.getDate();
+    }
+
 }
