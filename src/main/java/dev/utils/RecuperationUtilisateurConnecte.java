@@ -46,6 +46,7 @@ public class RecuperationUtilisateurConnecte {
 		}
 		log.info("Identifiant récupéré : {0}", email);
 		Optional<Utilisateur> utilisateur = repository.findByEmailIgnoreCase(email);
+
 		if (utilisateur.isPresent()) {
 			return utilisateur.get();
 		} else {
