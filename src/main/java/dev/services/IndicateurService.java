@@ -54,7 +54,7 @@ public class IndicateurService {
 
 	/**
 	 * @param @Email de l'utilisateur qui va être utilisé pour récupérer les
-	 *              indicateurs
+	 *               indicateurs
 	 * @return retourne la liste des noms de communes concernées par les différents
 	 *         indicateurs de l'utilisateur
 	 */

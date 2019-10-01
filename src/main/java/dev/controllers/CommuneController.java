@@ -25,30 +25,29 @@ import dev.controllers.dto.DonneesLocalesRecherchees;
 import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.IndicateurFuturException;
 
-
-
 @RestController
 @RequestMapping(value = "/communes")
 public class CommuneController {
 
-    private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
+	private Logger LOGGER = LoggerFactory.getLogger(CommuneController.class);
 
-    private CommuneService communeService;
+	private CommuneService communeService;
 
-    /** Constructeur
+	/**
+	 * Constructeur
+	 * 
 	 * @param communeService
 	 */
-    @Autowired
+	@Autowired
 	public CommuneController(CommuneService communeService) {
 		super();
 		this.communeService = communeService;
 	}
 
 	@ExceptionHandler(CommuneInvalideException.class)
-    public ResponseEntity<String> handleException(CommuneInvalideException e) {
-        return ResponseEntity.status(404).body(e.getMessage());
-    }
-
+	public ResponseEntity<String> handleException(CommuneInvalideException e) {
+		return ResponseEntity.status(404).body(e.getMessage());
+	}
 
 	/**
 	 * Méthode qui affiche les données locales pour l'utilisateur
@@ -87,11 +86,10 @@ public class CommuneController {
 	@PostMapping("/historiques/{codeInsee}")
 	public List<DonneesLocalesHistorique> afficherHistorique(@PathVariable String codeInsee,
 			@RequestBody DonneesLocalesRecherchees donneesLocalesRecherchees) {
-    
-    	LOGGER.info("Je passe dans le controller et je récupère le json : " + donneesLocalesRecherchees);
-    	
-        return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
+		LOGGER.info("Je passe dans le controller et je récupère le json : " + donneesLocalesRecherchees);
+
+		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
 	}
 

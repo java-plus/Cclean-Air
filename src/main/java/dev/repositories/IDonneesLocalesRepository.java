@@ -14,24 +14,24 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author Cécile
- * Classe Repository faisant le lien avec la table DonneesLocales
+ * @author Cécile Classe Repository faisant le lien avec la table DonneesLocales
  */
 @Repository
 public interface IDonneesLocalesRepository extends JpaRepository<DonneesLocales, Integer> {
 
-    @Query("select MAX(d.date) from DonneesLocales d where d.commune= :commune")
-    ZonedDateTime findByCommune(@Param("commune") Optional<Commune> commune);
+	@Query("select MAX(d.date) from DonneesLocales d where d.commune= :commune")
+	ZonedDateTime findByCommune(@Param("commune") Optional<Commune> commune);
 
-    DonneesLocales findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
+	DonneesLocales findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
 
-    @Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin ")
-    List<DonneesLocales> findAllByDateDebutAndDateFin(@Param("dateDebut") ZonedDateTime dateDebut, @Param("dateFin") ZonedDateTime dateFin, @Param("commune") Commune commune);
+	@Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin ")
+	List<DonneesLocales> findAllByDateDebutAndDateFin(@Param("dateDebut") ZonedDateTime dateDebut,
+			@Param("dateFin") ZonedDateTime dateFin, @Param("commune") Commune commune);
 
-    Optional<DonneesLocales> findTopByOrderByDateDesc();
+	Optional<DonneesLocales> findTopByOrderByDateDesc();
 
-    @Transactional
-    @Modifying
-    @Query("delete from DonneesLocales d where d.date <= ?1")
-    void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
+	@Transactional
+	@Modifying
+	@Query("delete from DonneesLocales d where d.date <= ?1")
+	void deleteAllExpiredSince(ZonedDateTime zonedDateTime);
 }

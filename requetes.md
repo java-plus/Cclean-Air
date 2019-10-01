@@ -42,6 +42,15 @@ Réponse en cas d'échec :
 
 Code `404`
 
+### Requête pour se connecter
+```JSON
+[Post] /connexion
+
+{
+	"email" : "cecile@test.fr", 
+	"motDePasse" : "Abcd.123"
+}
+```
 
 ## Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 

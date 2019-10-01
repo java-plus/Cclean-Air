@@ -62,7 +62,7 @@ public class Utilisateur implements Serializable {
 	 */
 	@Column(name = "uti_email", unique = true)
 	@NotBlank
-	@Email(message ="Le format de l'email est incorrect")
+	@Email(message = "Le format de l'email est incorrect")
 	private String email;
 	/**
 	 * Mot de pase choisi par l'utilisateur lors de l'inscription. Utilisé pour se

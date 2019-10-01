@@ -1,9 +1,9 @@
 package dev.controllers.dto;
 
 public class EmailDto {
-	
+
 	private String email;
-	
+
 	public EmailDto() {
 		super();
 	}
@@ -20,7 +20,5 @@ public class EmailDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
 
 }

@@ -5,71 +5,66 @@ package dev.controllers.dto;
  */
 public class PolluantDtoApi {
 
-    private String id;
-    private String nom;
-    private String code;
-    private String famille;
-    private Boolean principal;
+	private String id;
+	private String nom;
+	private String code;
+	private String famille;
+	private Boolean principal;
 
-    public PolluantDtoApi() {
-    }
+	public PolluantDtoApi() {
+	}
 
-    public PolluantDtoApi(String id, String nom, String code, String famille, Boolean principal) {
-        this.id = id;
-        this.nom = nom;
-        this.code = code;
-        this.famille = famille;
-        this.principal = principal;
-    }
+	public PolluantDtoApi(String id, String nom, String code, String famille, Boolean principal) {
+		this.id = id;
+		this.nom = nom;
+		this.code = code;
+		this.famille = famille;
+		this.principal = principal;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getNom() {
-        return nom;
-    }
+	public String getNom() {
+		return nom;
+	}
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getFamille() {
-        return famille;
-    }
+	public String getFamille() {
+		return famille;
+	}
 
-    public void setFamille(String famille) {
-        this.famille = famille;
-    }
+	public void setFamille(String famille) {
+		this.famille = famille;
+	}
 
-    public Boolean getPrincipal() {
-        return principal;
-    }
+	public Boolean getPrincipal() {
+		return principal;
+	}
 
-    public void setPrincipal(Boolean principal) {
-        this.principal = principal;
-    }
+	public void setPrincipal(Boolean principal) {
+		this.principal = principal;
+	}
 
-    @Override
-    public String toString() {
-        return "PolluantDtoApi{" +
-                "id=" + id +
-                ", nom='" + nom + '\'' +
-                ", code='" + code + '\'' +
-                ", famille='" + famille + '\'' +
-                ", principal=" + principal +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "PolluantDtoApi{" + "id=" + id + ", nom='" + nom + '\'' + ", code='" + code + '\'' + ", famille='"
+				+ famille + '\'' + ", principal=" + principal + '}';
+	}
 }

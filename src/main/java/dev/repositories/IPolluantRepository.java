@@ -12,17 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * @author Cécile
- * Classe Repository faisant le lien avec la table Polluant
+ * @author Cécile Classe Repository faisant le lien avec la table Polluant
  */
 @Repository
 public interface IPolluantRepository extends JpaRepository<Polluant, Integer> {
 
-    @Query("select new dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation(p.nom, p.valeur, p.unite) from Polluant p")
-    List<PolluantDtoVisualisation> findByQualiteAir(QualiteAir qualiteAir);
+	@Query("select new dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation(p.nom, p.valeur, p.unite) from Polluant p")
+	List<PolluantDtoVisualisation> findByQualiteAir(QualiteAir qualiteAir);
 
-    @Transactional
-    @Modifying
-    @Query("delete from Polluant p where p.qualiteAir = ?1")
-    void supprimerPolluantsDeLaQualiteAirIndiquee(QualiteAir qualiteAir);
+	@Transactional
+	@Modifying
+	@Query("delete from Polluant p where p.qualiteAir = ?1")
+	void supprimerPolluantsDeLaQualiteAirIndiquee(QualiteAir qualiteAir);
 }

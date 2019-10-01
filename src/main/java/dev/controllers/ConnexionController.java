@@ -1,6 +1,5 @@
 package dev.controllers;
 
-
 import dev.controllers.dto.InfosConnexion;
 import dev.repositories.IUtilisateurRepository;
 import dev.services.CommuneService;
@@ -23,68 +22,63 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Cécile
- * controller qui permet de gérer la connexion sur l'application
+ * @author Cécile controller qui permet de gérer la connexion sur l'application
  */
 @RestController
 public class ConnexionController {
 
-    @Value("${jwt.expires_in}")
-    private Integer EXPIRES_IN;
+	@Value("${jwt.expires_in}")
+	private Integer EXPIRES_IN;
 
-    @Value("${jwt.cookie}")
-    private String TOKEN_COOKIE;
+	@Value("${jwt.cookie}")
+	private String TOKEN_COOKIE;
 
-    @Value("${jwt.secret}")
-    private String SECRET;
+	@Value("${jwt.secret}")
+	private String SECRET;
 
-    @Autowired
-    IUtilisateurRepository utilisateurRepository;
+	@Autowired
+	IUtilisateurRepository utilisateurRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ConnexionController.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(ConnexionController.class);
 
-    /**
-     * Méthode qui permet de se connecter l'utilisateur en vérifiant s'il est admin ou non et d'installer le cookie dans le navigateur correspondant dans le navigateur
-     * @param infos
-     * @return
-     */
-    @PostMapping(value = "/connexion")
-    public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+	/**
+	 * Méthode qui permet de se connecter l'utilisateur en vérifiant s'il est admin
+	 * ou non et d'installer le cookie dans le navigateur correspondant dans le
+	 * navigateur
+	 * 
+	 * @param infos
+	 * @return
+	 */
+	@PostMapping(value = "/connexion")
+	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
 
-        return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-                .filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
-                .map(utilisateur -> {
+		return this.utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
+				.filter(utilisateur -> passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse()))
+				.map(utilisateur -> {
 
-                    Map<String, Object> infosSupplementaireToken = new HashMap<>();
+					Map<String, Object> infosSupplementaireToken = new HashMap<>();
 
-                    infosSupplementaireToken.put("statuts", utilisateur.getStatut());
-                    infosSupplementaireToken.put("email", utilisateur.getEmail()); 
+					infosSupplementaireToken.put("statuts", utilisateur.getStatut());
+					infosSupplementaireToken.put("email", utilisateur.getEmail());
 
-                    String jetonJTW = Jwts.builder()
-                            .setSubject(utilisateur.getEmail())
-                            .addClaims(infosSupplementaireToken)
-                            .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
-                            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET)
-                            .compact();
+					String jetonJTW = Jwts.builder().setSubject(utilisateur.getEmail())
+							.addClaims(infosSupplementaireToken)
+							.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
+							.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
 
-                    ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW)
-                            .httpOnly(true)
-                            .maxAge(EXPIRES_IN * 1000)
-                            .path("/")
-                            .build();
+					ResponseCookie tokenCookie = ResponseCookie.from(TOKEN_COOKIE, jetonJTW).httpOnly(true)
+							.maxAge(EXPIRES_IN * 1000).path("/").build();
 
-                    LOGGER.info("Le cookie est créé");
+					LOGGER.info("Le cookie est créé");
 
-                    return ResponseEntity.ok()
-                            .header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
-                            .build();
+					return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
 
-                })
+				})
 
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 
-    }
+	}
 }

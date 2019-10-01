@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class CodePostalService {
 
-    private ICodePostalRepository codePostalRepository;
+	private ICodePostalRepository codePostalRepository;
 
-    @Autowired
-    public CodePostalService(ICodePostalRepository codePostalRepository) {
-        this.codePostalRepository = codePostalRepository;
-    }
+	@Autowired
+	public CodePostalService(ICodePostalRepository codePostalRepository) {
+		this.codePostalRepository = codePostalRepository;
+	}
 
-    public void sauvegarderCodePostal(CodePostal cp) {
-        codePostalRepository.save(cp);
-    }
+	public void sauvegarderCodePostal(CodePostal cp) {
+		codePostalRepository.save(cp);
+	}
 
 }
