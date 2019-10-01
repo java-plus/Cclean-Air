@@ -66,7 +66,6 @@ public class CommuneService {
 	 * @param nomCommune : [String] nom de la commune
 	 * @return [Boolean] : true si la commune existe, false sinon
 	 */
-
 	public Boolean isCommuneExistante(String nomCommune) {
 		return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
 	}
