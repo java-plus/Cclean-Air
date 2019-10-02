@@ -20,9 +20,9 @@ import java.util.Optional;
 public interface IDonneesLocalesRepository extends JpaRepository<DonneesLocales, Integer> {
 
 	@Query("select MAX(d.date) from DonneesLocales d where d.commune= :commune")
-	ZonedDateTime findByCommune(@Param("commune") Optional<Commune> commune);
+	Optional<ZonedDateTime> findByCommune(@Param("commune") Optional<Commune> commune);
 
-	DonneesLocales findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
+	Optional<DonneesLocales> findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
 
 	@Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin ")
 	List<DonneesLocales> findAllByDateDebutAndDateFin(@Param("dateDebut") ZonedDateTime dateDebut,
