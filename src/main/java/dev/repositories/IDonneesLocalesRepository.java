@@ -22,6 +22,7 @@ public interface IDonneesLocalesRepository extends JpaRepository<DonneesLocales,
 	@Query("select MAX(d.date) from DonneesLocales d where d.commune= :commune")
 	Optional<ZonedDateTime> findByCommune(@Param("commune") Optional<Commune> commune);
 
+	
 	Optional<DonneesLocales> findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
 
 	@Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin ")
