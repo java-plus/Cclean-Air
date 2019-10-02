@@ -118,7 +118,7 @@ public class ConnexionController {
 							utilisateur.setDateDerniereConnexion(date);
 						}
 					}
-					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-				});
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();					
+							});
 	}
 }
