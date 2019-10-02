@@ -6,8 +6,10 @@ import dev.entities.QualiteAir;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -17,8 +19,8 @@ import java.util.List;
 @Repository
 public interface IPolluantRepository extends JpaRepository<Polluant, Integer> {
 
-	@Query("select new dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation(p.nom, p.valeur, p.unite) from Polluant p")
-	List<PolluantDtoVisualisation> findByQualiteAir(QualiteAir qualiteAir);
+	@Query("select new dev.controllers.dto.visualiserDonnees.PolluantDtoVisualisation(p.nom, p.valeur, p.unite) from Polluant p where p.qualiteAir = :qualiteAir")
+	List<PolluantDtoVisualisation> findByQualiteAir(@Param("qualiteAir")QualiteAir qualiteAir);
 
 	@Transactional
 	@Modifying
