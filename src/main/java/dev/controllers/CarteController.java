@@ -31,7 +31,7 @@ public class CarteController {
 	 * @return renvoie les informations nécessaire à l'affichage de chaque "pin" sur
 	 *         la carte
 	 */
-	@GetMapping("/recherche")
+	@GetMapping("/donnees_carte")
 	public ResponseEntity<List<CommuneCarteDto>> recupererDonneesCartes() {
 		return new ResponseEntity<>(service.recupererDonnesCarte(), HttpStatus.OK);
 	}

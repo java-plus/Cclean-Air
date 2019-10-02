@@ -96,6 +96,21 @@ Code `401`
 
 ```
 
+#### Requête pour récupérer les données pour affichage sur la carte
+
+[GET] /donnees_carte
+
+
+
+
+Réponse en cas de succès :
+
+Code `200`
+
+
+
+```
+
 
 
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique

@@ -36,19 +36,19 @@ public class AlerteService {
 
 		List<Polluant> listeParticulesFines = listePolluantsCommune.stream()
 				.filter(p -> p.getNom().equals("Particules fines")).collect(Collectors.toList());
-		if (listeParticulesFines.stream().anyMatch(p -> p.getValeur() >= 80)) {
+		if (listeParticulesFines.stream().anyMatch(p -> p.getValeur() >= 80.0)) {
 			return new NiveauAlerteDto("Particules fines", listeParticulesFines.get(0).getValeur());
 		}
 
 		List<Polluant> listeOzone = listePolluantsCommune.stream().filter(p -> p.getNom().equals("Ozone"))
 				.collect(Collectors.toList());
-		if (listeOzone.stream().anyMatch(p -> p.getValeur() >= 240)) {
+		if (listeOzone.stream().anyMatch(p -> p.getValeur() >= 240.0)) {
 			return new NiveauAlerteDto("Ozone", listeOzone.get(0).getValeur());
 		}
 
 		List<Polluant> listeDioxydeAzote = listePolluantsCommune.stream()
 				.filter(p -> p.getNom().equals("Dioxyde d'azote")).collect(Collectors.toList());
-		if (listeDioxydeAzote.stream().anyMatch(p -> p.getValeur() >= 200)) {
+		if (listeDioxydeAzote.stream().anyMatch(p -> p.getValeur() >= 200.0)) {
 			return new NiveauAlerteDto("Dioxyde d'azote", listeDioxydeAzote.get(0).getValeur());
 		}
 
