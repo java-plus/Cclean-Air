@@ -2,6 +2,7 @@ package dev.controllers.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
@@ -12,24 +13,28 @@ public class ProfilModificationPost {
 	/**
 	 * nom de l'utilisateur
 	 */
+	@NotBlank
 	private String nom;
 	/**
 	 * prénom de l'utilisateur
 	 */
+	@NotBlank
 	private String prenom;
 	/**
 	 * mail de l'utilisateur
 	 */
-	@Email(message = "Le format de l'email est incorrect")
+	@Email
 	private String email;
 	/**
 	 * commune de l'utilisateur
 	 */
+	@NotBlank
 	private String commune;
 	/**
 	 * Acceptation ou non des alertes
 	 */
-	private Boolean alerte;
+	@NotNull
+	private Boolean statutNotification;
 
 	/**
 	 * Liste des alertes par indicateru
@@ -39,28 +44,31 @@ public class ProfilModificationPost {
 	/**
 	 * mot de passe actuel de l'utilisateur
 	 */
+	@NotBlank
 	private String motDePasseActuel;
 	/**
 	 * nouveau mot de passe de l'utilisateur
 	 */
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
+	@NotBlank
 	private String motDePasseNouveau;
 	/**
 	 * controle du nouveau mot de passe de l'utilisateur
 	 */
 
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
+	@NotBlank
 	private String getMotDePasseNouveauValidation;
 
 	public ProfilModificationPost(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
-			@NotBlank String commune, @NotBlank Boolean alerte, @NotBlank List<CommuneIndicateurDto> listeIndicateurs,
+			@NotBlank String commune, @NotBlank Boolean statutNotification, List<CommuneIndicateurDto> listeIndicateurs,
 			@NotBlank String motDePasseActuel, @NotBlank String motDePasseNouveau,
 			@NotBlank String getMotDePasseNouveauValidation) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.email = email;
 		this.commune = commune;
-		this.alerte = alerte;
+		this.statutNotification = statutNotification;
 		this.listeIndicateurs = listeIndicateurs;
 		this.motDePasseActuel = motDePasseActuel;
 		this.motDePasseNouveau = motDePasseNouveau;
@@ -102,12 +110,12 @@ public class ProfilModificationPost {
 		this.commune = commune;
 	}
 
-	public Boolean getAlerte() {
-		return alerte;
+	public Boolean getstatutNotification() {
+		return statutNotification;
 	}
 
-	public void setAlerte(Boolean alerte) {
-		this.alerte = alerte;
+	public void setstatutNotification(Boolean statutNotification) {
+		this.statutNotification = statutNotification;
 	}
 
 	public String getMotDePasseActuel() {

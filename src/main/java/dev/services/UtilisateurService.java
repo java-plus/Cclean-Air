@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import dev.controllers.dto.*;
 import dev.entities.Commune;
 import dev.entities.Statut;
+import dev.exceptions.EmailInvalideException;
 import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.repositories.ICommuneRepository;
@@ -179,10 +180,7 @@ public class UtilisateurService {
 	 * @throws MotDePasseInvalideException
 	 */
 	public ProfilModifcationGet modifierProfil(ProfilModificationPost profilModificationPost)
-			throws UtilisateurNonConnecteException, MotDePasseInvalideException {
-
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException, EmailInvalideException {		
 
 		// Récupération de l'utilisateur
 		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
@@ -200,15 +198,8 @@ public class UtilisateurService {
 
 		// modification de l'email
 		if (profilModificationPost.getEmail() != null && !profilModificationPost.getEmail().equals("")) {
-			// validation de l'email
-			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
-					.validate(profilModificationPost);
-
-			if (constraintViolations != null) {
-
-				throw new MotDePasseInvalideException("L'email est mal renseigné");
-			}
-			utilisateur.setEmail(profilModificationPost.getEmail());
+			// validation de l'email			
+			utilisateur.setEmail(profilModificationPost.getEmail());			
 		}
 
 		// modification de la commune
@@ -218,7 +209,15 @@ public class UtilisateurService {
 			if (commune.isPresent()) {
 				utilisateur.setCommune(commune.get());
 			}
-
+		}	
+		
+		// modification du statut notification
+		if (profilModificationPost.getstatutNotification() != null) {
+			utilisateur.setStatutNotification(profilModificationPost.getstatutNotification());
+		} else {
+			if (profilModificationPost.getstatutNotification() == null) {
+				utilisateur.setStatutNotification(false);
+			}
 		}
 
 		// modification de la liste d'indicateurs
@@ -249,21 +248,16 @@ public class UtilisateurService {
 
 		// modification du mot de passe
 		if (profilModificationPost.getMotDePasseActuel() != null
-				&& !profilModificationPost.getMotDePasseActuel().equals("")) {
-			// validation de la sécurité du mot de passe
-			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
-					.validate(profilModificationPost);
-			if (constraintViolations != null) {
-				throw new MotDePasseInvalideException("Le mot de passe ne respecte pas les règles de sécurité");
-			}
+				&& !profilModificationPost.getMotDePasseActuel().equals("")) {			
 			// vérification de la correspondance des mots de passe pour modification
 			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
 				if (profilModificationPost.getMotDePasseNouveau()
 						.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
-					utilisateur.setMotDePasse(profilModificationPost.getGetMotDePasseNouveauValidation());
+					utilisateur.setMotDePasse(passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
 				} else {
 					throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
 				}
+				
 			} else {
 				throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
 			}
