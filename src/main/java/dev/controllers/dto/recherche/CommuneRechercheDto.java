@@ -1,7 +1,9 @@
-package dev.controllers.dto;
+package dev.controllers.dto.recherche;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import dev.controllers.dto.NiveauAlerteDto;
 
 /**
  * @author Guillaume
@@ -9,17 +11,42 @@ import java.time.LocalTime;
  */
 public class CommuneRechercheDto {
 
+	/**
+	 * Code Insee de la commune
+	 */
+	private String codeInsee;
+
+	/**
+	 * Nom de la commune sur lequel se base la recherche
+	 */
 	private String nomCommune;
+	/**
+	 * Nom du polluant sur lequel se basse la recherche
+	 */
 	private String polluant;
+	/**
+	 * Date de la donnée
+	 */
 	private LocalDate date;
+	/**
+	 * Heure de la donnée
+	 */
 	private LocalTime heure;
 
-	public CommuneRechercheDto(String nomCommune, String polluant, LocalDate date, LocalTime heure) {
+	/**
+	 * Niveau d'alerte de la commune
+	 */
+	private NiveauAlerteDto alerte;
+
+	public CommuneRechercheDto(String codeInsee, String nomCommune, String polluant, LocalDate date, LocalTime heure,
+			NiveauAlerteDto alerte) {
 		super();
+		this.codeInsee = codeInsee;
 		this.nomCommune = nomCommune;
 		this.polluant = polluant;
 		this.date = date;
 		this.heure = heure;
+		this.alerte = alerte;
 	}
 
 	public CommuneRechercheDto() {
@@ -28,14 +55,16 @@ public class CommuneRechercheDto {
 
 	@Override
 	public String toString() {
-		return "CommuneRechercheDto [nomCommune=" + nomCommune + ", polluant=" + polluant + ", date=" + date
-				+ ", heure=" + heure + "]";
+		return "CommuneRechercheDto [codeInsee=" + codeInsee + ", nomCommune=" + nomCommune + ", polluant=" + polluant
+				+ ", date=" + date + ", heure=" + heure + ", alerte=" + alerte + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((alerte == null) ? 0 : alerte.hashCode());
+		result = prime * result + ((codeInsee == null) ? 0 : codeInsee.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((heure == null) ? 0 : heure.hashCode());
 		result = prime * result + ((nomCommune == null) ? 0 : nomCommune.hashCode());
@@ -52,6 +81,16 @@ public class CommuneRechercheDto {
 		if (getClass() != obj.getClass())
 			return false;
 		CommuneRechercheDto other = (CommuneRechercheDto) obj;
+		if (alerte == null) {
+			if (other.alerte != null)
+				return false;
+		} else if (!alerte.equals(other.alerte))
+			return false;
+		if (codeInsee == null) {
+			if (other.codeInsee != null)
+				return false;
+		} else if (!codeInsee.equals(other.codeInsee))
+			return false;
 		if (date == null) {
 			if (other.date != null)
 				return false;
@@ -73,6 +112,20 @@ public class CommuneRechercheDto {
 		} else if (!polluant.equals(other.polluant))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the codeInsee
+	 */
+	public String getCodeInsee() {
+		return codeInsee;
+	}
+
+	/**
+	 * @param codeInsee the codeInsee to set
+	 */
+	public void setCodeInsee(String codeInsee) {
+		this.codeInsee = codeInsee;
 	}
 
 	/**
@@ -129,6 +182,20 @@ public class CommuneRechercheDto {
 	 */
 	public void setHeure(LocalTime heure) {
 		this.heure = heure;
+	}
+
+	/**
+	 * @return the alerte
+	 */
+	public NiveauAlerteDto getAlerte() {
+		return alerte;
+	}
+
+	/**
+	 * @param alerte the alerte to set
+	 */
+	public void setAlerte(NiveauAlerteDto alerte) {
+		this.alerte = alerte;
 	}
 
 }

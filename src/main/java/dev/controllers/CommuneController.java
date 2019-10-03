@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
-import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
+import dev.controllers.dto.recherche.CommuneRechercheDto;
 import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.IndicateurFuturException;
 
