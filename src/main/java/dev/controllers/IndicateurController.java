@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.IndicateurAffichageDto;
 import dev.controllers.dto.IndicateurDto;
 import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.exceptions.AucuneDonneeException;
@@ -50,7 +51,7 @@ public class IndicateurController {
 	 * @return Renvoie la liste des indicateurs d'un utilisateur spécifique
 	 */
 	@GetMapping(value = "/indicateurs")
-	public ResponseEntity<List<CommuneIndicateurDto>> getIndicateursUtilisateur() {
+	public ResponseEntity<List<IndicateurAffichageDto>> getIndicateursUtilisateur() {
 		log.info("Récupération de l'utilisateur enregistré...");
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String email = "";
@@ -60,7 +61,7 @@ public class IndicateurController {
 			email = principal.toString();
 		}
 
-		List<CommuneIndicateurDto> response = service.recupererLesIndicateurs(email);
+		List<IndicateurAffichageDto> response = service.recupererLesIndicateurs(email);
 		log.info("Indicateurs récupérés : {0}", response);
 		return new ResponseEntity<>(service.recupererLesIndicateurs(email), HttpStatus.OK);
 
