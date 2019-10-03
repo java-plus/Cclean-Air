@@ -16,7 +16,6 @@ import javax.validation.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,13 +36,6 @@ import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.ICommuneRepository;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Email;
 
 /**
  * @author Cécile Peyras
