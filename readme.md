@@ -236,7 +236,7 @@ Réponse en cas de succès :
 Code `200`
 
 ```
-OK
+
 ```
 
 Réponses en cas d'échec :

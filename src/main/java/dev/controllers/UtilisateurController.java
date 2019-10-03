@@ -137,9 +137,9 @@ public class UtilisateurController {
      * @return : ResponseEntity<String>
      */
     @DeleteMapping("/admin/membres/{email}")
-    public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email) {
+    public ResponseEntity<Void> suppressionUtilisateur(@PathVariable String email) {
             utilisateurService.supprimerUtilisateur(email);
-            return ResponseEntity.status(200).body("OK");
+            return ResponseEntity.status(200).build();
     }
 
     /**
