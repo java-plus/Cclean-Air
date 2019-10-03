@@ -8,12 +8,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import dev.controllers.dto.*;
-import dev.entities.Commune;
-import dev.entities.Statut;
-import dev.exceptions.MotDePasseInvalideException;
-import dev.exceptions.UtilisateurInvalideException;
-import dev.repositories.ICommuneRepository;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,21 @@ import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.ProfilModifcationGet;
+import dev.controllers.dto.ProfilModificationPost;
+import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.UtilisateurDtoPost;
+import dev.entities.Commune;
 import dev.entities.Indicateur;
+import dev.entities.Statut;
 import dev.entities.Utilisateur;
+import dev.exceptions.MotDePasseInvalideException;
+import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
+import dev.repositories.ICommuneRepository;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
 
@@ -131,6 +142,7 @@ public class UtilisateurService {
 			throw new UtilisateurInvalideException("ERREUR: Aucun email " +
 					"trouvé pour l'utilisateur connecté.");
 		}
+
 	}
 
 	/**
@@ -282,4 +294,24 @@ public class UtilisateurService {
 				utilisateur.getStatutNotification(), utilisateur.getCommune().getNom(), listGet);
 
 	}
+
+	/**
+	 * méthode qui valide que l'on est connecté en admin et qui renvoie true si
+	 * c'est bien le cas
+	 *
+	 * @return
+	 * @throws UtilisateurNonConnecteException
+	 */
+	public Boolean validationAdmin() throws UtilisateurNonConnecteException {
+		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+
+		if (utilisateur.getStatut().contains(Statut.ADMINISTRATEUR)) {
+
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
 }
