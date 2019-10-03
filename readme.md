@@ -96,7 +96,6 @@ Code `401`
 
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 
-
 #### Requête pour récupérer les données pour affichage sur la carte
 
 [GET] /donnees_carte
@@ -105,12 +104,20 @@ Réponse en cas de succès :
 
 Code `200`
 
-```
-
 #### Requête pour récupérer les données pour affichage sur la carte
 
 [GET] /details_commune
 
+```JSON
+{
+    "codeInsee" : "44001", 
+    "nomCommune" : "Abbaretz",
+    "polluant" : null,
+    "date" : null,
+    "heure" : null,
+    "alerte" : null
+}
+```
 
 Un nom de polluant peut être indiqué pour personnaliser la recherche.
 Une date et une heure également mais au moment du développement, 
@@ -123,21 +130,6 @@ Code `200`
 Réponse en cas d'échec :
 
 Code `404`
-
-```JSON
-
-{
-	"codeInsee" : "44001", 
-    "nomCommune" : "Abbaretz",
-    "polluant" : null,
-    "date" : null,
-    "heure" : null,
-    "alerte" : null
-}
-
-```
-
-```
 
 #### Cas d’utilisation “Visualiser données pollution” 
 
