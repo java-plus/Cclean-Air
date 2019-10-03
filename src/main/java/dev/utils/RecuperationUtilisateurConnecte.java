@@ -26,7 +26,6 @@ public class RecuperationUtilisateurConnecte {
 
 	@Autowired
 	public RecuperationUtilisateurConnecte(IUtilisateurRepository repository) {
-
 		this.repository = repository;
 	}
 

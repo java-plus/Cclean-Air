@@ -74,4 +74,14 @@ public class RestResponseEntityExceptionHandler {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * Gestionnaire de l'exception de connexion invalide.
+	 * @param e : ConnexionInvalideException l'exception lancée
+	 * @return : ResponseEntity<Object>
+	 */
+	@ExceptionHandler(value = { ConnexionInvalideException.class })
+	public ResponseEntity<Object> handleConflict(ConnexionInvalideException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
 }

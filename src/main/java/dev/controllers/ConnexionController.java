@@ -2,6 +2,7 @@ package dev.controllers;
 
 import dev.controllers.dto.InfosConnexion;
 import dev.entities.Utilisateur;
+import dev.exceptions.ConnexionInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.repositories.IUtilisateurRepository;
 import dev.services.CommuneService;
@@ -76,7 +77,7 @@ public class ConnexionController {
 	 */
 	@PostMapping(value = "/connexion")
 	@Transactional
-	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) {
+	public ResponseEntity<?> connexion(@RequestBody InfosConnexion infos) throws ConnexionInvalideException {
 
 		ZonedDateTime date = ZonedDateTime.now();
 
@@ -101,7 +102,7 @@ public class ConnexionController {
 					return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
 				}).orElseGet(() -> {
 					Utilisateur utilisateur = utilisateurRepository.findByEmailIgnoreCase(infos.getEmail())
-							.orElseThrow(() -> new UtilisateurInvalideException("Erreur : utilisateur non trouvé."));
+							.orElseThrow(() -> new ConnexionInvalideException("Erreur : utilisateur non trouvé."));
 
 					if (!passwordEncoder.matches(infos.getMotDePasse(), utilisateur.getMotDePasse())) {
 						if (date.getMinute() - utilisateur.getDateDerniereConnexion().getMinute() >= 30) {
