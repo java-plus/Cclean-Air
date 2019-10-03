@@ -1,19 +1,20 @@
 package dev.utils;
 
-import dev.entities.QualiteAir;
-import dev.exceptions.DonneesLocalesSheduledTasksException;
-import dev.services.ConditionMeteoService;
-import dev.services.DonneesLocalesService;
-import dev.services.PolluantService;
-import dev.services.QualiteAirService;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import dev.entities.QualiteAir;
+import dev.exceptions.DonneesLocalesSheduledTasksException;
+import dev.services.ConditionMeteoService;
+import dev.services.DonneesLocalesService;
+import dev.services.PolluantService;
+import dev.services.QualiteAirService;
 
 /**
  * Classe gérant le lancement automatique des méthodes nécessaires à la
@@ -45,8 +46,10 @@ public class DonneesLocalesSheduledTasks {
 	 */
 	// TODO: changer l'annotation Scheduled une fois que l'application sera
 	// déployée.
-	// @Scheduled(cron="0 0 * * * *") : annotation à garder par la suite
-	@Scheduled(initialDelay = 5000, fixedRate = 1296000000) // lancement au bout de 5s, après démarrage de l'appli
+
+	@Scheduled(initialDelay = 5000, fixedRate = 1296000000) // lancement au bout
+	// de 5s, après démarrage de l'appli
+	// @Scheduled(cron = "0 0 * * * *")
 	public void recupererEtSauvegarderDonneesLocales() {
 		LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
 		donneesLocalesService.genererEtsauvegarderDonneesLocales(

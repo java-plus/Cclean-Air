@@ -1,4 +1,6 @@
-package dev.controllers.dto;
+package dev.controllers.dto.recherche;
+
+import dev.controllers.dto.NiveauAlerteDto;
 
 /**
  * @author Guillaume Informations destinés à l'affichage des communes sur la

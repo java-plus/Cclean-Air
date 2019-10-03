@@ -20,11 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
-import dev.controllers.dto.CommuneCarteDto;
 import dev.controllers.dto.CommuneDtoGet;
-import dev.controllers.dto.CommuneRechercheDto;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
+import dev.controllers.dto.recherche.CommuneCarteDto;
+import dev.controllers.dto.recherche.CommuneRechercheDto;
+import dev.controllers.dto.recherche.resultat.CommuneDto;
+import dev.controllers.dto.recherche.resultat.ConditionMeteoDto;
+import dev.controllers.dto.recherche.resultat.PolluantDto;
 import dev.controllers.dto.visualiserDonnees.CommuneDtoVisualisation;
 import dev.controllers.dto.visualiserDonnees.ConditionMeteoDtoVisualisation;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
@@ -44,7 +47,6 @@ import dev.repositories.IConditionMeteoRepository;
 import dev.repositories.IDonneesLocalesRepository;
 import dev.repositories.IPolluantRepository;
 import dev.repositories.IQualiteAirRepository;
-import dev.utils.CalculUtils;
 
 /**
  * Classe regroupant les services d'une commune géographique.
@@ -60,7 +62,6 @@ public class CommuneService {
 	private IDonneesLocalesRepository donneesLocalesRepository;
 	private ICommuneRepository communeRepository;
 	private CodePostalService codePostalService;
-	private CalculUtils calculUtils;
 	private IQualiteAirRepository qualiteAirRepository;
 	private IConditionMeteoRepository conditionMeteoRepository;
 	private IPolluantRepository polluantRepository;
@@ -390,6 +391,81 @@ public class CommuneService {
 				.map(c -> new CommuneCarteDto(c.getCodeInsee(), c.getCodesPostaux().get(0).getValeur(), c.getNom(),
 						c.getLatitude(), c.getLongitude(), alerteService.donnerNiveauAlerte(c)))
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * @param commune Commune sur laquelle récupérer les informations détaillées
+	 * @return Retourne un objet de type Commune Dto pour envoyer les informations
+	 *         au controller
+	 * @throws AucuneDonneeException
+	 */
+	public CommuneDto rechercherDetailsCommune(CommuneRechercheDto commune) throws AucuneDonneeException {
+		Optional<Commune> c = communeRepository.findByCodeInsee(commune.getCodeInsee());
+
+		if (!c.isPresent()) {
+			throw new CommuneInvalideException("La commune recherchée n'existe pas.");
+		}
+
+		var resultat = new CommuneDto();
+		resultat.setCodeInsee(c.get().getCodeInsee());
+		resultat.setNom(c.get().getNom());
+		resultat.setDate(commune.getDate());
+		resultat.setHeure(commune.getHeure());
+		List<PolluantDto> listePolluants;
+		List<DonneesLocales> listeDonnees;
+		ConditionMeteoDto donneesMeteo = null;
+
+		// Si des valeurs de recherche temporelles personnalisées ont été renseignées
+		if (commune.getDate() != null && commune.getHeure() != null) {
+
+			// récupération des données locales à la période sélectionnée
+			listeDonnees = c.get().getDonneesLocales().stream()
+					.filter(d -> d.getDate()
+							.equals(ZonedDateTime.of(commune.getDate(), commune.getHeure(), ZoneId.systemDefault())))
+					.collect(Collectors.toList());
+
+			// vérification de l'approvisionement des données
+			if (listeDonnees.isEmpty()) {
+				throw new AucuneDonneeException("Aucune données disponible pour ces paramètres");
+			}
+
+			// Valorisation des conditions météorologiques et de la liste des polluants
+			listePolluants = listeDonnees.get(0).getQualiteAir().getListePolluants().stream()
+					.map(p -> new PolluantDto(p.getNom(), p.getUnite(), p.getValeur())).collect(Collectors.toList());
+
+			ConditionMeteo cm = listeDonnees.get(0).getConditionMeteo();
+			donneesMeteo = new ConditionMeteoDto(cm.getHumidite(), cm.getEnsoleillement(), cm.getTemperature());
+		}
+
+		else {
+
+			listeDonnees = c.get().getDonneesLocales();
+			if (listeDonnees.isEmpty()) {
+				throw new AucuneDonneeException("Aucune données disponible pour ces paramètres");
+			}
+			listePolluants = listeDonnees.get(listeDonnees.size() - 1).getQualiteAir().getListePolluants().stream()
+					.map(p -> new PolluantDto(p.getNom(), p.getUnite(), p.getValeur())).collect(Collectors.toList());
+
+			ConditionMeteo cm = listeDonnees.get(listeDonnees.size() - 1).getConditionMeteo();
+			donneesMeteo = new ConditionMeteoDto(cm.getHumidite(), cm.getEnsoleillement(), cm.getTemperature());
+		}
+
+		// si des valeurs de recherche par polluant on été renseignées
+		if (commune.getPolluant() != null) {
+			listePolluants = listePolluants.stream().filter(p -> p.getNom().equals(commune.getPolluant()))
+					.collect(Collectors.toList());
+			if (listePolluants.isEmpty()) {
+				throw new AucuneDonneeException("Aucune données disponible pour ces paramètres");
+			}
+		}
+
+		resultat.setPolluants(listePolluants);
+		resultat.setNbHabitants(c.get().getNbHabitants());
+		resultat.setMeteo(donneesMeteo);
+		resultat.setNiveauAlerte(commune.getAlerte());
+
+		return resultat;
+
 	}
 
 }
