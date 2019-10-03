@@ -1,5 +1,6 @@
 package dev.services;
 
+import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,30 +101,38 @@ public class UtilisateurService {
 	/**
 	 * Méthode qui supprime un utilisateur Elle vérifie que la personne connectée
 	 * n'est pas un admin qui supprime son propre compte
-	 *
-	 * @param email
+	 * @param email : Srting email de l'utilisateur
 	 */
-	public void supprimerUtilisateur(String email) {
-		// récupération utilisateur via l'email
-		Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmailIgnoreCase(email);
+	public void supprimerUtilisateur(String email) throws UtilisateurInvalideException {
+		LOGGER.info("supprimerUtilisateur() lancé");
+		String emailUtilisateurConnecte =
+				(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<Utilisateur> utilisateurConnecteOptional =
+				utilisateurRepository.findByEmailIgnoreCase(emailUtilisateurConnecte);
 
-		// récupération de l'email de la personne connectée et création d'un objet
-		// Utilisateur pour l'utilisateur connecté
-		String emailConnecte = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<Utilisateur> utilisateurConnecte = utilisateurRepository.findByEmailIgnoreCase(emailConnecte);
+		if(utilisateurConnecteOptional.isPresent()) {
+			Utilisateur utilisateurConnecte = utilisateurConnecteOptional.get();
+			List<Statut> statut = utilisateurConnecte.getStatut();
 
-		// Vérification du statut de l'utilisateur et suppression si autorisé à
-		// surpprimer.
-		List<Statut> statut = utilisateurConnecte.get().getStatut();
+			Optional<Utilisateur> utilisateurOptional =
+					utilisateurRepository.findByEmailIgnoreCase(email);
 
-		if (statut.contains(Statut.ADMINISTRATEUR)) {
-			if (!utilisateur.get().getEmail().equals(emailConnecte)) {
-				if (utilisateur.isPresent()) {
-					utilisateurRepository.delete(utilisateur.get());
+			if(utilisateurOptional.isPresent()) {
+				Utilisateur utilisateur = utilisateurOptional.get();
+				if (statut.contains(Statut.ADMINISTRATEUR)) {
+					if (utilisateur.getEmail().equalsIgnoreCase(emailUtilisateurConnecte)) {
+						throw new UtilisateurInvalideException("ERREUR: Un admin ne " +
+								"peut pas supprimer son propre compte.");
+					}
+					utilisateurRepository.delete(utilisateur);
 				}
 			} else {
-				throw new UtilisateurInvalideException("Un admin ne peut pas supprimer son propre compte");
+				throw new UtilisateurInvalideException("ERREUR: Aucun " +
+						"utilisateur trouvé avec cet email.");
 			}
+		} else {
+			throw new UtilisateurInvalideException("ERREUR: Aucun email " +
+					"trouvé pour l'utilisateur connecté.");
 		}
 
 	}
@@ -281,7 +290,7 @@ public class UtilisateurService {
 	/**
 	 * méthode qui valide que l'on est connecté en admin et qui renvoie true si
 	 * c'est bien le cas
-	 * 
+	 *
 	 * @return
 	 * @throws UtilisateurNonConnecteException
 	 */

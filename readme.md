@@ -63,7 +63,6 @@ Code `404`
 }
 ```
 
-
 Réponse en cas d'échec :
 
 Code `401`
@@ -71,7 +70,6 @@ Code `401`
 #### Requête pour modifier son compte
 
 [PATCH] /profil/modification
-
 
 ```JSON
   {
@@ -96,17 +94,17 @@ Code `401`
 
 ```
 
+### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
+
 #### Requête pour récupérer les données pour affichage sur la carte
 
 [GET] /donnees_carte
-
-
-
 
 Réponse en cas de succès :
 
 Code `200`
 
+<<<<<<< HEAD
 
 
 ```
@@ -147,7 +145,10 @@ Code `404`
 
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 
+=======
+>>>>>>> master
 #### Cas d’utilisation “Visualiser données pollution” 
+
 [GET] /communes/{codeInsee}
 
 Réponse en cas de réussite : 
@@ -251,6 +252,56 @@ Code `204`
 Réponse en cas d'échec :
 
 Code `400`
+
+### Module d'administration
+
+#### Requête pour afficher la liste des membres
+
+[GET] /admin/membres
+
+Réponse en cas de succès : 
+
+Code `200`
+
+```json
+[
+    {
+        "nom": "peyras",
+        "prenom": "cecile",
+        "email": "cecile@test.fr"
+    },
+    {
+        "nom": "peyras2",
+        "prenom": "cecile2",
+        "email": "cecile2@test.fr"
+    }
+]
+```
+
+#### Requête pour supprimer un membre
+
+[DELETE] /admin/membres/{email}
+
+Réponse en cas de succès :
+
+Code `200`
+
+```
+
+```
+
+Réponses en cas d'échec :
+
+Code `400`
+
+```
+ERREUR: Aucun utilisateur trouvé avec cet email.
+```
+
+```
+ERREUR: Un admin ne peut pas supprimer son propre compte.
+```
+
 
 ## API externes (les requêtes sont effectuées par l'API)
 
