@@ -109,12 +109,13 @@ public class IndicateurService {
 	 * @return renvoie le mail tilisateur et le nom de la commune à supprimer
 	 * @throws UtilisateurNonConnecteException
 	 */
-	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) throws UtilisateurNonConnecteException {
+	public IndicateurDto supprimerUnIndicateur(IndicateurAffichageDto indicateur)
+			throws UtilisateurNonConnecteException {
 
 		List<Indicateur> indicateurs = repository
 				.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
 		List<Indicateur> indicateursFiltres = indicateurs.stream()
-				.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
+				.filter(i -> i.getCommune().getNom().equals(indicateur.getNomCommune())).collect(Collectors.toList());
 		Indicateur suppression = null;
 		if (!indicateursFiltres.isEmpty()) {
 			suppression = indicateursFiltres.get(0);
