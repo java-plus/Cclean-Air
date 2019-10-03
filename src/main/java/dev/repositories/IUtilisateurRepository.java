@@ -20,10 +20,9 @@ import java.util.Optional;
 public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
 
 	/**
-	 * méthode qui recherche un Utilisateur à partir de son email
-	 * 
-	 * @param email
-	 * @return
+	 * Méthode qui retourne un optional d'un utilisateur à partir de son email.
+	 * @param email : String
+	 * @return : Optional<Utilisateur>
 	 */
 	Optional<Utilisateur> findByEmailIgnoreCase(String email);
 
