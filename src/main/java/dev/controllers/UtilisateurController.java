@@ -225,7 +225,7 @@ public class UtilisateurController {
 
 		var retour = utilisateurService.validationAdmin();
 
-		if (retour == true) {
+		if (retour) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
