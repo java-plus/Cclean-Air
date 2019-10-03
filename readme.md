@@ -79,7 +79,7 @@ Code `401`
 	"prenom" : "", 
 	"email" : "", 
 	"commune" : "", 
-	"alerte" : "", 
+	"statutNofication" : "", 
 	"listeIndicateurs" : [
 		{
 			"commune" : "Nantes", 
@@ -93,21 +93,6 @@ Code `401`
 	"motDePasseNouveau" : "", 
 	"getMotDePasseNouveauValidation" : ""
 }
-
-```
-
-#### Requête pour récupérer les données pour affichage sur la carte
-
-[GET] /donnees_carte
-
-
-
-
-Réponse en cas de succès :
-
-Code `200`
-
-
 
 ```
 

@@ -1,9 +1,5 @@
 package dev.controllers.dto;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 
 /**
@@ -13,27 +9,27 @@ public class ProfilModificationPost {
 	/**
 	 * nom de l'utilisateur
 	 */
-	@NotBlank
+
 	private String nom;
 	/**
 	 * prénom de l'utilisateur
 	 */
-	@NotBlank
+
 	private String prenom;
 	/**
 	 * mail de l'utilisateur
 	 */
-	@Email
+
 	private String email;
 	/**
 	 * commune de l'utilisateur
 	 */
-	@NotBlank
+
 	private String commune;
 	/**
 	 * Acceptation ou non des alertes
 	 */
-	@NotNull
+
 	private Boolean statutNotification;
 
 	/**
@@ -44,26 +40,29 @@ public class ProfilModificationPost {
 	/**
 	 * mot de passe actuel de l'utilisateur
 	 */
-	@NotBlank
+
 	private String motDePasseActuel;
 	/**
 	 * nouveau mot de passe de l'utilisateur
 	 */
-	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
-	@NotBlank
+	// @Pattern(regexp =
+	// "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message =
+	// "Le mot de passe ne respecte pas les règles de sécurité")
+
 	private String motDePasseNouveau;
 	/**
 	 * controle du nouveau mot de passe de l'utilisateur
 	 */
 
-	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Le mot de passe ne respecte pas les règles de sécurité")
-	@NotBlank
+	// @Pattern(regexp =
+	// "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message =
+	// "Le mot de passe ne respecte pas les règles de sécurité")
+
 	private String getMotDePasseNouveauValidation;
 
-	public ProfilModificationPost(@NotBlank String nom, @NotBlank String prenom, @NotBlank @Email String email,
-			@NotBlank String commune, @NotBlank Boolean statutNotification, List<CommuneIndicateurDto> listeIndicateurs,
-			@NotBlank String motDePasseActuel, @NotBlank String motDePasseNouveau,
-			@NotBlank String getMotDePasseNouveauValidation) {
+	public ProfilModificationPost(String nom, String prenom, String email, String commune, Boolean statutNotification,
+			List<CommuneIndicateurDto> listeIndicateurs, String motDePasseActuel, String motDePasseNouveau,
+			String getMotDePasseNouveauValidation) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.email = email;

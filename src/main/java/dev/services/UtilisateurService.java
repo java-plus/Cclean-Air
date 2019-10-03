@@ -1,39 +1,35 @@
 package dev.services;
 
-import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import dev.controllers.dto.*;
-import dev.entities.Commune;
-import dev.entities.Statut;
-import dev.exceptions.EmailInvalideException;
-import dev.exceptions.MotDePasseInvalideException;
-import dev.exceptions.UtilisateurInvalideException;
-import dev.repositories.ICommuneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.ProfilModifcationGet;
+import dev.controllers.dto.ProfilModificationPost;
+import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.UtilisateurDtoPost;
+import dev.entities.Commune;
 import dev.entities.Indicateur;
+import dev.entities.Statut;
 import dev.entities.Utilisateur;
+import dev.exceptions.EmailInvalideException;
+import dev.exceptions.MotDePasseInvalideException;
+import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
+import dev.repositories.ICommuneRepository;
 import dev.repositories.IUtilisateurRepository;
 import dev.utils.RecuperationUtilisateurConnecte;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Email;
 
 /**
  * @author Cécile Peyras
@@ -180,7 +176,7 @@ public class UtilisateurService {
 	 * @throws MotDePasseInvalideException
 	 */
 	public ProfilModifcationGet modifierProfil(ProfilModificationPost profilModificationPost)
-			throws UtilisateurNonConnecteException, MotDePasseInvalideException, EmailInvalideException {		
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException, EmailInvalideException {
 
 		// Récupération de l'utilisateur
 		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
@@ -198,8 +194,8 @@ public class UtilisateurService {
 
 		// modification de l'email
 		if (profilModificationPost.getEmail() != null && !profilModificationPost.getEmail().equals("")) {
-			// validation de l'email			
-			utilisateur.setEmail(profilModificationPost.getEmail());			
+			// validation de l'email
+			utilisateur.setEmail(profilModificationPost.getEmail());
 		}
 
 		// modification de la commune
@@ -209,8 +205,8 @@ public class UtilisateurService {
 			if (commune.isPresent()) {
 				utilisateur.setCommune(commune.get());
 			}
-		}	
-		
+		}
+
 		// modification du statut notification
 		if (profilModificationPost.getstatutNotification() != null) {
 			utilisateur.setStatutNotification(profilModificationPost.getstatutNotification());
@@ -248,16 +244,17 @@ public class UtilisateurService {
 
 		// modification du mot de passe
 		if (profilModificationPost.getMotDePasseActuel() != null
-				&& !profilModificationPost.getMotDePasseActuel().equals("")) {			
+				&& !profilModificationPost.getMotDePasseActuel().equals("")) {
 			// vérification de la correspondance des mots de passe pour modification
 			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
 				if (profilModificationPost.getMotDePasseNouveau()
 						.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
-					utilisateur.setMotDePasse(passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
+					utilisateur.setMotDePasse(
+							passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
 				} else {
 					throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
 				}
-				
+
 			} else {
 				throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
 			}

@@ -1,6 +1,35 @@
 package dev.controllers;
 
-import dev.controllers.dto.*;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import dev.controllers.dto.EmailDto;
+import dev.controllers.dto.ProfilDtoGet;
+import dev.controllers.dto.ProfilModifcationGet;
+import dev.controllers.dto.ProfilModificationPost;
+import dev.controllers.dto.UtilisateurDtoAdmin;
+import dev.controllers.dto.UtilisateurDtoGet;
+import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
@@ -10,19 +39,6 @@ import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.services.CommuneService;
 import dev.services.UtilisateurService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Controleur gérant les requêtes liées au CRUD des comptes utilisateurs.
@@ -186,24 +202,14 @@ public class UtilisateurController {
 	 *
 	 * @param profilModificationPost : ProfilModificationPost
 	 * @return : ProfilModifcationGet
+	 * @throws EmailInvalideException
 	 * @throws UtilisateurNonConnecteException
 	 * @throws MotDePasseInvalideException
 	 */
 	@PatchMapping("profil/modification")
-	public ProfilModifcationGet afficherProfilModifie(@RequestBody @Valid ProfilModificationPost profilModificationPost,
-			Errors errors) throws UtilisateurNonConnecteException, EmailInvalideException, MotDePasseInvalideException {
+	public ProfilModifcationGet afficherProfilModifie(@RequestBody ProfilModificationPost profilModificationPost)
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException, EmailInvalideException {
 
-		LOGGER.info("reqAjoutUtilisateur() lancé");
-
-		if (errors.hasErrors()) {
-			throw new UtilisateurInvalideException(
-					"ERREUR : au moins un des champs est mal renseigné : \n ");
-		}
-
-		if (!communeService.isCommuneExistante(profilModificationPost.getCommune())) {
-			throw new CommuneInvalideException(
-					"ERREUR : le nom de cette commune n'a pas été trouvé dans la base de données.");
-		}
 		return utilisateurService.modifierProfil(profilModificationPost);
 	}
 }
