@@ -1,4 +1,4 @@
-﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -77,7 +77,7 @@ Code `401`
 	"prenom" : "", 
 	"email" : "", 
 	"commune" : "", 
-	"alerte" : "", 
+	"statutNotification" : "", 
 	"listeIndicateurs" : [
 		{
 			"commune" : "Nantes", 
