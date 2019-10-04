@@ -30,4 +30,5 @@ public interface ICommuneRepository extends JpaRepository<Commune, Integer> {
 			+ ".nbHabitants, c.codeInsee, c.latitude, c.longitude) from Commune"
 			+ " c where c.codeInsee LIKE '44%' order by c.nom")
 	List<CommuneDtoGetLight> findAllDtoGetLight();
+
 }

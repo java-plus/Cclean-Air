@@ -77,7 +77,6 @@ public class QualiteAirService {
 
 		for (Polluant p : polluants) {
 			String urlDonneesPollutionDuPolluant = sbUrlDonneesPollution.toString() + p.getCode();
-			LOGGER.info("url utilisée = " + urlDonneesPollutionDuPolluant);
 
 			try {
 				RestTemplate restTemplate = new RestTemplate();
@@ -153,7 +152,7 @@ public class QualiteAirService {
 	 * @throws QualiteAirInvalideException : exception dans le cas où aucune ligne
 	 *                                     n'a été trouvée.
 	 */
-	public ZonedDateTime recupererDateDerniereQualiteAirDeLaBase() throws QualiteAirInvalideException {
+	public ZonedDateTime recupererDateDerniereQualiteAirDeLaBase() {
 		QualiteAir qualiteAir = qualiteAirRepository.findFirstByOrderByIdDesc()
 				.orElseThrow(() -> new QualiteAirInvalideException(
 						"ERREUR" + " : " + "Impossible " + "de trouver les dernières données de qualité d'air."));
@@ -191,7 +190,6 @@ public class QualiteAirService {
 			try {
 				communeDeLaStation = communeService.recupererCommune(q.getStationVille());
 			} catch (CommuneInvalideException e) {
-				LOGGER.info("CommuneInvalideException" + e);
 				continue;
 			}
 

@@ -44,9 +44,7 @@ public class ConditionMeteoService {
 	 * @throws ConditionMeteoException : exception lancée en cas de problème lors de
 	 *                                 la récupération.
 	 */
-	public ConditionMeteo recupererConditionMeteoCommuneDeApi(CommuneDto commune) throws ConditionMeteoException {
-
-		LOGGER.info("recupererConditionMeteoCommune() lancé");
+	public ConditionMeteo recupererConditionMeteoCommuneDeApi(CommuneDto commune) {
 
 		StringBuilder sbUrlApiWeather = new StringBuilder(URL_API_METEO);
 		sbUrlApiWeather.append("?lat=");
@@ -56,12 +54,10 @@ public class ConditionMeteoService {
 		sbUrlApiWeather.append("&lang=fr&units=metric&APPID=");
 		sbUrlApiWeather.append(KEY_API_METEO);
 		sbUrlApiWeather.append("&units=metric");
-		LOGGER.info("url de la requête = " + sbUrlApiWeather);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			String result = restTemplate.getForObject(sbUrlApiWeather.toString(), String.class);
-			LOGGER.info("recuperation donnees = " + result);
 			Double ensoleillement = 100 - Double.parseDouble(
 					result.substring(result.indexOf("clouds\":{\"all\":") + 15, result.indexOf("},\"dt\":")));
 			Double temperature = Double
@@ -81,8 +77,6 @@ public class ConditionMeteoService {
 	 * @return [ConditionMeteo] la condition météo qui a été sauvegarder.
 	 */
 	public ConditionMeteo sauvegarderConditionMeteo(ConditionMeteo conditionMeteo) {
-		LOGGER.info("sauvegarderConditionMeteo() lancé");
-		LOGGER.info("conditionMeteo = " + conditionMeteo);
 		return conditionMeteoRepository.save(conditionMeteo);
 	}
 

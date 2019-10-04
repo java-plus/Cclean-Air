@@ -38,7 +38,6 @@ public class PolluantService {
 	}
 
 	public void sauvegarderPolluant(List<Polluant> polluants) {
-		LOGGER.info("sauvegarderPolluant() lancé");
 		for (Polluant p : polluants) {
 			polluantRepository.save(p);
 		}
@@ -56,7 +55,6 @@ public class PolluantService {
 					new ParameterizedTypeReference<List<PolluantDtoApi>>() {
 					});
 			List<PolluantDtoApi> polluantsDto = response.getBody();
-			LOGGER.info("polluants récupérés : " + polluantsDto);
 			List<Polluant> polluants = new ArrayList<>();
 			for (PolluantDtoApi p : polluantsDto) {
 				polluants.add(new Polluant(p.getId(), p.getNom()));
