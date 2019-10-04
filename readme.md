@@ -145,7 +145,7 @@ Code `200`
 
 #### Requête pour récupérer les données pour affichage sur la carte
 
-[GET] /details_commune
+[POST] /details_commune
 
 
 Un nom de polluant peut être indiqué pour personnaliser la recherche.

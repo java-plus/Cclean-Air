@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,9 +41,11 @@ public class DonneesController {
 		return new ResponseEntity<>(service.recupererDonnesCarte(), HttpStatus.OK);
 	}
 
-	@GetMapping("/details_commune")
+	@PostMapping("/details_commune")
 	public ResponseEntity<CommuneDto> recupererDetailsCommune(@RequestBody CommuneRechercheDto commune)
 			throws AucuneDonneeException {
+
+		System.err.println(commune);
 		return new ResponseEntity<>(service.rechercherDetailsCommune(commune), HttpStatus.OK);
 	}
 
