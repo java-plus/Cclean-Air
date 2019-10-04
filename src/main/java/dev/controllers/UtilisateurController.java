@@ -163,10 +163,10 @@ public class UtilisateurController {
 	 * @param resp
 	 * @return : ResponseEntity<String>
 	 */
-	@DeleteMapping("/profil/suppression")
-	public ResponseEntity<String> suppressionComptePerso(@RequestBody EmailDto email, HttpServletRequest req,
+	@DeleteMapping("/profil/suppression/{email}")
+	public ResponseEntity<String> suppressionComptePerso(@PathVariable String email, HttpServletRequest req,
 			HttpServletResponse resp) {
-		if (utilisateurService.isEmailExistant(email.getEmail())) {
+		if (utilisateurService.isEmailExistant(email)) {
 			utilisateurService.supprimerComptePerso();
 
 			Cookie[] cookies = req.getCookies();
@@ -177,7 +177,8 @@ public class UtilisateurController {
 					resp.addCookie(cookie);
 				}
 			}
-			return ResponseEntity.status(200).body("Votre compte a bien été supprimé !");
+			//return ResponseEntity.status(200).body("Votre compte a bien été supprimé !");
+			return ResponseEntity.ok().build();
 		} else {
 			return ResponseEntity.status(400).body("L'email ne correspond a aucun compte");
 		}
