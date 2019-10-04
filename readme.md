@@ -77,7 +77,7 @@ Code `401`
 	"prenom" : "", 
 	"email" : "", 
 	"commune" : "", 
-	"alerte" : "", 
+	"statutNotification" : "", 
 	"listeIndicateurs" : [
 		{
 			"commune" : "Nantes", 
@@ -473,3 +473,4 @@ Extrait du début du JSON :
   }
 
 ```
+

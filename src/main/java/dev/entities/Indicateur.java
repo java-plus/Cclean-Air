@@ -34,7 +34,7 @@ public class Indicateur implements Serializable {
 	 * Si l'utilisateur souhaite ou non recevoir des alertes pour l'indicateur en
 	 * question
 	 */
-	@Column(name = "int_alerte")
+	@Column(name = "ind_alerte")
 	private Boolean alerte;
 
 	/**

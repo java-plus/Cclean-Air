@@ -1,17 +1,12 @@
 package dev.services;
 
-import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +25,7 @@ import dev.entities.Commune;
 import dev.entities.Indicateur;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
+import dev.exceptions.EmailInvalideException;
 import dev.exceptions.MotDePasseInvalideException;
 import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
@@ -101,38 +97,30 @@ public class UtilisateurService {
 	/**
 	 * Méthode qui supprime un utilisateur Elle vérifie que la personne connectée
 	 * n'est pas un admin qui supprime son propre compte
-	 * @param email : Srting email de l'utilisateur
+	 *
+	 * @param email
 	 */
-	public void supprimerUtilisateur(String email) throws UtilisateurInvalideException {
-		LOGGER.info("supprimerUtilisateur() lancé");
-		String emailUtilisateurConnecte =
-				(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<Utilisateur> utilisateurConnecteOptional =
-				utilisateurRepository.findByEmailIgnoreCase(emailUtilisateurConnecte);
+	public void supprimerUtilisateur(String email) {
+		// récupération utilisateur via l'email
+		Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmailIgnoreCase(email);
 
-		if(utilisateurConnecteOptional.isPresent()) {
-			Utilisateur utilisateurConnecte = utilisateurConnecteOptional.get();
-			List<Statut> statut = utilisateurConnecte.getStatut();
+		// récupération de l'email de la personne connectée et création d'un objet
+		// Utilisateur pour l'utilisateur connecté
+		String emailConnecte = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<Utilisateur> utilisateurConnecte = utilisateurRepository.findByEmailIgnoreCase(emailConnecte);
 
-			Optional<Utilisateur> utilisateurOptional =
-					utilisateurRepository.findByEmailIgnoreCase(email);
+		// Vérification du statut de l'utilisateur et suppression si autorisé à
+		// surpprimer.
+		List<Statut> statut = utilisateurConnecte.get().getStatut();
 
-			if(utilisateurOptional.isPresent()) {
-				Utilisateur utilisateur = utilisateurOptional.get();
-				if (statut.contains(Statut.ADMINISTRATEUR)) {
-					if (utilisateur.getEmail().equalsIgnoreCase(emailUtilisateurConnecte)) {
-						throw new UtilisateurInvalideException("ERREUR: Un admin ne " +
-								"peut pas supprimer son propre compte.");
-					}
-					utilisateurRepository.delete(utilisateur);
+		if (statut.contains(Statut.ADMINISTRATEUR)) {
+			if (!utilisateur.get().getEmail().equals(emailConnecte)) {
+				if (utilisateur.isPresent()) {
+					utilisateurRepository.delete(utilisateur.get());
 				}
 			} else {
-				throw new UtilisateurInvalideException("ERREUR: Aucun " +
-						"utilisateur trouvé avec cet email.");
+				throw new UtilisateurInvalideException("Un admin ne peut pas supprimer son propre compte");
 			}
-		} else {
-			throw new UtilisateurInvalideException("ERREUR: Aucun email " +
-					"trouvé pour l'utilisateur connecté.");
 		}
 
 	}
@@ -190,10 +178,7 @@ public class UtilisateurService {
 	 * @throws MotDePasseInvalideException
 	 */
 	public ProfilModifcationGet modifierProfil(ProfilModificationPost profilModificationPost)
-			throws UtilisateurNonConnecteException, MotDePasseInvalideException {
-
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+			throws UtilisateurNonConnecteException, MotDePasseInvalideException, EmailInvalideException {
 
 		// Récupération de l'utilisateur
 		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
@@ -212,13 +197,6 @@ public class UtilisateurService {
 		// modification de l'email
 		if (profilModificationPost.getEmail() != null && !profilModificationPost.getEmail().equals("")) {
 			// validation de l'email
-			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
-					.validate(profilModificationPost);
-
-			if (constraintViolations != null) {
-
-				throw new MotDePasseInvalideException("L'email est mal renseigné");
-			}
 			utilisateur.setEmail(profilModificationPost.getEmail());
 		}
 
@@ -229,7 +207,15 @@ public class UtilisateurService {
 			if (commune.isPresent()) {
 				utilisateur.setCommune(commune.get());
 			}
+		}
 
+		// modification du statut notification
+		if (profilModificationPost.getstatutNotification() != null) {
+			utilisateur.setStatutNotification(profilModificationPost.getstatutNotification());
+		} else {
+			if (profilModificationPost.getstatutNotification() == null) {
+				utilisateur.setStatutNotification(false);
+			}
 		}
 
 		// modification de la liste d'indicateurs
@@ -257,28 +243,31 @@ public class UtilisateurService {
 				utilisateur.setListeIndicateurs(listeIndicateur);
 			}
 		}
+		
+		String regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$";		
 
 		// modification du mot de passe
 		if (profilModificationPost.getMotDePasseActuel() != null
 				&& !profilModificationPost.getMotDePasseActuel().equals("")) {
-			// validation de la sécurité du mot de passe
-			Set<ConstraintViolation<ProfilModificationPost>> constraintViolations = validator
-					.validate(profilModificationPost);
-			if (constraintViolations != null) {
-				throw new MotDePasseInvalideException("Le mot de passe ne respecte pas les règles de sécurité");
-			}
 			// vérification de la correspondance des mots de passe pour modification
 			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
 				if (profilModificationPost.getMotDePasseNouveau()
-						.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
-					utilisateur.setMotDePasse(profilModificationPost.getGetMotDePasseNouveauValidation());
+						.matches(regex) && profilModificationPost.getMotDePasseNouveau().length() >= 7) {
+					if (profilModificationPost.getMotDePasseNouveau()
+							.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
+						utilisateur.setMotDePasse(
+								passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
+					} else {
+						throw new MotDePasseInvalideException(
+								"Le nouveau mot de passe et sa validation sont différents.");
+					}
 				} else {
-					throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
+					throw new MotDePasseInvalideException(
+							"Le mot de passe doit contenir une majuscule, une minuscule, un chiffre, un caractère spécial et doit contenir minimum 7 caractères");
 				}
 			} else {
 				throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
 			}
-
 		}
 		utilisateurRepository.save(utilisateur);
 
@@ -286,24 +275,4 @@ public class UtilisateurService {
 				utilisateur.getStatutNotification(), utilisateur.getCommune().getNom(), listGet);
 
 	}
-
-	/**
-	 * méthode qui valide que l'on est connecté en admin et qui renvoie true si
-	 * c'est bien le cas
-	 *
-	 * @return
-	 * @throws UtilisateurNonConnecteException
-	 */
-	public Boolean validationAdmin() throws UtilisateurNonConnecteException {
-		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
-
-		if (utilisateur.getStatut().contains(Statut.ADMINISTRATEUR)) {
-
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
 }
