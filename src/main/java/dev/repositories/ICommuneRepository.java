@@ -1,5 +1,6 @@
 package dev.repositories;
 
+import dev.controllers.dto.CommuneDtoGetLight;
 import dev.controllers.dto.CommuneDto;
 import dev.entities.Commune;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,5 +25,8 @@ public interface ICommuneRepository extends JpaRepository<Commune, Integer> {
 			+ ".longitude) from Commune c")
 	List<CommuneDto> findAllWithCodeDenomination();
 
-	List<Commune> findAll();
+	@Query("select new dev.controllers.dto.CommuneDtoGetLight(c.nom, c" +
+			".nbHabitants, c.codeInsee, c.latitude, c.longitude) from Commune" +
+			" c where c.codeInsee LIKE '44%'")
+	List<CommuneDtoGetLight> findAllDtoGetLight();
 }
