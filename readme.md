@@ -1,4 +1,4 @@
-﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -116,14 +116,6 @@ Un nom de polluant peut être indiqué pour personnaliser la recherche.
 Une date et une heure également mais au moment du développement, 
 il n'y aura pas suffisament de données pour tester.
 
-Réponse en cas de succès :
-
-Code `200`
-
-Réponse en cas d'échec :
-
-Code `404`
-
 ```JSON
 
 {
@@ -136,6 +128,14 @@ Code `404`
 }
 
 ```
+
+Réponse en cas de succès :
+
+Code `200`
+
+Réponse en cas d'échec :
+
+Code `404`
 
 ```
 
@@ -167,6 +167,37 @@ Code : `200`
     },
     "date": "2019-09-12T14:00:00+02:00"
 } 
+```
+
+Réponse en cas d'erreur : 
+
+Code `404`
+
+
+[GET] /polluant/noms
+
+Réponse en cas de réussite : 
+
+Code : `200`
+
+
+
+```JSON
+[
+    "Sulfure d'hydrogène",
+    "Monoxyde de carbone",
+    "Benzène",
+    "toluène",
+    "Dioxyde d'azote",
+    "Oxydes d'azote",
+    "Dioxyde de soufre",
+    "Ethyl Benzène",
+    "Particules fines",
+    "m.p-xylène",
+    "Monoxyde d'azote",
+    "Ozone",
+    "o-xylène"
+]
 ```
 
 Réponse en cas d'erreur : 
@@ -473,4 +504,3 @@ Extrait du début du JSON :
   }
 
 ```
-

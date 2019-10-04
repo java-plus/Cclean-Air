@@ -1,10 +1,10 @@
 package dev.services;
 
-import dev.controllers.dto.PolluantDtoApi;
-import dev.entities.Polluant;
-import dev.entities.QualiteAir;
-import dev.exceptions.PolluantInvalideException;
-import dev.repositories.IPolluantRepository;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import dev.controllers.dto.PolluantDtoApi;
+import dev.entities.Polluant;
+import dev.entities.QualiteAir;
+import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.PolluantInvalideException;
+import dev.repositories.IPolluantRepository;
 
 @Service
 public class PolluantService {
@@ -74,6 +78,19 @@ public class PolluantService {
 	public void purgerPolluant(QualiteAir qualiteAir) {
 		LOGGER.info("purgerConditionMeteo() lancé");
 		polluantRepository.supprimerPolluantsDeLaQualiteAirIndiquee(qualiteAir);
+	}
+
+	/**
+	 * @return renvoie la liste sans doublon des noms de polluants présents en base
+	 * @throws AucuneDonneeException si aucun polluant n'a pu être récupéré en base.
+	 */
+	public List<String> recupererNomsPolluantsDeBase() throws AucuneDonneeException {
+		List<String> listeNomPolluants = polluantRepository.findAll().stream().map(p -> p.getNom())
+				.collect(Collectors.toList());
+		if (listeNomPolluants.isEmpty()) {
+			throw new AucuneDonneeException("Aucune donnée de polluant disponible.");
+		}
+		return new ArrayList<>(new HashSet<String>(listeNomPolluants));
 	}
 
 }
