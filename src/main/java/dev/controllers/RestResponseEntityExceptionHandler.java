@@ -1,10 +1,18 @@
 package dev.controllers;
 
-import dev.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.CommuneDejaSuivieException;
+import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.ConnexionInvalideException;
+import dev.exceptions.IndicateurFuturException;
+import dev.exceptions.MotDePasseInvalideException;
+import dev.exceptions.NombreIndicateursException;
+import dev.exceptions.UtilisateurNonConnecteException;
 
 /**
  * @author Guillaume Classe de gestion des exceptions au niveau de l'envoie de
@@ -76,12 +84,24 @@ public class RestResponseEntityExceptionHandler {
 
 	/**
 	 * Gestionnaire de l'exception de connexion invalide.
+	 * 
 	 * @param e : ConnexionInvalideException l'exception lancée
 	 * @return : ResponseEntity<Object>
 	 */
 	@ExceptionHandler(value = { ConnexionInvalideException.class })
 	public ResponseEntity<Object> handleConflict(ConnexionInvalideException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * Gestionnaire de l'exceptin d'absence de données
+	 * 
+	 * @param e l'exception déclenchée
+	 * @return retourne une réponse avec un statut 404 et le corps de la stack trace
+	 */
+	@ExceptionHandler(AucuneDonneeException.class)
+	public ResponseEntity<String> handleException(AucuneDonneeException e) {
+		return ResponseEntity.status(404).body(e.getMessage());
 	}
 
 }

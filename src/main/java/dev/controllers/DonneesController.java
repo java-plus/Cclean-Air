@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.controllers.dto.CommuneCarteDto;
+import dev.controllers.dto.recherche.CommuneCarteDto;
+import dev.controllers.dto.recherche.CommuneRechercheDto;
+import dev.controllers.dto.recherche.resultat.CommuneDto;
+import dev.exceptions.AucuneDonneeException;
 import dev.services.CommuneService;
 
 /**
@@ -17,12 +21,12 @@ import dev.services.CommuneService;
  *
  */
 @RestController
-public class CarteController {
+public class DonneesController {
 
 	private CommuneService service;
 
 	@Autowired
-	public CarteController(CommuneService service) {
+	public DonneesController(CommuneService service) {
 
 		this.service = service;
 	}
@@ -34,6 +38,12 @@ public class CarteController {
 	@GetMapping("/donnees_carte")
 	public ResponseEntity<List<CommuneCarteDto>> recupererDonneesCartes() {
 		return new ResponseEntity<>(service.recupererDonnesCarte(), HttpStatus.OK);
+	}
+
+	@GetMapping("/details_commune")
+	public ResponseEntity<CommuneDto> recupererDetailsCommune(@RequestBody CommuneRechercheDto commune)
+			throws AucuneDonneeException {
+		return new ResponseEntity<>(service.rechercherDetailsCommune(commune), HttpStatus.OK);
 	}
 
 }
