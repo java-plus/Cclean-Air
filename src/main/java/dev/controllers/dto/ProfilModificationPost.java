@@ -2,6 +2,8 @@ package dev.controllers.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * @author Cécile Objet Dto qui sert pour modifier le profil
  */
@@ -54,8 +56,7 @@ public class ProfilModificationPost {
 	 * controle du nouveau mot de passe de l'utilisateur
 	 */
 
-	// @Pattern(regexp =
-	// "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message =
+	//@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"), message =
 	// "Le mot de passe ne respecte pas les règles de sécurité")
 
 	private String getMotDePasseNouveauValidation;

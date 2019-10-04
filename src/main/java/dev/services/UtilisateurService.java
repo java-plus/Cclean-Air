@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,6 +243,8 @@ public class UtilisateurService {
 				utilisateur.setListeIndicateurs(listeIndicateur);
 			}
 		}
+		
+		String regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$";		
 
 		// modification du mot de passe
 		if (profilModificationPost.getMotDePasseActuel() != null
@@ -248,17 +252,22 @@ public class UtilisateurService {
 			// vérification de la correspondance des mots de passe pour modification
 			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
 				if (profilModificationPost.getMotDePasseNouveau()
-						.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
-					utilisateur.setMotDePasse(
-							passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
+						.matches(regex) && profilModificationPost.getMotDePasseNouveau().length() >= 7) {
+					if (profilModificationPost.getMotDePasseNouveau()
+							.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
+						utilisateur.setMotDePasse(
+								passwordEncoder.encode(profilModificationPost.getGetMotDePasseNouveauValidation()));
+					} else {
+						throw new MotDePasseInvalideException(
+								"Le nouveau mot de passe et sa validation sont différents.");
+					}
 				} else {
-					throw new MotDePasseInvalideException("Le nouveau mot de passe et sa validation sont différents. ");
+					throw new MotDePasseInvalideException(
+							"Le mot de passe doit contenir une majuscule, une minuscule, un chiffre, un caractère spécial et doit contenir minimum 7 caractères");
 				}
-
 			} else {
 				throw new MotDePasseInvalideException("Le mot de passe saisi n'est pas le mot de passe actuel");
 			}
-
 		}
 		utilisateurRepository.save(utilisateur);
 
