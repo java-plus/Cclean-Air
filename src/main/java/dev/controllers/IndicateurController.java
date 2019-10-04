@@ -12,11 +12,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.IndicateurAffichageDto;
 import dev.controllers.dto.IndicateurDto;
 import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.exceptions.AucuneDonneeException;
@@ -50,7 +52,7 @@ public class IndicateurController {
 	 * @return Renvoie la liste des indicateurs d'un utilisateur spécifique
 	 */
 	@GetMapping(value = "/indicateurs")
-	public ResponseEntity<List<CommuneIndicateurDto>> getIndicateursUtilisateur() {
+	public ResponseEntity<List<IndicateurAffichageDto>> getIndicateursUtilisateur() {
 		log.info("Récupération de l'utilisateur enregistré...");
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String email = "";
@@ -60,7 +62,7 @@ public class IndicateurController {
 			email = principal.toString();
 		}
 
-		List<CommuneIndicateurDto> response = service.recupererLesIndicateurs(email);
+		List<IndicateurAffichageDto> response = service.recupererLesIndicateurs(email);
 		log.info("Indicateurs récupérés : {0}", response);
 		return new ResponseEntity<>(service.recupererLesIndicateurs(email), HttpStatus.OK);
 
@@ -89,10 +91,10 @@ public class IndicateurController {
 	 * @return renvoie un code 204 en cas de suppression réussie
 	 * @throws UtilisateurNonConnecteException
 	 */
-	@DeleteMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> supprimerIndicateur(@RequestBody CommuneIndicateurDto indicateur)
+	@DeleteMapping(value = "/indicateurs/{nomCommune}")
+	public ResponseEntity<IndicateurDto> supprimerIndicateur(@PathVariable String nomCommune)
 			throws UtilisateurNonConnecteException {
-		return new ResponseEntity<>(service.supprimerUnIndicateur(indicateur), HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(service.supprimerUnIndicateur(nomCommune), HttpStatus.NO_CONTENT);
 	}
 
 	/**

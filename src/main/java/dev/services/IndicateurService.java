@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.controllers.dto.CommuneIndicateurDto;
+import dev.controllers.dto.IndicateurAffichageDto;
 import dev.controllers.dto.IndicateurDto;
 import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.entities.Commune;
@@ -58,9 +59,9 @@ public class IndicateurService {
 	 * @return retourne la liste des noms de communes concernées par les différents
 	 *         indicateurs de l'utilisateur
 	 */
-	public List<CommuneIndicateurDto> recupererLesIndicateurs(String mailUtilisateur) {
+	public List<IndicateurAffichageDto> recupererLesIndicateurs(String mailUtilisateur) {
 		return repository.findByUtilisateurEmail(mailUtilisateur).stream()
-				.map(i -> new CommuneIndicateurDto(i.getCommune().getNom(), i.getAlerte()))
+				.map(i -> new IndicateurAffichageDto(i.getCommune().getNom(), i.getCommune().getCodeInsee()))
 				.collect(Collectors.toList());
 	}
 
@@ -108,12 +109,12 @@ public class IndicateurService {
 	 * @return renvoie le mail tilisateur et le nom de la commune à supprimer
 	 * @throws UtilisateurNonConnecteException
 	 */
-	public IndicateurDto supprimerUnIndicateur(CommuneIndicateurDto indicateur) throws UtilisateurNonConnecteException {
+	public IndicateurDto supprimerUnIndicateur(String nomCommune) throws UtilisateurNonConnecteException {
 
 		List<Indicateur> indicateurs = repository
 				.findByUtilisateurEmail(recuperationUtilisateurConnecte.recupererUtilisateurViaEmail().getEmail());
 		List<Indicateur> indicateursFiltres = indicateurs.stream()
-				.filter(i -> i.getCommune().getNom().equals(indicateur.getCommune())).collect(Collectors.toList());
+				.filter(i -> i.getCommune().getNom().equals(nomCommune)).collect(Collectors.toList());
 		Indicateur suppression = null;
 		if (!indicateursFiltres.isEmpty()) {
 			suppression = indicateursFiltres.get(0);
