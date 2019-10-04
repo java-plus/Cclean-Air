@@ -1,6 +1,8 @@
 package dev.controllers;
 
+import dev.controllers.dto.CommuneDtoGetLight;
 import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
+import dev.entities.Commune;
 import dev.exceptions.CommuneInvalideException;
 import dev.exceptions.DonneesLocalesException;
 import dev.services.CommuneService;
@@ -92,6 +94,15 @@ public class CommuneController {
 
 		return communeService.creerHistorique(donneesLocalesRecherchees, codeInsee);
 
+	}
+
+	/**
+	 * Contrôleur permettant la transmission de toutes les communes.
+	 * @return : List<CommuneDtoGetLight> la liste des communes insérées en base de données
+	 */
+	@GetMapping
+	public List<CommuneDtoGetLight> recupererCommunesReq() {
+		return communeService.recupererToutesLesCommunesDeLaBaseInfosEssentielles();
 	}
 	
 	@ExceptionHandler(DonneesLocalesException.class)
