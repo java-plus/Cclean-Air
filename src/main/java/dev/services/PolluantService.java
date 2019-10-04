@@ -81,7 +81,7 @@ public class PolluantService {
 	}
 
 	/**
-	 * @return renvoie la liste sans doublons des noms de polluants présents en base
+	 * @return renvoie la liste sans doublon des noms de polluants présents en base
 	 * @throws AucuneDonneeException si aucun polluant n'a pu être récupéré en base.
 	 */
 	public List<String> recupererNomsPolluantsDeBase() throws AucuneDonneeException {

@@ -1,8 +1,10 @@
 package dev.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.exceptions.AucuneDonneeException;
@@ -13,11 +15,13 @@ import dev.services.PolluantService;
  *         concernant uniquement les polluants
  *
  */
-@RestController(value = "/polluants")
+@RestController
+@RequestMapping(value = "/polluant")
 public class PolluantController {
 
 	private PolluantService service;
 
+	@Autowired
 	public PolluantController(PolluantService service) {
 		super();
 		this.service = service;
