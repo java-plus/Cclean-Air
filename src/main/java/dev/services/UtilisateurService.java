@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,16 +241,16 @@ public class UtilisateurService {
 				utilisateur.setListeIndicateurs(listeIndicateur);
 			}
 		}
-		
-		String regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$";		
+
+		String regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$";
 
 		// modification du mot de passe
 		if (profilModificationPost.getMotDePasseActuel() != null
 				&& !profilModificationPost.getMotDePasseActuel().equals("")) {
 			// vérification de la correspondance des mots de passe pour modification
 			if (passwordEncoder.matches(profilModificationPost.getMotDePasseActuel(), utilisateur.getMotDePasse())) {
-				if (profilModificationPost.getMotDePasseNouveau()
-						.matches(regex) && profilModificationPost.getMotDePasseNouveau().length() >= 7) {
+				if (profilModificationPost.getMotDePasseNouveau().matches(regex)
+						&& profilModificationPost.getMotDePasseNouveau().length() >= 7) {
 					if (profilModificationPost.getMotDePasseNouveau()
 							.equals(profilModificationPost.getGetMotDePasseNouveauValidation())) {
 						utilisateur.setMotDePasse(
@@ -273,6 +271,25 @@ public class UtilisateurService {
 
 		return new ProfilModifcationGet(utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getEmail(),
 				utilisateur.getStatutNotification(), utilisateur.getCommune().getNom(), listGet);
+
+	}
+
+	/**
+	 * méthode qui valide que l'on est connecté en admin et qui renvoie true si
+	 * c'est bien le cas
+	 * 
+	 * @return
+	 * @throws UtilisateurNonConnecteException
+	 */
+	public Boolean validationAdmin() throws UtilisateurNonConnecteException {
+		var utilisateur = recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+
+		if (utilisateur.getStatut().contains(Statut.ADMINISTRATEUR)) {
+
+			return true;
+		} else {
+			return false;
+		}
 
 	}
 }
