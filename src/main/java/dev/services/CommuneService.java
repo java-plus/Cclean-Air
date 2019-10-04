@@ -452,7 +452,7 @@ public class CommuneService {
 
 		// si des valeurs de recherche par polluant on été renseignées
 		if (commune.getPolluant() != null) {
-			listePolluants = listePolluants.stream().filter(p -> p.getNom().equals(commune.getPolluant()))
+			listePolluants = listePolluants.stream().filter(p -> p.getNom().equalsIgnoreCase(commune.getPolluant()))
 					.collect(Collectors.toList());
 			if (listePolluants.isEmpty()) {
 				throw new AucuneDonneeException("Aucune données disponible pour ces paramètres");
