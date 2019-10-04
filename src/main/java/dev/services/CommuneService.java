@@ -81,11 +81,10 @@ public class CommuneService {
 
 	/**
 	 * Méthode vérifiant si la commune existe déjà dans la base de données.
-	 * 
+	 *
 	 * @param nomCommune : [String] nom de la commune
 	 * @return [Boolean] : true si la commune existe, false sinon
 	 */
-
 	public Boolean isCommuneExistante(String nomCommune) {
 		return communeRepository.findByNomIgnoreCase(nomCommune).isPresent();
 	}
@@ -93,7 +92,7 @@ public class CommuneService {
 	/**
 	 * Méthode récupérant un objet commune de la base de données portant le nom
 	 * indiqué.
-	 * 
+	 *
 	 * @param commune : [String] le nom de la commune à récupérer
 	 * @return [Commune] l'objet commune récupéré
 	 * @throws CommuneInvalideException : exeception lancée si aucune commune n'a
@@ -179,7 +178,7 @@ public class CommuneService {
 
 	/**
 	 * Méthode permettant de récupérer toutes les communes de la base de données.
-	 * 
+	 *
 	 * @return [List<Commune>] Une liste de toutes les communes de la base de
 	 *         données.
 	 * @throws CommuneInvalideException : exception lancée si la liste retournée est
@@ -189,6 +188,34 @@ public class CommuneService {
 		LOGGER.info("recupererToutesLesCommunesDeLaBase() lancée");
 		if (communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
 			return communeRepository.findAll();
+		} else {
+			LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
+			throw new CommuneInvalideException(
+					"ERREUR : la récupération des communes de la base de données a échoué" + ".");
+		}
+	}
+
+	/**
+	 * Méthode permettant de récupérer toutes les communes de la base de données.
+	 *
+	 * @return [List<Commune>] Une liste de toutes les communes de la base de
+	 *         données.
+	 * @throws CommuneInvalideException : exception lancée si la liste retournée est
+	 *                                  null ou vide.
+	 */
+	public List<Commune> recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase() {
+		LOGGER.info("recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase() " +
+				"lancée");
+		communeRepository.findAll();
+		if (!communeRepository.findAll().isEmpty()) {
+			List<Commune> listeCommunes = communeRepository.findAll();
+			List<Commune> listeCommunesDeLA = new ArrayList<>();
+			for (Commune commune : listeCommunes) {
+				if(commune.getCodeInsee().startsWith("44")) {
+					listeCommunesDeLA.add(commune);
+				}
+			}
+			return listeCommunesDeLA;
 		} else {
 			LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
 			throw new CommuneInvalideException(
@@ -219,7 +246,7 @@ public class CommuneService {
 	/**
 	 * Méthode permettant de récupérer toutes les données de communes des Pays de la
 	 * Loire de l'API des communes et de les sauvegarder dans la base de données.
-	 * 
+	 *
 	 * @throws CommuneInvalideException : exception lancée si la récupération a
 	 *                                  échoué.
 	 */
