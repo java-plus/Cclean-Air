@@ -1,4 +1,4 @@
-﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -7,6 +7,42 @@
 => consultation de la base de données h2 (embarquée) : `http://localhost:8090/h2-console/`
 
 ## Liste des requêtes back de Cclean-Air
+
+### Requêtes utiles à différents modules
+
+#### Requête pour récupérer toutes les communes de Loire-Atlantique
+
+[GET] /communes
+
+Réponse en cas de succès :
+
+Code `200`
+
+```JSON
+[
+    {
+        "nom": "Abbaretz",
+        "nbHabitants": 2068,
+        "codeInsee": "44001",
+        "latitude": 47.5537,
+        "longitude": -1.5053
+    },
+    {
+        "nom": "Aigrefeuille-sur-Maine",
+        "nbHabitants": 3763,
+        "codeInsee": "44002",
+        "latitude": 47.0733,
+        "longitude": -1.4137
+    },
+```
+
+Réponse en cas d'échec :
+
+Code `404`
+
+```
+ERREUR : la récupération des communes de la base de données a échoué
+```
 
 ### Module de création, de gestion de compte et d'authentification
 
@@ -137,6 +173,14 @@ Code `404`
 
 ```
 
+Réponse en cas de succès :
+
+Code `200`
+
+Réponse en cas d'échec :
+
+Code `404`
+
 ```
 
 #### Cas d’utilisation “Visualiser données pollution” 
@@ -167,6 +211,37 @@ Code : `200`
     },
     "date": "2019-09-12T14:00:00+02:00"
 } 
+```
+
+Réponse en cas d'erreur : 
+
+Code `404`
+
+
+[GET] /polluant/noms
+
+Réponse en cas de réussite : 
+
+Code : `200`
+
+
+
+```JSON
+[
+    "Sulfure d'hydrogène",
+    "Monoxyde de carbone",
+    "Benzène",
+    "toluène",
+    "Dioxyde d'azote",
+    "Oxydes d'azote",
+    "Dioxyde de soufre",
+    "Ethyl Benzène",
+    "Particules fines",
+    "m.p-xylène",
+    "Monoxyde d'azote",
+    "Ozone",
+    "o-xylène"
+]
 ```
 
 Réponse en cas d'erreur : 
@@ -473,4 +548,3 @@ Extrait du début du JSON :
   }
 
 ```
-

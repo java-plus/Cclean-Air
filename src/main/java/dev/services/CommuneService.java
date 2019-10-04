@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import dev.controllers.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import dev.controllers.dto.AffichageResultatCommuneDto;
-import dev.controllers.dto.CommuneDtoGet;
-import dev.controllers.dto.DonneesLocalesHistorique;
-import dev.controllers.dto.DonneesLocalesRecherchees;
 import dev.controllers.dto.recherche.CommuneCarteDto;
 import dev.controllers.dto.recherche.CommuneRechercheDto;
 import dev.controllers.dto.recherche.resultat.CommuneDto;
@@ -191,6 +188,26 @@ public class CommuneService {
 		LOGGER.info("recupererToutesLesCommunesDeLaBase() lancée");
 		if (communeRepository.findAll() != null && !communeRepository.findAll().isEmpty()) {
 			return communeRepository.findAll();
+		} else {
+			LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
+			throw new CommuneInvalideException(
+					"ERREUR : la récupération des communes de la base de données a échoué" + ".");
+		}
+	}
+
+	/**
+	 * Méthode permettant de récupérer toutes les communes de
+	 * Loire-Altnaituqe de la base de données.
+	 *
+	 * @return [List<CommuneDtoGetLight>] Une liste de toutes les communes de
+	 * Loire-Atlantique de la base de données.
+	 * @throws CommuneInvalideException : exception lancée si la liste retournée est
+	 *                                  null ou vide.
+	 */
+	public List<CommuneDtoGetLight> recupererToutesLesCommunesDeLaBaseInfosEssentielles() throws CommuneInvalideException {
+		LOGGER.info("recupererToutesLesCommunesDeLaBaseInfosEssentielles() lancée");
+		if (communeRepository.findAllDtoGetLight() != null && !communeRepository.findAllDtoGetLight().isEmpty()) {
+			return communeRepository.findAllDtoGetLight();
 		} else {
 			LOGGER.error("CommuneInvalideException : la récupération des communes de la base de données a échoué");
 			throw new CommuneInvalideException(

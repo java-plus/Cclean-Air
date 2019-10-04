@@ -213,4 +213,25 @@ public class UtilisateurController {
 
 		return utilisateurService.modifierProfil(profilModificationPost);
 	}
+
+	/**
+	 * Méthode qui permet de savoir si on et connecté en mode admin ou non. Elle
+	 * retourne un code 200 si on est connecté en admin, et un code 400 si on n'est
+	 * pas connecté en admin.
+	 * 
+	 * @return
+	 * @throws UtilisateurNonConnecteException
+	 */
+	@GetMapping("/profils/statut")
+	public ResponseEntity<String> validationStatut() throws UtilisateurNonConnecteException {
+
+		var retour = utilisateurService.validationAdmin();
+
+		if (retour) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+	}
 }
