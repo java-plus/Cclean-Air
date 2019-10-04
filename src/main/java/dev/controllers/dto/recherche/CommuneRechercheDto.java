@@ -1,7 +1,8 @@
 package dev.controllers.dto.recherche;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import dev.controllers.dto.NiveauAlerteDto;
 
@@ -27,18 +28,20 @@ public class CommuneRechercheDto {
 	/**
 	 * Date de la donnée
 	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	/**
 	 * Heure de la donnée
 	 */
-	private LocalTime heure;
+
+	private Integer heure;
 
 	/**
 	 * Niveau d'alerte de la commune
 	 */
 	private NiveauAlerteDto alerte;
 
-	public CommuneRechercheDto(String codeInsee, String nomCommune, String polluant, LocalDate date, LocalTime heure,
+	public CommuneRechercheDto(String codeInsee, String nomCommune, String polluant, LocalDate date, Integer heure,
 			NiveauAlerteDto alerte) {
 		super();
 		this.codeInsee = codeInsee;
@@ -173,14 +176,14 @@ public class CommuneRechercheDto {
 	/**
 	 * @return the heure
 	 */
-	public LocalTime getHeure() {
+	public Integer getHeure() {
 		return heure;
 	}
 
 	/**
 	 * @param heure the heure to set
 	 */
-	public void setHeure(LocalTime heure) {
+	public void setHeure(Integer heure) {
 		this.heure = heure;
 	}
 

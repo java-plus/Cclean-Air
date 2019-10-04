@@ -2,6 +2,7 @@
 package dev.services;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -337,7 +338,7 @@ public class CommuneService {
 		var resCommune = oResCommune.get();
 
 		// Récupération de la date
-		var resDate = ZonedDateTime.of(commune.getDate(), commune.getHeure(), ZoneId.systemDefault());
+		var resDate = ZonedDateTime.of(commune.getDate(), LocalTime.of(commune.getHeure(), 0), ZoneId.systemDefault());
 		List<DonneesLocalesDto> resDonnees = new ArrayList<>();
 
 		// récupération des polluants
@@ -410,7 +411,7 @@ public class CommuneService {
 		resultat.setCodeInsee(c.get().getCodeInsee());
 		resultat.setNom(c.get().getNom());
 		resultat.setDate(commune.getDate());
-		resultat.setHeure(commune.getHeure());
+		resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
 		List<PolluantDto> listePolluants;
 		List<DonneesLocales> listeDonnees;
 		ConditionMeteoDto donneesMeteo = null;
@@ -419,9 +420,9 @@ public class CommuneService {
 		if (commune.getDate() != null && commune.getHeure() != null) {
 
 			// récupération des données locales à la période sélectionnée
-			listeDonnees = c.get().getDonneesLocales().stream()
-					.filter(d -> d.getDate()
-							.equals(ZonedDateTime.of(commune.getDate(), commune.getHeure(), ZoneId.systemDefault())))
+			listeDonnees = c
+					.get().getDonneesLocales().stream().filter(d -> d.getDate().equals(ZonedDateTime
+							.of(commune.getDate(), LocalTime.of(commune.getHeure(), 0), ZoneId.systemDefault())))
 					.collect(Collectors.toList());
 
 			// vérification de l'approvisionement des données
