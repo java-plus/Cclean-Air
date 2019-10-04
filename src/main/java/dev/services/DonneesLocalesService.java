@@ -40,13 +40,16 @@ public class DonneesLocalesService {
 	 */
 	public void genererEtsauvegarderDonneesLocales(ZonedDateTime zonedDateTimeDesDonneesLocales, Integer nbCommunes) {
 
-		List<Commune> listeCommunes = communeService.recupererToutesLesCommunesDeLaBase();
+		List<Commune> listeCommunes = communeService.recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase();
 		Map<String, List<Polluant>> donneesPollution = qualiteAirService.recupererDonneesQualiteAirDeApi();
 		qualiteAirService.sauvegarderQualiteAir(donneesPollution);
 		List<QualiteAir> listeQualiteAir = qualiteAirService
 				.recupererListeQualitesAirSelonDate(qualiteAirService.recupererDateDerniereQualiteAirDeLaBase());
 
 		try {
+			if(nbCommunes == null) {
+				nbCommunes = listeCommunes.size();
+			}
 			for (int i = 0; i < nbCommunes; i++) {
 				Commune c = listeCommunes.get(i);
 				ConditionMeteo conditionMeteo = conditionMeteoService
@@ -61,7 +64,7 @@ public class DonneesLocalesService {
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			throw new DonneesLocalesException(
-					"ERREUR : impossible de générer des données locales pour autant de " + "communes. \n" + e);
+					"ERREUR : impossible de générer des données locales pour autant de communes. \n" + e);
 		}
 
 	}

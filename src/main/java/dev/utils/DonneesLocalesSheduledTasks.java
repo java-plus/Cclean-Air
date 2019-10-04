@@ -44,17 +44,11 @@ public class DonneesLocalesSheduledTasks {
 	 * Méthode lançant périodiquement (à chaque heure) la méthode permettant de
 	 * générer et de sauvegarder toutes les données locales.
 	 */
-	// TODO: changer l'annotation Scheduled une fois que l'application sera
-	// déployée.
-
-	@Scheduled(initialDelay = 5000, fixedRate = 1296000000) // lancement au bout
-	// de 5s, après démarrage de l'appli
-	// @Scheduled(cron = "0 0 * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void recupererEtSauvegarderDonneesLocales() {
 		LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
 		donneesLocalesService.genererEtsauvegarderDonneesLocales(
-				ZonedDateTime.now().minusHours(1).withMinute(0).withSecond(0).withNano(0), 10);
-
+				ZonedDateTime.now().minusHours(1).withMinute(0).withSecond(0).withNano(0), null);
 	}
 
 	/**
@@ -63,7 +57,7 @@ public class DonneesLocalesSheduledTasks {
 	 * météorologiques et données de pollution).
 	 */
 	@Scheduled(cron = "0 0 3 * * *")
-	public void purgerDonneesLocales() throws DonneesLocalesSheduledTasksException {
+	public void purgerDonneesLocales() {
 		LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
 		ZonedDateTime dateExpiration = donneesLocalesService.recupererDateHeureDeDerniereDonneesLocales().minusDays(7);
 		LOGGER.info("date d'expiration des données, à partir de laquelle il y aura suppression des données locales "
