@@ -44,7 +44,7 @@ public class DonneesLocalesSheduledTasks {
 	 * Méthode lançant périodiquement (à chaque heure) la méthode permettant de
 	 * générer et de sauvegarder toutes les données locales.
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void recupererEtSauvegarderDonneesLocales() {
 		LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
 		donneesLocalesService.genererEtsauvegarderDonneesLocales(
