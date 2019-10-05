@@ -105,12 +105,12 @@ public class IndicateurController {
 	 * @throws UtilisateurNonConnecteException
 	 * @throws AucuneDonneeException
 	 */
-	@PatchMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> modifierIndicateur(@RequestBody ModificationCommuneIndicateurDto indicateurs,
-			CommuneIndicateurDto ancienIndicateur)
+	@PatchMapping(value = "/indicateurs/{nomCommune}")
+	public ResponseEntity<CommuneIndicateurDto> modifierIndicateur(@RequestBody CommuneIndicateurDto indicateurs,
+			@PathVariable String nomCommune)
 			throws UtilisateurNonConnecteException, CommuneDejaSuivieException, AucuneDonneeException {
 
-		return new ResponseEntity<>(service.modifierIndicateur(indicateurs), HttpStatus.OK);
+		return new ResponseEntity<>(service.modifierIndicateur(indicateurs, nomCommune), HttpStatus.OK);
 
 	}
 
