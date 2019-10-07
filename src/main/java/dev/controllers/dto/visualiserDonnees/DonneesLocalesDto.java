@@ -33,44 +33,20 @@ public class DonneesLocalesDto {
 	public DonneesLocalesDto() {
 	}
 
-	public DonneesLocalesDto(CommuneDtoVisualisation communeDtoVisualisation,
-			List<PolluantDtoVisualisation> listePolluantDtoVisualisation,
-			ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation, ZonedDateTime date) {
-		this.commune = communeDtoVisualisation;
-		this.listePolluants = listePolluantDtoVisualisation;
-		this.conditionMeteo = conditionMeteoDtoVisualisation;
-		this.date = date;
-	}
-
-	public CommuneDtoVisualisation getCommuneDtoVisualisation() {
-		return commune;
-	}
-
-	public void setCommuneDtoVisualisation(CommuneDtoVisualisation communeDtoVisualisation) {
-		this.commune = communeDtoVisualisation;
-	}
-
-	public List<PolluantDtoVisualisation> getListePolluants() {
-		return listePolluants;
-	}
-
-	public void setListePolluants(List<PolluantDtoVisualisation> listePolluantDtoVisualisation) {
-		this.listePolluants = listePolluantDtoVisualisation;
-	}
-
-	public ConditionMeteoDtoVisualisation getConditionMeteoDtoVisualisation() {
-		return conditionMeteo;
-	}
-
-	public void setConditionMeteoDtoVisualisation(ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation) {
-		this.conditionMeteo = conditionMeteoDtoVisualisation;
-	}
-
-	public ZonedDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(ZonedDateTime date) {
+	/**
+	 * Constructeur
+	 * 
+	 * @param commune
+	 * @param listePolluants
+	 * @param conditionMeteo
+	 * @param date
+	 */
+	public DonneesLocalesDto(CommuneDtoVisualisation commune, List<PolluantDtoVisualisation> listePolluants,
+			ConditionMeteoDtoVisualisation conditionMeteo, ZonedDateTime date) {
+		super();
+		this.commune = commune;
+		this.listePolluants = listePolluants;
+		this.conditionMeteo = conditionMeteo;
 		this.date = date;
 	}
 
@@ -115,6 +91,78 @@ public class DonneesLocalesDto {
 		} else if (!listePolluants.equals(other.listePolluants))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return the commune
+	 */
+	public CommuneDtoVisualisation getCommune() {
+		return commune;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param commune the commune to set
+	 */
+	public void setCommune(CommuneDtoVisualisation commune) {
+		this.commune = commune;
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return the listePolluants
+	 */
+	public List<PolluantDtoVisualisation> getListePolluants() {
+		return listePolluants;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param listePolluants the listePolluants to set
+	 */
+	public void setListePolluants(List<PolluantDtoVisualisation> listePolluants) {
+		this.listePolluants = listePolluants;
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return the conditionMeteo
+	 */
+	public ConditionMeteoDtoVisualisation getConditionMeteo() {
+		return conditionMeteo;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param conditionMeteo the conditionMeteo to set
+	 */
+	public void setConditionMeteo(ConditionMeteoDtoVisualisation conditionMeteo) {
+		this.conditionMeteo = conditionMeteo;
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return the date
+	 */
+	public ZonedDateTime getDate() {
+		return date;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param date the date to set
+	 */
+	public void setDate(ZonedDateTime date) {
+		this.date = date;
 	}
 
 }
