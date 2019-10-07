@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import dev.controllers.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import dev.controllers.dto.AffichageResultatCommuneDto;
+import dev.controllers.dto.CommuneDtoGet;
+import dev.controllers.dto.CommuneDtoGetLight;
+import dev.controllers.dto.DonneesLocalesHistorique;
+import dev.controllers.dto.DonneesLocalesRecherchees;
 import dev.controllers.dto.recherche.CommuneCarteDto;
 import dev.controllers.dto.recherche.CommuneRechercheDto;
 import dev.controllers.dto.recherche.resultat.CommuneDto;
@@ -204,14 +208,13 @@ public class CommuneService {
 	 *                                  null ou vide.
 	 */
 	public List<Commune> recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase() {
-		LOGGER.info("recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase() " +
-				"lancée");
+		LOGGER.info("recupererToutesLesCommunesDeLoireAtlantiqueDeLaBase() " + "lancée");
 		communeRepository.findAll();
 		if (!communeRepository.findAll().isEmpty()) {
 			List<Commune> listeCommunes = communeRepository.findAll();
 			List<Commune> listeCommunesDeLA = new ArrayList<>();
 			for (Commune commune : listeCommunes) {
-				if(commune.getCodeInsee().startsWith("44")) {
+				if (commune.getCodeInsee().startsWith("44")) {
 					listeCommunesDeLA.add(commune);
 				}
 			}
@@ -224,15 +227,16 @@ public class CommuneService {
 	}
 
 	/**
-	 * Méthode permettant de récupérer toutes les communes de
-	 * Loire-Altnaituqe de la base de données.
+	 * Méthode permettant de récupérer toutes les communes de Loire-Altnaituqe de la
+	 * base de données.
 	 *
 	 * @return [List<CommuneDtoGetLight>] Une liste de toutes les communes de
-	 * Loire-Atlantique de la base de données.
+	 *         Loire-Atlantique de la base de données.
 	 * @throws CommuneInvalideException : exception lancée si la liste retournée est
 	 *                                  null ou vide.
 	 */
-	public List<CommuneDtoGetLight> recupererToutesLesCommunesDeLaBaseInfosEssentielles() throws CommuneInvalideException {
+	public List<CommuneDtoGetLight> recupererToutesLesCommunesDeLaBaseInfosEssentielles()
+			throws CommuneInvalideException {
 		LOGGER.info("recupererToutesLesCommunesDeLaBaseInfosEssentielles() lancée");
 		if (communeRepository.findAllDtoGetLight() != null && !communeRepository.findAllDtoGetLight().isEmpty()) {
 			return communeRepository.findAllDtoGetLight();
@@ -454,8 +458,13 @@ public class CommuneService {
 		var resultat = new CommuneDto();
 		resultat.setCodeInsee(c.get().getCodeInsee());
 		resultat.setNom(c.get().getNom());
-		resultat.setDate(commune.getDate());
-		resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
+		if (commune.getDate() != null) {
+			resultat.setDate(commune.getDate());
+		}
+		if (commune.getHeure() != null) {
+			resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
+		}
+
 		List<PolluantDto> listePolluants;
 		List<DonneesLocales> listeDonnees;
 		ConditionMeteoDto donneesMeteo = null;
