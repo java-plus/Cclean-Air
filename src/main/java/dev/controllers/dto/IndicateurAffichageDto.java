@@ -11,6 +11,7 @@ public class IndicateurAffichageDto {
 
 	private String nomCommune;
 	private String codeInsee;
+	private Boolean alerte;
 
 	/**
 	 * Constructeur
@@ -26,10 +27,11 @@ public class IndicateurAffichageDto {
 	 * @param nomCommune
 	 * @param codeInsee
 	 */
-	public IndicateurAffichageDto(String nomCommune, String codeInsee) {
+	public IndicateurAffichageDto(String nomCommune, String codeInsee, Boolean alerte) {
 		super();
 		this.nomCommune = nomCommune;
 		this.codeInsee = codeInsee;
+		this.alerte = alerte;
 	}
 
 	/**
@@ -66,6 +68,24 @@ public class IndicateurAffichageDto {
 	 */
 	public void setCodeInsee(String codeInsee) {
 		this.codeInsee = codeInsee;
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return the alerte
+	 */
+	public Boolean getAlerte() {
+		return alerte;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param alerte the alerte to set
+	 */
+	public void setAlerte(Boolean alerte) {
+		this.alerte = alerte;
 	}
 
 }

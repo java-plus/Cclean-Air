@@ -1,4 +1,4 @@
-# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -278,11 +278,12 @@ Code `400`
 
 #### Requête pour modifier un indicateur
 
-[PATCH] /indicateurs
+[PATCH] /indicateurs/{commune}
 
 ```JSON
 {
-	"communes" : ["Nantes", "Châteaubriant"]
+	"commune" : "Abbaretz", 
+	"alerte" : "false"
 }
 ```
 Réponse en cas de réussite :
@@ -291,9 +292,8 @@ Code `200`
 
 ```JSON
 {
-    "mailUtilisateur": "cecile@test.fr",
-    "nomCommune": "Châteaubriant",
-    "alerte": true
+	"commune" : "Abbaretz", 
+	"alerte" : "false"
 }
 ```
 

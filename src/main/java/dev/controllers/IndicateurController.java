@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.controllers.dto.CommuneIndicateurDto;
 import dev.controllers.dto.IndicateurAffichageDto;
 import dev.controllers.dto.IndicateurDto;
-import dev.controllers.dto.ModificationCommuneIndicateurDto;
 import dev.exceptions.AucuneDonneeException;
 import dev.exceptions.CommuneDejaSuivieException;
 import dev.exceptions.NombreIndicateursException;
@@ -79,7 +78,7 @@ public class IndicateurController {
 	 */
 	@PostMapping(value = "/indicateurs")
 	public ResponseEntity<IndicateurDto> ajoutIndicateur(@RequestBody CommuneIndicateurDto indicateur)
-			throws NombreIndicateursException {
+			throws NombreIndicateursException, UtilisateurNonConnecteException, CommuneDejaSuivieException {
 
 		return new ResponseEntity<>(service.sauvegarderNouvelIndicateur(indicateur), HttpStatus.CREATED);
 
@@ -105,12 +104,12 @@ public class IndicateurController {
 	 * @throws UtilisateurNonConnecteException
 	 * @throws AucuneDonneeException
 	 */
-	@PatchMapping(value = "/indicateurs")
-	public ResponseEntity<IndicateurDto> modifierIndicateur(@RequestBody ModificationCommuneIndicateurDto indicateurs,
-			CommuneIndicateurDto ancienIndicateur)
+	@PatchMapping(value = "/indicateurs/{nomCommune}")
+	public ResponseEntity<CommuneIndicateurDto> modifierIndicateur(@RequestBody CommuneIndicateurDto indicateurs,
+			@PathVariable String nomCommune)
 			throws UtilisateurNonConnecteException, CommuneDejaSuivieException, AucuneDonneeException {
 
-		return new ResponseEntity<>(service.modifierIndicateur(indicateurs), HttpStatus.OK);
+		return new ResponseEntity<>(service.modifierIndicateur(indicateurs, nomCommune), HttpStatus.OK);
 
 	}
 
