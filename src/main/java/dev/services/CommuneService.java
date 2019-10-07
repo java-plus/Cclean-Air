@@ -458,8 +458,12 @@ public class CommuneService {
 		var resultat = new CommuneDto();
 		resultat.setCodeInsee(c.get().getCodeInsee());
 		resultat.setNom(c.get().getNom());
-		resultat.setDate(commune.getDate());
-		resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
+		if (commune.getDate() != null) {
+			resultat.setDate(commune.getDate());
+		}
+		if (commune.getHeure() != null) {
+			resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
+		}
 		List<PolluantDto> listePolluants;
 		List<DonneesLocales> listeDonnees;
 		ConditionMeteoDto donneesMeteo = null;
