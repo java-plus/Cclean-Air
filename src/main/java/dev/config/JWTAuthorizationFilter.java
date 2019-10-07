@@ -53,8 +53,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
 							String username = body.getSubject();
 
-							List<String> statuts = body.get("statuts", List.class);
-							List<SimpleGrantedAuthority> authorities = statuts.stream().map(SimpleGrantedAuthority::new)
+							List<String> statuts = body.get("statuts",
+									List.class);
+							List<SimpleGrantedAuthority> authorities =
+									statuts.stream().map(SimpleGrantedAuthority::new)
 									.collect(Collectors.toList());
 							Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
 									authorities);
@@ -64,7 +66,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 			}
 		} catch (ExpiredJwtException e) {
 			LOGGER.info("Le cookie est expiré");
-			System.out.println("cookie expiré");
 		}
 
 		filterChain.doFilter(request, response);
