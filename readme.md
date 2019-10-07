@@ -193,18 +193,18 @@ Code : `200`
 
 ```JSON
 {
-    "communeDtoVisualisation": {
+    "commune": {
         "nom": "Nantes",
         "nbHabitants": 303382
     },
-    "listePolluantDtoVisualisation": [
+    "listePolluants": [
         {
             "nom": "azote",
             "unite": "µg",
             "valeur": 12.0
         }
     ],
-    "conditionMeteoDtoVisualisation": {
+    "conditionMeteo": {
         "ensoleillement": 10.0,
         "temperature": 20.0,
         "humidite": 20.0

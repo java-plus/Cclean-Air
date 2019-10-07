@@ -14,17 +14,17 @@ public class DonneesLocalesDto {
 	/**
 	 * Objet dto qui reprend le nom et le nombre d'habitant de la commune
 	 */
-	private CommuneDtoVisualisation communeDtoVisualisation;
+	private CommuneDtoVisualisation commune;
 
 	// Alerte -> Voir comment récupérer si la commune est en alerte ou pas
 	/**
 	 * liste d'objet dto qui reprend le nom, l'unité et la valeur d'un polluant
 	 */
-	private List<PolluantDtoVisualisation> listePolluantDtoVisualisation;
+	private List<PolluantDtoVisualisation> listePolluants;
 	/**
 	 * objet dto qui reprend le tx d'ensoleilleemnt, l'humidité et la température
 	 */
-	private ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation;
+	private ConditionMeteoDtoVisualisation conditionMeteo;
 	/**
 	 * date
 	 */
@@ -36,34 +36,34 @@ public class DonneesLocalesDto {
 	public DonneesLocalesDto(CommuneDtoVisualisation communeDtoVisualisation,
 			List<PolluantDtoVisualisation> listePolluantDtoVisualisation,
 			ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation, ZonedDateTime date) {
-		this.communeDtoVisualisation = communeDtoVisualisation;
-		this.listePolluantDtoVisualisation = listePolluantDtoVisualisation;
-		this.conditionMeteoDtoVisualisation = conditionMeteoDtoVisualisation;
+		this.commune = communeDtoVisualisation;
+		this.listePolluants = listePolluantDtoVisualisation;
+		this.conditionMeteo = conditionMeteoDtoVisualisation;
 		this.date = date;
 	}
 
 	public CommuneDtoVisualisation getCommuneDtoVisualisation() {
-		return communeDtoVisualisation;
+		return commune;
 	}
 
 	public void setCommuneDtoVisualisation(CommuneDtoVisualisation communeDtoVisualisation) {
-		this.communeDtoVisualisation = communeDtoVisualisation;
+		this.commune = communeDtoVisualisation;
 	}
 
-	public List<PolluantDtoVisualisation> getListePolluantDtoVisualisation() {
-		return listePolluantDtoVisualisation;
+	public List<PolluantDtoVisualisation> getListePolluants() {
+		return listePolluants;
 	}
 
-	public void setListePolluantDtoVisualisation(List<PolluantDtoVisualisation> listePolluantDtoVisualisation) {
-		this.listePolluantDtoVisualisation = listePolluantDtoVisualisation;
+	public void setListePolluants(List<PolluantDtoVisualisation> listePolluantDtoVisualisation) {
+		this.listePolluants = listePolluantDtoVisualisation;
 	}
 
 	public ConditionMeteoDtoVisualisation getConditionMeteoDtoVisualisation() {
-		return conditionMeteoDtoVisualisation;
+		return conditionMeteo;
 	}
 
 	public void setConditionMeteoDtoVisualisation(ConditionMeteoDtoVisualisation conditionMeteoDtoVisualisation) {
-		this.conditionMeteoDtoVisualisation = conditionMeteoDtoVisualisation;
+		this.conditionMeteo = conditionMeteoDtoVisualisation;
 	}
 
 	public ZonedDateTime getDate() {
@@ -78,12 +78,10 @@ public class DonneesLocalesDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((communeDtoVisualisation == null) ? 0 : communeDtoVisualisation.hashCode());
-		result = prime * result
-				+ ((conditionMeteoDtoVisualisation == null) ? 0 : conditionMeteoDtoVisualisation.hashCode());
+		result = prime * result + ((commune == null) ? 0 : commune.hashCode());
+		result = prime * result + ((conditionMeteo == null) ? 0 : conditionMeteo.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result
-				+ ((listePolluantDtoVisualisation == null) ? 0 : listePolluantDtoVisualisation.hashCode());
+		result = prime * result + ((listePolluants == null) ? 0 : listePolluants.hashCode());
 		return result;
 	}
 
@@ -96,25 +94,25 @@ public class DonneesLocalesDto {
 		if (getClass() != obj.getClass())
 			return false;
 		DonneesLocalesDto other = (DonneesLocalesDto) obj;
-		if (communeDtoVisualisation == null) {
-			if (other.communeDtoVisualisation != null)
+		if (commune == null) {
+			if (other.commune != null)
 				return false;
-		} else if (!communeDtoVisualisation.equals(other.communeDtoVisualisation))
+		} else if (!commune.equals(other.commune))
 			return false;
-		if (conditionMeteoDtoVisualisation == null) {
-			if (other.conditionMeteoDtoVisualisation != null)
+		if (conditionMeteo == null) {
+			if (other.conditionMeteo != null)
 				return false;
-		} else if (!conditionMeteoDtoVisualisation.equals(other.conditionMeteoDtoVisualisation))
+		} else if (!conditionMeteo.equals(other.conditionMeteo))
 			return false;
 		if (date == null) {
 			if (other.date != null)
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (listePolluantDtoVisualisation == null) {
-			if (other.listePolluantDtoVisualisation != null)
+		if (listePolluants == null) {
+			if (other.listePolluants != null)
 				return false;
-		} else if (!listePolluantDtoVisualisation.equals(other.listePolluantDtoVisualisation))
+		} else if (!listePolluants.equals(other.listePolluants))
 			return false;
 		return true;
 	}

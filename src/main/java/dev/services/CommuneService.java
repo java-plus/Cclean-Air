@@ -163,10 +163,10 @@ public class CommuneService {
 		donneesLocalesDto.setDate(date.get());
 		donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
 		if (!qualiteAir.isPresent()) {
-			donneesLocalesDto.setListePolluantDtoVisualisation(null);
+			donneesLocalesDto.setListePolluants(null);
 		} else {
 			List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
-			donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
+			donneesLocalesDto.setListePolluants(listePolluant);
 
 		}
 		donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
