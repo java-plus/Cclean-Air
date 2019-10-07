@@ -165,15 +165,15 @@ public class CommuneService {
 		// Création de l'objet DonneesLocalesDto
 		DonneesLocalesDto donneesLocalesDto = new DonneesLocalesDto();
 		donneesLocalesDto.setDate(date.get());
-		donneesLocalesDto.setCommuneDtoVisualisation(communeDtoVisualisation);
+		donneesLocalesDto.setCommune(communeDtoVisualisation);
 		if (!qualiteAir.isPresent()) {
-			donneesLocalesDto.setListePolluantDtoVisualisation(null);
+			donneesLocalesDto.setListePolluants(null);
 		} else {
 			List<PolluantDtoVisualisation> listePolluant = polluantRepository.findByQualiteAir(qualiteAir.get());
-			donneesLocalesDto.setListePolluantDtoVisualisation(listePolluant);
+			donneesLocalesDto.setListePolluants(listePolluant);
 
 		}
-		donneesLocalesDto.setConditionMeteoDtoVisualisation(conditionMeteoDtoVisualisation);
+		donneesLocalesDto.setConditionMeteo(conditionMeteoDtoVisualisation);
 
 		LOGGER.info("création des données locales à afficher /classe CommuneService");
 
@@ -464,7 +464,6 @@ public class CommuneService {
 		if (commune.getHeure() != null) {
 			resultat.setHeure(LocalTime.of(commune.getHeure(), 0));
 		}
-
 		List<PolluantDto> listePolluants;
 		List<DonneesLocales> listeDonnees;
 		ConditionMeteoDto donneesMeteo = null;
