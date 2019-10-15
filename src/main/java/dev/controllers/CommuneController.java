@@ -1,15 +1,9 @@
 package dev.controllers;
 
-import dev.controllers.dto.CommuneDtoGetLight;
-import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
-import dev.entities.Commune;
-import dev.exceptions.CommuneInvalideException;
-import dev.exceptions.DonneesLocalesException;
-import dev.services.CommuneService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controllers.dto.AffichageResultatCommuneDto;
+import dev.controllers.dto.CommuneDtoGetLight;
 import dev.controllers.dto.DonneesLocalesHistorique;
 import dev.controllers.dto.DonneesLocalesRecherchees;
+import dev.controllers.dto.recherche.CommuneCarteDto;
 import dev.controllers.dto.recherche.CommuneRechercheDto;
+import dev.controllers.dto.visualiserDonnees.DonneesLocalesDto;
 import dev.exceptions.AucuneDonneeException;
+import dev.exceptions.CommuneInvalideException;
+import dev.exceptions.DonneesLocalesException;
 import dev.exceptions.IndicateurFuturException;
+import dev.services.CommuneService;
+import dev.utils.CalculUtils;
 
 @RestController
 @RequestMapping(value = "/communes")
@@ -36,15 +37,12 @@ public class CommuneController {
 
 	private CommuneService communeService;
 
-	/**
-	 * Constructeur
-	 * 
-	 * @param communeService
-	 */
+	private CalculUtils calcul;
+
 	@Autowired
-	public CommuneController(CommuneService communeService) {
-		super();
+	public CommuneController(CommuneService communeService, CalculUtils calcul) {
 		this.communeService = communeService;
+		this.calcul = calcul;
 	}
 
 	@ExceptionHandler(CommuneInvalideException.class)
@@ -97,14 +95,27 @@ public class CommuneController {
 	}
 
 	/**
+	 * @param coordonnees Prend en paramètre un tableau de coordonnées [longitude,
+	 *                    latitude]
+	 * @return Renvoie la commune la plus proche sous la forme d'une instance de
+	 *         CommuneCarteDto
+	 */
+	@PostMapping("/plus_proche")
+	public ResponseEntity<CommuneCarteDto> recupererCommuneLaPlusProche(@RequestBody Double[] coordonnees) {
+		return new ResponseEntity<>(calcul.calculerCommuneLaPluProche(coordonnees), HttpStatus.OK);
+	}
+
+	/**
 	 * Contrôleur permettant la transmission de toutes les communes.
-	 * @return : List<CommuneDtoGetLight> la liste des communes insérées en base de données
+	 * 
+	 * @return : List<CommuneDtoGetLight> la liste des communes insérées en base de
+	 *         données
 	 */
 	@GetMapping
 	public List<CommuneDtoGetLight> recupererCommunesReq() {
 		return communeService.recupererToutesLesCommunesDeLaBaseInfosEssentielles();
 	}
-	
+
 	@ExceptionHandler(DonneesLocalesException.class)
 	public ResponseEntity<String> handleException(DonneesLocalesException e) {
 		return ResponseEntity.status(404).body(e.getMessage());
