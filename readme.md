@@ -103,6 +103,19 @@ Réponse en cas d'échec :
 
 Code `401`
 
+#### Requête pour récupérer la commune présente en base la plus proche 
+
+[POST] /communes/plus_proche
+[longitude, latitude]
+
+```JSON
+[-1.553621, 47.218371]
+```
+
+Réponse en cas de succès :
+
+Code `200`
+
 #### Requête pour modifier son compte
 
 [PATCH] /profil/modification
