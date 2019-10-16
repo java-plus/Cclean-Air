@@ -6,27 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dev.controllers.dto.recherche.CommuneCarteDto;
-import dev.services.AlerteService;
 import dev.services.CommuneService;
 
 /**
  * Classe utilitaire regroupant des méthodes de calcul.
  */
-/**
- * @author Guillaume
- *
- */
 @Component
 public class CalculUtils {
 
 	private CommuneService service;
-	private AlerteService alerteService;
 
 	@Autowired
-	public CalculUtils(CommuneService service, AlerteService alerteService) {
+	public CalculUtils(CommuneService service) {
 		super();
 		this.service = service;
-		this.alerteService = alerteService;
 	}
 
 	/**
