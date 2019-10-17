@@ -145,6 +145,36 @@ Code `200`
 
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 
+#### Requête pour récupérer la commune l'historique de la commune
+
+[POST] /communes/historiques/{codeInsee}
+
+ ```JSON
+  {
+	"dateDebut": "2019-10-16T17:08:32.791+02:00", 
+	"dateFin": "2019-10-17T17:08:32.794+02:00", 
+	"polluant": "Ozone"
+}
+
+```
+
+Retour si ok : 
+ ```JSON
+[
+    {
+        "polluantDtoVisualisation": {
+            "nom": "Ozone",
+            "unite": "microg/m3",
+            "valeur": 57.0
+        },
+        "communeDtoVisualisation": {
+            "nom": "Ancenis-Saint-Géréon",
+            "nbHabitants": 10595
+        },
+        "date": "2019-10-17T07:00:00+02:00"
+    }
+]
+```
 
 #### Requête pour récupérer les données pour affichage sur la carte
 
