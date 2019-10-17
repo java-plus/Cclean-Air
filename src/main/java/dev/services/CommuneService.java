@@ -1,7 +1,6 @@
 
 package dev.services;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -304,13 +303,9 @@ public class CommuneService {
 			String codeInsee) {
 
 		// création de la date de début de recherche
-		LocalDateTime dateDebutLdt = donneesLocalesRecherchees.getDateDebut()
-				.atTime(donneesLocalesRecherchees.getHeureDebut());
-		ZonedDateTime dateDebut = dateDebutLdt.atZone(ZoneId.systemDefault());
+		ZonedDateTime dateDebutLdt = donneesLocalesRecherchees.getDateDebut();
 		// création de la date de fin de recherche
-		LocalDateTime dateFinLdt = donneesLocalesRecherchees.getDateFin()
-				.atTime(donneesLocalesRecherchees.getHeureFin());
-		ZonedDateTime dateFin = dateFinLdt.atZone(ZoneId.systemDefault());
+		ZonedDateTime dateFinLdt = donneesLocalesRecherchees.getDateFin();
 
 		// récupération de la commune
 		Optional<Commune> commune = communeRepository.findByCodeInsee(codeInsee);
@@ -320,7 +315,7 @@ public class CommuneService {
 
 		// Récupération de la liste de données locales bornées par les dates
 		List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository
-				.findAllByDateDebutAndDateFin(dateDebut, dateFin, commune.get());
+				.findAllByDateDebutAndDateFin(dateDebutLdt, dateFinLdt, commune.get());
 
 		// Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par
 		// DonneesLocalesHistorique
