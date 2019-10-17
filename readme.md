@@ -119,7 +119,7 @@ Code `401`
 #### Requête pour tester l'authentification
 
 [GET] /connexion
-``
+
 Réponse :
 
 Code `200`
@@ -128,7 +128,7 @@ Réponse avec le filtre activé, en cas de cookie non présent ou invalide :
 
 Code `403`
 
-Commentaire : cette requête s'appui`e sur le fait que le filtre va renvoyé un
+Commentaire : cette requête s'appuie sur le fait que le filtre va renvoyer un
  code 403 si jamais l'utilisateur n'est pas déjà authentifié.
 
 #### Requête pour modifier son compte
@@ -604,4 +604,3 @@ Extrait du début du JSON :
   }
 
 ```
->>>>>>> master
