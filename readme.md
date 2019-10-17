@@ -1,4 +1,4 @@
-﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+﻿﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -9,6 +9,19 @@
 ## Liste des requêtes back de Cclean-Air
 
 ### Requêtes utiles à différents modules
+
+#### Requête pour récupérer la commune présente en base la plus proche 
+
+[POST] /communes/plus_proche
+[longitude, latitude]
+
+```JSON
+[-1.553621, 47.218371]
+```
+
+Réponse en cas de succès :
+
+Code `200`
 
 #### Requête pour récupérer toutes les communes de Loire-Atlantique
 
@@ -103,18 +116,20 @@ Réponse en cas d'échec :
 
 Code `401`
 
-#### Requête pour récupérer la commune présente en base la plus proche 
+#### Requête pour tester l'authentification
 
-[POST] /communes/plus_proche
-[longitude, latitude]
-
-```JSON
-[-1.553621, 47.218371]
-```
-
-Réponse en cas de succès :
+[GET] /connexion
+``
+Réponse :
 
 Code `200`
+
+Réponse avec le filtre activé, en cas de cookie non présent ou invalide :
+
+Code `403`
+
+Commentaire : cette requête s'appui`e sur le fait que le filtre va renvoyé un
+ code 403 si jamais l'utilisateur n'est pas déjà authentifié.
 
 #### Requête pour modifier son compte
 
@@ -144,6 +159,7 @@ Code `200`
 ```
 
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
+
 
 #### Requête pour récupérer la commune l'historique de la commune
 
@@ -184,7 +200,6 @@ Réponse en cas de succès :
 
 Code `200`
 
-```
 
 #### Requête pour récupérer les données pour affichage sur la carte
 
@@ -223,8 +238,6 @@ Code `200`
 Réponse en cas d'échec :
 
 Code `404`
-
-```
 
 #### Cas d’utilisation “Visualiser données pollution” 
 
@@ -591,3 +604,4 @@ Extrait du début du JSON :
   }
 
 ```
+>>>>>>> master

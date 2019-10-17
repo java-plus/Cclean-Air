@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -121,5 +122,16 @@ public class ConnexionController {
 					}
 					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();					
 							});
+	}
+
+	/**
+	 * Contrôleur gérant la requête GET permettant de valider le fait que
+	 * l'utilisateur est déjà authentifié (cookie présent).
+	 *
+	 * @return : ResponseEntity<Void> Réponse au body vide avec statut 200.
+	 */
+	@GetMapping("/connexion")
+	public ResponseEntity<Void> reqVerificationEstConnecte() {
+		return ResponseEntity.ok().build();
 	}
 }

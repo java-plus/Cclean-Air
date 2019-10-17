@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -57,7 +58,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.cors();
 
-		http.csrf().disable().authorizeRequests().antMatchers("/connexion").permitAll().antMatchers("/comptes")
+		http.csrf().disable().authorizeRequests()
+				.antMatchers(HttpMethod.POST, "/connexion").permitAll()
+				.antMatchers(HttpMethod.GET, "/connexion").authenticated()
+				.antMatchers(HttpMethod.GET, "/communes").permitAll()
+				.antMatchers("/comptes")
 				.permitAll().antMatchers("/h2-console/**").permitAll().antMatchers("/admin/**")
 				.hasAuthority("ADMINISTRATEUR").anyRequest().authenticated().and().headers().frameOptions().disable()
 				.and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).logout()
