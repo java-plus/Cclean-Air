@@ -314,22 +314,23 @@ public class CommuneService {
 		}
 
 		// Récupération de la liste de données locales bornées par les dates
-		List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository
-				.findAllByDateDebutAndDateFin(dateDebutLdt, dateFinLdt, commune.get());
+		List<DonneesLocales> listeDonneesLocalesBornees = donneesLocalesRepository.findAllBornesDates(dateDebutLdt,
+				dateFinLdt, commune.get());
 
 		// Création de la liste de DonneesLocalesRetourHistorique qui sera retourné par
 		// DonneesLocalesHistorique
 		List<DonneesLocalesHistorique> listeDonneesLocalesHistorique = new ArrayList<>();
 
-		// Création de donneesLocalesRetourHistorique qui comprends :
-		// -PolluantDtoViualisation
-		// -CommuneDtovisualition
-		// -Date
-		DonneesLocalesHistorique donneesLocalesRetourHistorique = new DonneesLocalesHistorique();
-
 		// Les données locales sont transformée en donnéesLocalesRetourHistorique pour
 		// les ajouter à la liste
 		for (DonneesLocales donneesLocales : listeDonneesLocalesBornees) {
+
+			// Création de donneesLocalesRetourHistorique qui comprends :
+			// -PolluantDtoViualisation
+			// -CommuneDtovisualition
+			// -Date
+			DonneesLocalesHistorique donneesLocalesRetourHistorique = new DonneesLocalesHistorique();
+
 			// création du polluantDtoVisualisation
 			PolluantDtoVisualisation polluantDtoVisualisation = new PolluantDtoVisualisation();
 			// récupération de la liste de polluant de la donnée locale
@@ -354,8 +355,12 @@ public class CommuneService {
 			donneesLocalesRetourHistorique.setDate(date);
 			donneesLocalesRetourHistorique.setPolluantDtoVisualisation(polluantDtoVisualisation);
 
+			LOGGER.info("donnesLocalesRetourHistorique" + donneesLocalesRetourHistorique.getDate());
+
 			// ajout à la liste qui sera retournée par la classe donneesLocalesHistorique
 			listeDonneesLocalesHistorique.add(donneesLocalesRetourHistorique);
+
+			LOGGER.info("liste" + listeDonneesLocalesHistorique);
 		}
 
 		return listeDonneesLocalesHistorique;
