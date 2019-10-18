@@ -25,7 +25,7 @@ public interface IDonneesLocalesRepository extends JpaRepository<DonneesLocales,
 
 	Optional<DonneesLocales> findByCommuneAndDate(Optional<Commune> commune, ZonedDateTime date);
 
-	@Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin ")
+	@Query("select d from DonneesLocales d where d.commune = :commune and d.date between :dateDebut and :dateFin order by d.date desc")
 	List<DonneesLocales> findAllBornesDates(@Param("dateDebut") ZonedDateTime dateDebut,
 			@Param("dateFin") ZonedDateTime dateFin, @Param("commune") Commune commune);
 
