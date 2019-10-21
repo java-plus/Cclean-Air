@@ -313,12 +313,10 @@ public class UtilisateurService {
                 recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
 
         if (utilisateur.getStatut().contains(Statut.ADMINISTRATEUR)) {
-
             return true;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -335,8 +333,39 @@ public class UtilisateurService {
         var utilisateur =
                 recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
 
-        return utilisateur.getListeIndicateurs()
+        List<Commune> communes = utilisateur.getListeIndicateurs()
                 .stream().filter(Indicateur::getAlerte)
                 .map(Indicateur::getCommune).collect(Collectors.toList());
+
+        if(utilisateur.getStatutNotification().equals(Boolean.TRUE) && utilisateur.getCommune() != null) {
+            communes.add(utilisateur.getCommune());
+        }
+
+        return communes;
+    }
+
+    /**
+     * Méthode renvoyant la liste des communes ajoutées en aux indicateurs de
+     * l'utilisateur.
+     *
+     * @return List<Commune> : liste des communes pour lesquelles
+     * l'utilisateur a créé un indicateur.
+     * @throws UtilisateurNonConnecteException : exception si aucun
+     * utilisateur n'est authentifié
+     */
+    public List<Commune> recupererCommunesUtilisateurAvecIndicateur()
+            throws UtilisateurNonConnecteException {
+        var utilisateur =
+                recuperationUtilisateurConnecte.recupererUtilisateurViaEmail();
+
+        List<Commune> communes = utilisateur.getListeIndicateurs()
+                .stream().map(Indicateur::getCommune).collect(Collectors.toList());
+
+
+        if(utilisateur.getCommune() != null) {
+            communes.add(utilisateur.getCommune());
+        }
+
+        return communes;
     }
 }

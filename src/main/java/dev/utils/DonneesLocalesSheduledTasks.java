@@ -45,8 +45,7 @@ public class DonneesLocalesSheduledTasks {
 	 * générer et de sauvegarder toutes les données locales.
 	 */
 
-	@Scheduled(initialDelay = 5000, fixedRate = 1296000000)
-	// @Scheduled(cron = "0 0 * * * *")
+	@Scheduled(cron = "0 0 * * * *")
 	public void recupererEtSauvegarderDonneesLocales() {
 		LOGGER.info("lancement de recupererEtSauvegarderDonneesLocales()");
 		donneesLocalesService.genererEtsauvegarderDonneesLocales(

@@ -25,14 +25,40 @@ public class AlerteController {
         this.alerteService = alerteService;
     }
 
+    /**
+     * Contrôleur gérant la requête GET retournant la liste des alertes à
+     * notifier pour l'utilisateur courant.
+     * @return List<CommuneNiveauAlerteDto> : liste des alertes à notifier
+     * pour l'utilisateur courant
+     * @throws UtilisateurNonConnecteException : exception lancée si
+     * utilisateur courant non reconnu
+     */
     @GetMapping()
+    public List<CommuneNiveauAlerteDto> afficherAlertesPourIndicateursDeUtilisateur()
+            throws UtilisateurNonConnecteException {
+
+        LOGGER.info("affichage des alertes en cours pour les indicateurs de " +
+                "l'utilisateur");
+
+        return alerteService.verifierAlertesUtilisateurTousIndicateurs();
+    }
+
+    /**
+     * Contrôleur gérant la requête GET retournant la liste des alertes pour
+     * tous les indicateurs de l'utilisateur courant.
+     * @return List<CommuneNiveauAlerteDto> : liste des alertes pour tous les
+     * indicateurs de l'utilisateur courant
+     * @throws UtilisateurNonConnecteException : exception lancée si
+     * utilisateur courant non reconnu
+     */
+    @GetMapping("/notifications")
     public List<CommuneNiveauAlerteDto> afficherAlertesANotifierPourUtilisateur()
             throws UtilisateurNonConnecteException {
 
         LOGGER.info("affichage des alertes à notifier pour l'utilisateur " +
                 "connecté");
 
-        return alerteService.verifierAlertesUtilisateur();
+        return alerteService.verifierAlertesUtilisateurVeutNotification();
     }
 
 }

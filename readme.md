@@ -362,7 +362,6 @@ Code `400`
 
 [DELETE] /indicateurs
 
-
 ```JSON
 {
 	"commune" : "Nantes"
@@ -375,6 +374,75 @@ Code `204`
 Réponse en cas d'échec :
 
 Code `400`
+
+### Module d'alertes et de notifications
+
+#### Requête pour récupérer toutes les alertes en cours sur toutes les communes pour lesquelles l'utilisateur a ajouté un indicateur et pour sa commune
+
+[GET] http://localhost:8090/alertes
+
+Réponse s'il y a des alertes : 
+
+Code `200`
+
+```JSON
+[
+    {
+        "nomCommune": "Aigrefeuille-sur-Maine",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44002"
+    },
+    {
+        "nomCommune": "Ancenis-Saint-Géréon",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44003"
+    }
+]
+```
+
+S'il n'y a pas d'alertes :
+
+Code `200`
+
+```JSON
+[]
+```
+
+#### Requête pour récupérer toutes les alertes en cours sur toutes les communes pour lesquelles l'utilisateur souhaite être notifié en cas d'alerte pollution
+
+[GET] http://localhost:8090/alertes
+
+Réponse s'il y a des alertes : 
+
+Code `200`
+
+```JSON
+[
+    {
+        "nomCommune": "Aigrefeuille-sur-Maine",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44002"
+    },
+    {
+        "nomCommune": "Ancenis-Saint-Géréon",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44003"
+    }
+]
+```
+
+S'il n'y a pas d'alertes :
+
+Code `200`
+
+```JSON
+[]
+```
+
 
 ### Module d'administration
 

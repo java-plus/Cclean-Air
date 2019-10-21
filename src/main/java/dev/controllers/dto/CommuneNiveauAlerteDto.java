@@ -7,6 +7,7 @@ public class CommuneNiveauAlerteDto {
     private String nomCommune;
     private String nomPolluant;
     private Double valeur;
+    private String codeInseeCommune;
 
     /**
      * Constructeur
@@ -15,16 +16,18 @@ public class CommuneNiveauAlerteDto {
     }
 
     /**
-     * Constructeur
+      Constructeur
      * @param nomCommune : nom de la commune où il y a une alerte
      * @param nomPolluant : nom du polluant anormalement élevé
      * @param valeur : valeur de la mesure du polluant
+     * @param codeInseeCommune : code insee de la commune
      */
     public CommuneNiveauAlerteDto(String nomCommune, String nomPolluant,
-                                  Double valeur) {
+                                  Double valeur, String codeInseeCommune) {
         this.nomCommune = nomCommune;
         this.nomPolluant = nomPolluant;
         this.valeur = valeur;
+        this.codeInseeCommune = codeInseeCommune;
     }
 
     public String getNomCommune() {
@@ -49,5 +52,13 @@ public class CommuneNiveauAlerteDto {
 
     public void setValeur(Double valeur) {
         this.valeur = valeur;
+    }
+
+    public String getCodeInseeCommune() {
+        return codeInseeCommune;
+    }
+
+    public void setCodeInseeCommune(String codeInseeCommune) {
+        this.codeInseeCommune = codeInseeCommune;
     }
 }

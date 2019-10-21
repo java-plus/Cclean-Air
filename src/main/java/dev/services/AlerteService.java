@@ -5,7 +5,6 @@ import dev.controllers.dto.NiveauAlerteDto;
 import dev.entities.Commune;
 import dev.entities.Polluant;
 import dev.exceptions.UtilisateurNonConnecteException;
-import dev.repositories.ICommuneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +64,9 @@ public class AlerteService {
      * @return List<CommuneNiveauAlerteDto> : la liste des alertes (commune
      * concernée, nom du polluant et valeur du polluant)
      * @throws UtilisateurNonConnecteException : exception si utilisateur non
-     * authentifié
+     *                                         authentifié
      */
-    public List<CommuneNiveauAlerteDto> verifierAlertesUtilisateur()
+    public List<CommuneNiveauAlerteDto> verifierAlertesUtilisateurVeutNotification()
             throws UtilisateurNonConnecteException {
 
         List<Commune> communes =
@@ -75,14 +74,46 @@ public class AlerteService {
 
         List<CommuneNiveauAlerteDto> listeAlertes = new ArrayList<>();
 
-        for (Commune commune: communes) {
+        for (Commune commune : communes) {
 
             NiveauAlerteDto niveauAlerteDto = donnerNiveauAlerte(commune);
 
-            if(niveauAlerteDto != null) {
+            if (niveauAlerteDto != null) {
                 listeAlertes.add(new CommuneNiveauAlerteDto(commune.getNom(),
                         niveauAlerteDto.getNomPolluant(),
-                        niveauAlerteDto.getValeur()));
+                        niveauAlerteDto.getValeur(), commune.getCodeInsee()));
+            }
+        }
+
+        return listeAlertes;
+
+    }
+
+    /**
+     * Pour chacune des communes pour lesquelles l'utilisateur a un
+     * indicateur, retourne l'alerte pollution s'il y en a une.
+     *
+     * @return List<CommuneNiveauAlerteDto> : la liste des alertes (commune
+     * concernée, nom du polluant et valeur du polluant)
+     * @throws UtilisateurNonConnecteException : exception si utilisateur non
+     *                                         authentifié
+     */
+    public List<CommuneNiveauAlerteDto> verifierAlertesUtilisateurTousIndicateurs()
+            throws UtilisateurNonConnecteException {
+
+        List<Commune> communes =
+                utilisateurService.recupererCommunesUtilisateurAvecIndicateur();
+
+        List<CommuneNiveauAlerteDto> listeAlertes = new ArrayList<>();
+
+        for (Commune commune : communes) {
+
+            NiveauAlerteDto niveauAlerteDto = donnerNiveauAlerte(commune);
+
+            if (niveauAlerteDto != null) {
+                listeAlertes.add(new CommuneNiveauAlerteDto(commune.getNom(),
+                        niveauAlerteDto.getNomPolluant(),
+                        niveauAlerteDto.getValeur(), commune.getCodeInsee()));
             }
         }
 
