@@ -31,8 +31,8 @@ public class AlerteService {
      */
     public NiveauAlerteDto donnerNiveauAlerte(Commune commune) {
         if(commune.getDonneesLocales().isEmpty()) {
-            throw new DonneesLocalesException("Erreur : aucune donnée locale en" +
-                    " base de données.");
+            throw new DonneesLocalesException("Erreur : erreur dans la " +
+                    "récupération des données locales.");
         }
 
         List<Polluant> listePolluantsCommune =
