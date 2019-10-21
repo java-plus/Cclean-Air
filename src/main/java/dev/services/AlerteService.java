@@ -4,7 +4,6 @@ import dev.controllers.dto.CommuneNiveauAlerteDto;
 import dev.controllers.dto.NiveauAlerteDto;
 import dev.entities.Commune;
 import dev.entities.Polluant;
-import dev.exceptions.DonneesLocalesException;
 import dev.exceptions.UtilisateurNonConnecteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,7 @@ public class AlerteService {
      */
     public NiveauAlerteDto donnerNiveauAlerte(Commune commune) {
         if(commune.getDonneesLocales().isEmpty()) {
-            throw new DonneesLocalesException("Erreur : erreur dans la " +
-                    "récupération des données locales.");
+            return null;
         }
 
         List<Polluant> listePolluantsCommune =
