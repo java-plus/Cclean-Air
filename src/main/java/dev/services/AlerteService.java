@@ -29,7 +29,7 @@ public class AlerteService {
      * franchi, sinon renvoi null
      */
     public NiveauAlerteDto donnerNiveauAlerte(Commune commune) {
-        if(commune.getDonneesLocales().isEmpty()) {
+        if(commune.getDonneesLocales() == null || commune.getDonneesLocales().isEmpty()) {
             return null;
         }
 
