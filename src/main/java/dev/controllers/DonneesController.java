@@ -44,8 +44,6 @@ public class DonneesController {
 	@PostMapping("/details_commune")
 	public ResponseEntity<CommuneDto> recupererDetailsCommune(@RequestBody CommuneRechercheDto commune)
 			throws AucuneDonneeException {
-
-		System.err.println(commune);
 		return new ResponseEntity<>(service.rechercherDetailsCommune(commune), HttpStatus.OK);
 	}
 

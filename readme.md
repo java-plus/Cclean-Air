@@ -1,4 +1,4 @@
-﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
+﻿﻿# Cclean-Air (API) : API de suivi des données météorologiques et de pollution en Loire-Atlantique.
 
 => Travail réalisé dans le cadre d'un projet "fil rouge" en août/septembre 2019.
 
@@ -9,6 +9,19 @@
 ## Liste des requêtes back de Cclean-Air
 
 ### Requêtes utiles à différents modules
+
+#### Requête pour récupérer la commune présente en base la plus proche 
+
+[POST] /communes/plus_proche
+[longitude, latitude]
+
+```JSON
+[-1.553621, 47.218371]
+```
+
+Réponse en cas de succès :
+
+Code `200`
 
 #### Requête pour récupérer toutes les communes de Loire-Atlantique
 
@@ -103,6 +116,21 @@ Réponse en cas d'échec :
 
 Code `401`
 
+#### Requête pour tester l'authentification
+
+[GET] /connexion
+
+Réponse :
+
+Code `200`
+
+Réponse avec le filtre activé, en cas de cookie non présent ou invalide :
+
+Code `403`
+
+Commentaire : cette requête s'appuie sur le fait que le filtre va renvoyer un
+ code 403 si jamais l'utilisateur n'est pas déjà authentifié.
+
 #### Requête pour modifier son compte
 
 [PATCH] /profil/modification
@@ -133,6 +161,37 @@ Code `401`
 ### Module de consultation de la qualité de l’air, des conditions météorologiques en temps réel pour les communes de Loire-Atlantique
 
 
+#### Requête pour récupérer la commune l'historique de la commune
+
+[POST] /communes/historiques/{codeInsee}
+
+ ```JSON
+  {
+	"dateDebut": "2019-10-16T17:08:32.791+02:00", 
+	"dateFin": "2019-10-17T17:08:32.794+02:00", 
+	"polluant": "Ozone"
+}
+
+```
+
+Retour si ok : 
+ ```JSON
+[
+    {
+        "polluantDtoVisualisation": {
+            "nom": "Ozone",
+            "unite": "microg/m3",
+            "valeur": 57.0
+        },
+        "communeDtoVisualisation": {
+            "nom": "Ancenis-Saint-Géréon",
+            "nbHabitants": 10595
+        },
+        "date": "2019-10-17T07:00:00+02:00"
+    }
+]
+```
+
 #### Requête pour récupérer les données pour affichage sur la carte
 
 [GET] /donnees_carte
@@ -141,7 +200,6 @@ Réponse en cas de succès :
 
 Code `200`
 
-```
 
 #### Requête pour récupérer les données pour affichage sur la carte
 
@@ -181,8 +239,6 @@ Réponse en cas d'échec :
 
 Code `404`
 
-```
-
 #### Cas d’utilisation “Visualiser données pollution” 
 
 [GET] /communes/{codeInsee}
@@ -193,18 +249,18 @@ Code : `200`
 
 ```JSON
 {
-    "communeDtoVisualisation": {
+    "commune": {
         "nom": "Nantes",
         "nbHabitants": 303382
     },
-    "listePolluantDtoVisualisation": [
+    "listePolluants": [
         {
             "nom": "azote",
             "unite": "µg",
             "valeur": 12.0
         }
     ],
-    "conditionMeteoDtoVisualisation": {
+    "conditionMeteo": {
         "ensoleillement": 10.0,
         "temperature": 20.0,
         "humidite": 20.0
@@ -306,7 +362,6 @@ Code `400`
 
 [DELETE] /indicateurs
 
-
 ```JSON
 {
 	"commune" : "Nantes"
@@ -319,6 +374,75 @@ Code `204`
 Réponse en cas d'échec :
 
 Code `400`
+
+### Module d'alertes et de notifications
+
+#### Requête pour récupérer toutes les alertes en cours sur toutes les communes pour lesquelles l'utilisateur a ajouté un indicateur et pour sa commune
+
+[GET] http://localhost:8090/alertes
+
+Réponse s'il y a des alertes : 
+
+Code `200`
+
+```JSON
+[
+    {
+        "nomCommune": "Aigrefeuille-sur-Maine",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44002"
+    },
+    {
+        "nomCommune": "Ancenis-Saint-Géréon",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44003"
+    }
+]
+```
+
+S'il n'y a pas d'alertes :
+
+Code `200`
+
+```JSON
+[]
+```
+
+#### Requête pour récupérer toutes les alertes en cours sur toutes les communes pour lesquelles l'utilisateur souhaite être notifié en cas d'alerte pollution
+
+[GET] http://localhost:8090/alertes
+
+Réponse s'il y a des alertes : 
+
+Code `200`
+
+```JSON
+[
+    {
+        "nomCommune": "Aigrefeuille-sur-Maine",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44002"
+    },
+    {
+        "nomCommune": "Ancenis-Saint-Géréon",
+        "nomPolluant": "Particules fines",
+        "valeur": 900.0,
+        "codeInseeCommune": "44003"
+    }
+]
+```
+
+S'il n'y a pas d'alertes :
+
+Code `200`
+
+```JSON
+[]
+```
+
 
 ### Module d'administration
 

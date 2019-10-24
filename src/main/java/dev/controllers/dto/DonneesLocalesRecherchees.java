@@ -1,11 +1,8 @@
 package dev.controllers.dto;
 
-import dev.entities.Polluant;
-import org.apache.tomcat.jni.Poll;
+import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 /**
  * @author Cécile
@@ -17,58 +14,38 @@ import java.time.LocalTime;
 public class DonneesLocalesRecherchees {
 
 	@NotBlank
-	private LocalDate dateDebut;
+	private ZonedDateTime dateDebut;
 	@NotBlank
-	private LocalTime heureDebut;
-	@NotBlank
-	private LocalDate dateFin;
-	@NotBlank
-	private LocalTime heureFin;
+	private ZonedDateTime dateFin;
 	@NotBlank
 	private String polluant;
 
 	public DonneesLocalesRecherchees() {
 	}
 
-	public DonneesLocalesRecherchees(@NotBlank LocalDate dateDebut, @NotBlank LocalTime heureDebut,
-			@NotBlank LocalDate dateFin, @NotBlank LocalTime heureFin, @NotBlank String polluant) {
+	public DonneesLocalesRecherchees(@NotBlank ZonedDateTime dateDebut, @NotBlank ZonedDateTime dateFin,
+			@NotBlank String polluant) {
 		this.dateDebut = dateDebut;
-		this.heureDebut = heureDebut;
+
 		this.dateFin = dateFin;
-		this.heureFin = heureFin;
+
 		this.polluant = polluant;
 	}
 
-	public LocalDate getDateDebut() {
+	public ZonedDateTime getDateDebut() {
 		return dateDebut;
 	}
 
-	public void setDateDebut(LocalDate dateDebut) {
+	public void setDateDebut(ZonedDateTime dateDebut) {
 		this.dateDebut = dateDebut;
 	}
 
-	public LocalTime getHeureDebut() {
-		return heureDebut;
-	}
-
-	public void setHeureDebut(LocalTime heureDebut) {
-		this.heureDebut = heureDebut;
-	}
-
-	public LocalDate getDateFin() {
+	public ZonedDateTime getDateFin() {
 		return dateFin;
 	}
 
-	public void setDateFin(LocalDate dateFin) {
+	public void setDateFin(ZonedDateTime dateFin) {
 		this.dateFin = dateFin;
-	}
-
-	public LocalTime getHeureFin() {
-		return heureFin;
-	}
-
-	public void setHeureFin(LocalTime heureFin) {
-		this.heureFin = heureFin;
 	}
 
 	public String getPolluant() {

@@ -135,19 +135,15 @@ public class UtilisateurController {
 	}
 
 	/**
-	 * Méthode qui récupère la suppression de l'utilisateur
+	 * Contrôleur gérant la suppression de l'utilisateur
 	 *
 	 * @param email : string
 	 * @return : ResponseEntity<String>
 	 */
-	@DeleteMapping("/admin/membres/suppression/{email}")
-	public ResponseEntity<String> suppressionUtilisateur(@PathVariable String email) {
-		if (utilisateurService.isEmailExistant(email)) {
-			utilisateurService.supprimerUtilisateur(email);
-			return ResponseEntity.status(200).body("L'utilisateur " + email + " est bien supprimé !");
-		} else {
-			return ResponseEntity.status(400).body("L'email ne correspond à aucun compte");
-		}
+	@DeleteMapping("/admin/membres/{email}")
+	public ResponseEntity<Void> suppressionUtilisateur(@PathVariable String email) {
+		utilisateurService.supprimerUtilisateur(email);
+		return ResponseEntity.status(200).build();
 	}
 
 	/**
