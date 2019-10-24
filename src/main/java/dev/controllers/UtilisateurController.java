@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import dev.controllers.dto.*;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.controllers.dto.EmailDto;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.ProfilModifcationGet;
-import dev.controllers.dto.ProfilModificationPost;
-import dev.controllers.dto.UtilisateurDtoAdmin;
-import dev.controllers.dto.UtilisateurDtoGet;
-import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Statut;
 import dev.entities.Utilisateur;
 import dev.exceptions.CommuneInvalideException;
@@ -233,5 +228,13 @@ public class UtilisateurController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
+	}
+
+	@PostMapping("/admin/alertes")
+	@ResponseBody
+	public ResponseEntity<EmailAlerteDto> reqEnvoieEmailDAlerte(@RequestBody EmailAlerteDto emailAlerte) {
+
+
+		return ResponseEntity.status(201).body(emailAlerte);
 	}
 }

@@ -7,6 +7,7 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.resource.Emailv31;
+import dev.controllers.dto.EmailAlerteDto;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +23,6 @@ public class MailUtils {
     public void envoyerEmail() throws MailjetException,
             MailjetSocketTimeoutException {
 
-    }
-
-    public static void main(String[] args) throws MailjetException, MailjetSocketTimeoutException {
         MailjetClient client;
         MailjetRequest request;
         MailjetResponse response;

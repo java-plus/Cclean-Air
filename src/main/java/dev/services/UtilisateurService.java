@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import dev.controllers.dto.*;
+import dev.utils.MailUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dev.controllers.dto.CommuneIndicateurDto;
-import dev.controllers.dto.ProfilDtoGet;
-import dev.controllers.dto.ProfilModifcationGet;
-import dev.controllers.dto.ProfilModificationPost;
-import dev.controllers.dto.UtilisateurDtoAdmin;
-import dev.controllers.dto.UtilisateurDtoPost;
 import dev.entities.Commune;
 import dev.entities.Indicateur;
 import dev.entities.Statut;
@@ -290,6 +286,16 @@ public class UtilisateurService {
 		} else {
 			return false;
 		}
+
+	}
+
+	public List<Utilisateur> recupererUtilisateurSouhaitantNotificationPourCommune(String inseeCommune) {
+		utilisateurRepository.findBy
+	}
+
+	public boolean envoyerAlerteParEmail(EmailAlerteDto email) {
+
+		communeService.recupererCommune(email.)
 
 	}
 }
