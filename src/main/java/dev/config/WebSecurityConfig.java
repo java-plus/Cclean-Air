@@ -60,10 +60,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, "/connexion").permitAll()
 				.antMatchers(HttpMethod.GET, "/connexion").authenticated().antMatchers(HttpMethod.GET, "/communes")
-				.permitAll().antMatchers("/comptes").permitAll().antMatchers("/h2-console/**").permitAll()
-				.antMatchers("/admin/**").hasAuthority("ADMINISTRATEUR").anyRequest().authenticated().and().headers()
-				.frameOptions().disable().and()
-				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).logout()
+
+				.permitAll().antMatchers(HttpMethod.GET, "/donnees_carte").permitAll().antMatchers("/comptes")
+				.permitAll().antMatchers("/h2-console/**").permitAll().antMatchers("/admin/**")
+				.hasAuthority("ADMINISTRATEUR").anyRequest().authenticated().and().headers().frameOptions().disable()
+				.and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).logout()
 				.logoutSuccessHandler((req, resp, auth) -> resp.setStatus(HttpStatus.OK.value()))
 				.deleteCookies(TOKEN_COOKIE);
 	}
