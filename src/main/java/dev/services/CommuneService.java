@@ -501,6 +501,8 @@ public class CommuneService {
 
 			ConditionMeteo cm = listeDonnees.get(listeDonnees.size() - 1).getConditionMeteo();
 			donneesMeteo = new ConditionMeteoDto(cm.getHumidite(), cm.getEnsoleillement(), cm.getTemperature());
+			resultat.setDate(listeDonnees.get(listeDonnees.size() - 1).getDate().toLocalDate());
+			resultat.setHeure(listeDonnees.get(listeDonnees.size() - 1).getDate().toLocalTime());
 		}
 
 		// si des valeurs de recherche par polluant on été renseignées
