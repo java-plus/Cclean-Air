@@ -1,5 +1,7 @@
 package dev.services;
 
+import com.mailjet.client.errors.MailjetException;
+import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import dev.controllers.dto.*;
 import dev.entities.Commune;
 import dev.entities.Indicateur;
@@ -11,6 +13,7 @@ import dev.exceptions.UtilisateurInvalideException;
 import dev.exceptions.UtilisateurNonConnecteException;
 import dev.repositories.ICommuneRepository;
 import dev.repositories.IUtilisateurRepository;
+import dev.utils.MailUtils;
 import dev.utils.RecuperationUtilisateurConnecte;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +42,20 @@ public class UtilisateurService {
     private RecuperationUtilisateurConnecte recuperationUtilisateurConnecte;
     private CommuneService communeService;
     private ICommuneRepository communeRepository;
+    private MailUtils mailUtils;
 
     @Autowired
     public UtilisateurService(PasswordEncoder passwordEncoder,
                               IUtilisateurRepository utilisateurRepository,
                               RecuperationUtilisateurConnecte recuperationUtilisateurConnecte, CommuneService communeService,
-                              ICommuneRepository communeRepository) {
+                              ICommuneRepository communeRepository,
+                              MailUtils mailUtils) {
         this.passwordEncoder = passwordEncoder;
         this.utilisateurRepository = utilisateurRepository;
         this.recuperationUtilisateurConnecte = recuperationUtilisateurConnecte;
         this.communeService = communeService;
         this.communeRepository = communeRepository;
+        this.mailUtils = mailUtils;
     }
 
     /**
@@ -324,9 +330,9 @@ public class UtilisateurService {
      * authentifié souhaite recevoir des notifications
      *
      * @return List<Commune> : liste des communes pour lesquelles une
-	 * notification est souhaitée en cas d'alerte pollution
+     * notification est souhaitée en cas d'alerte pollution
      * @throws UtilisateurNonConnecteException : exception si aucun
-	 * utilisateur n'est authentifié
+     *                                         utilisateur n'est authentifié
      */
     public List<Commune> recupererCommunesUtilisateurCourantVeutNotifications()
             throws UtilisateurNonConnecteException {
@@ -337,7 +343,7 @@ public class UtilisateurService {
                 .stream().filter(Indicateur::getAlerte)
                 .map(Indicateur::getCommune).collect(Collectors.toList());
 
-        if(utilisateur.getStatutNotification().equals(Boolean.TRUE) && utilisateur.getCommune() != null) {
+        if (utilisateur.getStatutNotification().equals(Boolean.TRUE) && utilisateur.getCommune() != null) {
             communes.add(utilisateur.getCommune());
         }
 
@@ -351,7 +357,7 @@ public class UtilisateurService {
      * @return List<Commune> : liste des communes pour lesquelles
      * l'utilisateur a créé un indicateur.
      * @throws UtilisateurNonConnecteException : exception si aucun
-     * utilisateur n'est authentifié
+     *                                         utilisateur n'est authentifié
      */
     public List<Commune> recupererCommunesUtilisateurAvecIndicateur()
             throws UtilisateurNonConnecteException {
@@ -362,10 +368,64 @@ public class UtilisateurService {
                 .stream().map(Indicateur::getCommune).collect(Collectors.toList());
 
 
-        if(utilisateur.getCommune() != null) {
+        if (utilisateur.getCommune() != null) {
             communes.add(utilisateur.getCommune());
         }
 
         return communes;
+    }
+
+    /**
+     * Retourne tous les utilisateurs qui souhaitent être notifiés pour les
+     * alertes pollution de la commune dont l'insee est renseignée
+     * @param inseeCommune : insee de la commune
+     * @return List<Utilisateur> : la liste des utilisateurs voulant être
+     * notifiés
+     */
+    public List<Utilisateur> recupererUtilisateursSouhaitantNotificationPourCommune(String inseeCommune) {
+
+        List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
+        List<Utilisateur> utilisateursSouhaitantNotif = new ArrayList<>();
+
+        for (Utilisateur utilisateur : utilisateurs) {
+
+            List<Indicateur> indicateursConcernes =
+                    utilisateur.getListeIndicateurs()
+                            .stream()
+                            .filter(indicateur -> indicateur.getCommune()
+                                    .getCodeInsee().equalsIgnoreCase(inseeCommune))
+                            .collect(Collectors.toList());
+
+            if (!indicateursConcernes.isEmpty()) {
+                utilisateursSouhaitantNotif.add(utilisateur);
+            } else {
+                LOGGER.info("else de " +
+                        "recupererUtilisateursSouhaitantNotificationPourCommune" + utilisateur.getEmail());
+            }
+        }
+
+        return utilisateursSouhaitantNotif;
+    }
+
+    /**
+     * Sollicite une méthode utilisant Mailjet pour envoyer un email à chaque
+     * utilisateur souhaitant être notifié sur la commune dont le code insee
+     * est renseigné.
+     * @param email : l'objet email à envoyer
+     * @throws MailjetSocketTimeoutException : exception lancée en cas
+     * d'erreur d'envoi des emails
+     * @throws MailjetException : exception lancée en cas
+     *      * d'erreur d'envoi des emails
+     */
+    public void envoyerAlerteParEmail(EmailAlerteDto email)
+            throws MailjetSocketTimeoutException, MailjetException {
+
+        List<Utilisateur> listeUtilisateurs =
+                recupererUtilisateursSouhaitantNotificationPourCommune(email.getCommuneInsee());
+
+        for (Utilisateur utilisateur : listeUtilisateurs) {
+            mailUtils.envoyerEmail(utilisateur.getPrenom(), email.getObjet(),
+                    utilisateur.getEmail(), email.getCorpsMsg());
+        }
     }
 }
