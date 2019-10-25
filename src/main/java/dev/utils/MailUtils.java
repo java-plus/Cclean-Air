@@ -21,6 +21,15 @@ public class MailUtils {
     @Value("${mjpr}")
     private static String mjpr;
 
+    /**
+     * Utilise l'API Mailjet pour envoyer un email
+     * @param prenom : prénom du destinataire
+     * @param titre : titre du mail
+     * @param email : email du destinataire
+     * @param corps : corps du message
+     * @throws MailjetException : exception lancée en cas de problème de l'API
+     * @throws MailjetSocketTimeoutException : exception lancée en cas de problème de l'API
+     */
     public void envoyerEmail(String prenom, String titre,
                              String email, String corps) throws MailjetException,
             MailjetSocketTimeoutException {
@@ -34,7 +43,8 @@ public class MailUtils {
                 .property(Emailv31.MESSAGES, new JSONArray()
                         .put(new JSONObject()
                                 .put(Emailv31.Message.FROM, new JSONObject()
-                                        .put("Email", "ccleanair.projet@gmail.com")
+                                        .put("Email", "ccleanair" +
+                                                ".projet@google.com")
                                         .put("Name", "ccleanair"))
                                 .put(Emailv31.Message.TO, new JSONArray()
                                         .put(new JSONObject()
@@ -45,7 +55,5 @@ public class MailUtils {
                                 .put(Emailv31.Message.HTMLPART, "<p>"+corps+
                                                 "</p>")));
         response = client.post(request);
-        System.out.println(response.getStatus());
-        System.out.println(response.getData());
     }
 }

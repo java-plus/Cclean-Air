@@ -1,7 +1,7 @@
 package dev.controllers.dto;
 
 /**
- * Dto représentant un email d'alerte envoyé par l'administrateur
+ * Dto représentant un email d'alerte envoyable par un administrateur.
  */
 public class EmailAlerteDto {
 

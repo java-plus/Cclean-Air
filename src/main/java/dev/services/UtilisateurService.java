@@ -375,6 +375,13 @@ public class UtilisateurService {
         return communes;
     }
 
+    /**
+     * Retourne tous les utilisateurs qui souhaitent être notifiés pour les
+     * alertes pollution de la commune dont l'insee est renseignée
+     * @param inseeCommune : insee de la commune
+     * @return List<Utilisateur> : la liste des utilisateurs voulant être
+     * notifiés
+     */
     public List<Utilisateur> recupererUtilisateursSouhaitantNotificationPourCommune(String inseeCommune) {
 
         List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
@@ -400,10 +407,18 @@ public class UtilisateurService {
         return utilisateursSouhaitantNotif;
     }
 
+    /**
+     * Sollicite une méthode utilisant Mailjet pour envoyer un email à chaque
+     * utilisateur souhaitant être notifié sur la commune dont le code insee
+     * est renseigné.
+     * @param email : l'objet email à envoyer
+     * @throws MailjetSocketTimeoutException : exception lancée en cas
+     * d'erreur d'envoi des emails
+     * @throws MailjetException : exception lancée en cas
+     *      * d'erreur d'envoi des emails
+     */
     public void envoyerAlerteParEmail(EmailAlerteDto email)
             throws MailjetSocketTimeoutException, MailjetException {
-
-        LOGGER.info("envoyerAlerteParEmail lancé, email = " + email.getObjet());
 
         List<Utilisateur> listeUtilisateurs =
                 recupererUtilisateursSouhaitantNotificationPourCommune(email.getCommuneInsee());

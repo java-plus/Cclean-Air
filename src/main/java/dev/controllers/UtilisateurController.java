@@ -227,18 +227,22 @@ public class UtilisateurController {
 
     }
 
+    /**
+     * Contrôleur gérant les requêtes de création d'emails d'alerte envoyable
+     * par les administrateurs
+     * @param emailAlerte : l'objet email à envoyer aux utilisateurs concernés
+     * @return ResponseEntity<EmailAlerteDto>
+     */
     @PostMapping("/admin/alertes")
     @ResponseBody
     public ResponseEntity<EmailAlerteDto> reqEnvoieEmailDAlerte(@RequestBody EmailAlerteDto emailAlerte) {
 
-    	LOGGER.info("lancement de reqEnvoieEmailDAlerte");
+    	LOGGER.info("lancement de reqEnvoieEmailDAlerte()");
 
         try {
-        	LOGGER.info("passage dans le try");
             utilisateurService.envoyerAlerteParEmail(emailAlerte);
 			return ResponseEntity.status(200).body(emailAlerte);
         } catch (MailjetSocketTimeoutException | MailjetException e) {
-        	LOGGER.info("passage dans le catch");
             return ResponseEntity.status(404).build();
         }
 
