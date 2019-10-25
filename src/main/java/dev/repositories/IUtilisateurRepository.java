@@ -29,6 +29,4 @@ public interface IUtilisateurRepository extends JpaRepository<Utilisateur, Integ
 	@Query("select new dev.controllers.dto.UtilisateurDtoAdmin(u.nom, u.prenom, u.email) from Utilisateur u")
 	List<UtilisateurDtoAdmin> findAllwithNomPrenomEmail();
 
-	List<Utilisateur> findBy
-
 }
