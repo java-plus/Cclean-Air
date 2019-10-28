@@ -10,6 +10,9 @@ public class CommuneDtoGet {
 	private String codeRegion;
 	private Long population;
 
+	/**
+	 * Constructeur
+	 */
 	public CommuneDtoGet() {
 	}
 
