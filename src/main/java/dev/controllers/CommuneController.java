@@ -78,6 +78,14 @@ public class CommuneController {
 	}
 
 	/**
+	 * @return renvoie la liste complte des communes de loire atlantique
+	 */
+	@GetMapping(value = "/inscription")
+	public ResponseEntity<List<CommuneCarteDto>> recupererCommunesInscription() {
+		return ResponseEntity.ok(communeService.recupererToutesCommunes());
+	}
+
+	/**
 	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
 	 *
 	 * @param codeInsee
