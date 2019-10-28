@@ -1,16 +1,17 @@
 package dev.repositories;
 
-import dev.entities.ConditionMeteo;
+import java.time.ZonedDateTime;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
+import dev.entities.ConditionMeteo;
 
 /**
- * <<<<<<< HEAD
+ * 
  * 
  * @author Cécile Classe Repository faisant le lien avec la table ConditionMeteo
  *         ======= Classe repository faisant le lien avec la base de données et

@@ -91,4 +91,22 @@ public class PolluantService {
 		return new ArrayList<>(new HashSet<String>(listeNomPolluants));
 	}
 
+	/**
+	 * Getter
+	 * 
+	 * @return the polluantRepository
+	 */
+	public IPolluantRepository getPolluantRepository() {
+		return polluantRepository;
+	}
+
+	/**
+	 * Setter
+	 * 
+	 * @param polluantRepository the polluantRepository to set
+	 */
+	public void setPolluantRepository(IPolluantRepository polluantRepository) {
+		this.polluantRepository = polluantRepository;
+	}
+
 }
