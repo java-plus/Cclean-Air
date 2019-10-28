@@ -523,6 +523,9 @@ public class CommuneService {
 
 	}
 
+	/**
+	 * @return Renvoie la liste entière des communes de loire atlantique
+	 */
 	public List<CommuneCarteDto> recupererToutesCommunes() {
 
 		return communeRepository.findAll().stream()
