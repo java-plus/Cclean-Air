@@ -77,6 +77,11 @@ public class CommuneController {
 		return new ResponseEntity<>(communeService.rechercheCommune(commune), HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/inscription")
+	public ResponseEntity<List<CommuneCarteDto>> recupererCommunesInscription() {
+		return ResponseEntity.ok(communeService.recupererToutesCommunes());
+	}
+
 	/**
 	 * Affcihe l'historique pour le polluant et la période saisie par l'utilisateur
 	 *

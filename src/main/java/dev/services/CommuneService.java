@@ -523,4 +523,12 @@ public class CommuneService {
 
 	}
 
+	public List<CommuneCarteDto> recupererToutesCommunes() {
+
+		return communeRepository.findAll().stream()
+				.map(c -> new CommuneCarteDto(c.getCodeInsee(), c.getCodesPostaux().get(0).getValeur(), c.getNom(),
+						c.getLatitude(), c.getLongitude(), alerteService.donnerNiveauAlerte(c)))
+				.collect(Collectors.toList());
+	}
+
 }
